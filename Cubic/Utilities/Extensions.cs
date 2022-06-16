@@ -6,7 +6,7 @@ namespace Cubic.Utilities;
 
 public static class Extensions
 {
-    internal static Vector4 Normalize(this Color color)
+    public static Vector4 Normalize(this Color color)
     {
         return new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
     }

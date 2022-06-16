@@ -15,6 +15,8 @@ public struct UITheme
 
     public Color HoverColor;
 
+    public Color HoverTextColor;
+
     public Color ClickColor;
 
     public Color TextColor;
@@ -37,6 +39,7 @@ public struct UITheme
         BorderWidth = 1;
         RectColor = Color.GhostWhite;
         HoverColor = Color.DarkGray;
+        HoverTextColor = default;
         ClickColor = Color.LightGray;
         TextColor = Color.Black;
         CheckBoxPadding = 5;

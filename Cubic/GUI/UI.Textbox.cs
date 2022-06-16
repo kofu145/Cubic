@@ -19,7 +19,7 @@ public static partial class UI
         CalculatePos(anchor, ref pos, ignoreReferenceResolution, Vector2.Zero);
         Add(pos);
 
-        if (ElementClicked(pos))
+        if (IsElementClicked(pos))
         {
             _textCursorPos.X = text.Length;
         }
@@ -83,6 +83,6 @@ public static partial class UI
 
         _texts.Add((text, size, new Vector2(pos.X - _textOffset, pos.Y + pos.Height / 2 - size / 2), Theme.TextColor, false, true, _currentID));
 
-        return ElementClicked(pos);
+        return IsElementClicked(pos);
     }
 }

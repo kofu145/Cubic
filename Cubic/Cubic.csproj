@@ -10,7 +10,7 @@
     <ItemGroup>
       <PackageReference Include="BepuPhysics" Version="2.4.0" />
       <PackageReference Include="FreeTypeSharp" Version="2.0.0.8-ci" />
-      <PackageReference Include="ImGui.NET" Version="1.87.2" />
+      <PackageReference Include="ImGui.NET" Version="1.87.3" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="Silk.NET.GLFW" Version="2.15.0" />
       <PackageReference Include="Silk.NET.OpenAL" Version="2.15.0" />

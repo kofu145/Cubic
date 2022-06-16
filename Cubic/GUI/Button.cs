@@ -34,14 +34,19 @@ public class Button : UIElement
         Rectangle rect = Position;
         UI.CalculatePos(Anchor, ref rect, IgnoreReferenceResolution, Offset, Viewport);
 
-        Color color = Theme.RectColor;
+        Color rectColor = Theme.RectColor;
+        Color textColor = Theme.TextColor;
         if (Hovering)
-            color = Theme.HoverColor;
+        {
+            rectColor = Theme.HoverColor;
+            if (Theme.HoverTextColor != default)
+                textColor = Theme.HoverTextColor;
+        }
         if (Clicked)
-            color = Theme.ClickColor;
+            rectColor = Theme.ClickColor;
         
         graphics.SpriteRenderer.DrawBorderRectangle(rect.Location.ToVector2(), rect.Size.ToVector2(), Theme.BorderWidth,
-            Theme.BorderColor, color, 0, Vector2.Zero);
+            Theme.BorderColor, rectColor, 0, Vector2.Zero);
 
         float scale = UI.GetReferenceMultiplier();
         
@@ -57,7 +62,7 @@ public class Button : UIElement
 
         Theme.Font.Draw(graphics.SpriteRenderer, (uint) (_fontSize * scale), Text,
             new Vector2(rect.X + rect.Width / 2 + (int) (TextOffset.X * scale),
-                rect.Y + rect.Height / 2 + (int) (TextOffset.Y * scale)), Theme.TextColor, 0,
+                rect.Y + rect.Height / 2 + (int) (TextOffset.Y * scale)), textColor, 0,
             new Vector2(origin.Width / 2, origin.Height / 2), Vector2.One);
     }
 }

@@ -328,7 +328,7 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
                     throw new NotImplementedException();
                 
                 Gl.ActiveTexture(TextureUnit.Texture0);
-                Gl.BindTexture(TextureTarget.Texture2D, _fontTexture.Handle);
+                Gl.BindTexture(TextureTarget.Texture2D, (uint) pcmd.TextureId.ToInt32());
                 Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
                     (int) TextureMinFilter.Linear);
                 Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
@@ -383,5 +383,10 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
     public void ResetFont()
     {
         ImGui.PopFont();
+    }
+
+    public IntPtr TextureToImGui(Texture texture)
+    {
+        return (IntPtr) texture.Handle;
     }
 }

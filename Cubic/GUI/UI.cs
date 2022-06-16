@@ -13,6 +13,10 @@ namespace Cubic.GUI;
 
 public static partial class UI
 {
+    public static event OnElementHovered ElementHovered;
+    public static event OnElementHoveredOnce ElementHoveredOnce;
+    public static event OnElementClicked ElementClicked;
+
     private static (int, Rectangle)[] _lastElementPositions;
     private static List<(int, Rectangle)> _elementPositions;
     private static List<(Rectangle, Color, Texture2D, int)> _rectangles;
@@ -72,7 +76,7 @@ public static partial class UI
         return pos.Contains(new Point((int) mPos.X, (int) mPos.Y)) && _currentID == _hoveringID;
     }
 
-    private static bool ElementClicked(Rectangle pos)
+    private static bool IsElementClicked(Rectangle pos)
     {
         Vector2 mPos = Input.MousePosition;
         if (!_clicked || !pos.Contains(new Point((int) mPos.X, (int) mPos.Y)) || _currentID != _hoveringID)
@@ -289,4 +293,14 @@ public static partial class UI
         _elements.Clear();
         _reversedElements.Clear();
     }
+
+    internal static void RaiseHovered(UIElement element) => ElementHovered?.Invoke(element);
+    internal static void RaiseHoveredOnce(UIElement element) => ElementHoveredOnce?.Invoke(element);
+    internal static void RaiseClicked(UIElement element) => ElementClicked?.Invoke(element);
+
+    public delegate void OnElementHovered(UIElement element);
+
+    public delegate void OnElementHoveredOnce(UIElement element);
+
+    public delegate void OnElementClicked(UIElement element);
 }

@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using Cubic.Utilities;
+using Newtonsoft.Json;
 using Silk.NET.OpenGL;
 using static Cubic.Render.Graphics;
 using StbImageSharp;
@@ -10,6 +11,41 @@ namespace Cubic.Render;
 
 public class Texture2D : Texture
 {
+    /// <summary>
+    /// The path, if any, of this texture. Useful for JSON serialization.
+    /// </summary>
+    public string Path { get; }
+
+    /// <summary>
+    /// The raw byte data of this texture. Useful for JSON serialization.
+    /// </summary>
+    public unsafe byte[] Data
+    {
+        get
+        {
+            Bind();
+            fixed (byte* data = new byte[Size.Width * Size.Height * 4])
+            {
+                Gl.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+
+                byte[] datArray = new byte[Size.Width * Size.Height * 4];
+                for (int x = 0; x < Size.Width; x++)
+                {
+                    // TODO: Find if there is a better way to do this
+                    for (int y = 0; y < Size.Height; y++)
+                    {
+                        datArray[(y * Size.Width + x) * 4] = data[(y * Size.Width + x) * 4];
+                        datArray[(y * Size.Width + x) * 4 + 1] = data[(y * Size.Width + x) * 4 + 1];
+                        datArray[(y * Size.Width + x) * 4 + 2] = data[(y * Size.Width + x) * 4 + 2];
+                        datArray[(y * Size.Width + x) * 4 + 3] = data[(y * Size.Width + x) * 4 + 3];
+                    }
+                }
+
+                return datArray;
+            }
+        }
+    }
+    
     public Texture2D(string path, bool autoDispose = true) : base(autoDispose)
     {
         ImageResult result = ImageResult.FromMemory(File.ReadAllBytes(path));
@@ -17,6 +53,7 @@ public class Texture2D : Texture
         Handle = CreateTexture(result.Width, result.Height, result.Data,
             result.Comp == ColorComponents.RedGreenBlueAlpha ? PixelFormat.Rgba : PixelFormat.Rgb);
         Size = new Size(result.Width, result.Height);
+        Path = path;
     }
 
     public Texture2D(int width, int height, byte[] data, bool autoDispose = true) : base(autoDispose)
@@ -35,6 +72,14 @@ public class Texture2D : Texture
     {
         Handle = CreateTexture(bitmap.Size.Width, bitmap.Size.Height, bitmap.Data);
         Size = bitmap.Size;
+    }
+
+    [JsonConstructor]
+    public Texture2D(string path, byte[] data, Size size) : base(true)
+    {
+        Handle = CreateTexture(size.Width, size.Height, data);
+        Size = size;
+        Path = path;
     }
 
     public unsafe void SetData(IntPtr data, int x, int y, int width, int height)

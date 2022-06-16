@@ -134,11 +134,10 @@ public struct Font : IDisposable
         // If the font size is not the same as our old one, generate a new texture!
         if (size != _storedSize)
         {
-            if (_cachedAtlases.ContainsKey(size))
+            if (_cachedAtlases.TryGetValue(size, out (Texture2D, Dictionary<char, FontHelper.Character>) value))
             {
-                (Texture2D, Dictionary<char, FontHelper.Character>) ch = _cachedAtlases[size];
-                _currentTexture = ch.Item1;
-                _characters = ch.Item2;
+                _currentTexture = value.Item1;
+                _characters = value.Item2;
             }
             else
             {
@@ -269,11 +268,10 @@ public struct Font : IDisposable
         // If the font size is not the same as our old one, generate a new texture!
         if (size != _storedSize)
         {
-            if (_cachedAtlases.ContainsKey(size))
+            if (_cachedAtlases.TryGetValue(size, out (Texture2D, Dictionary<char, FontHelper.Character>) value))
             {
-                (Texture2D, Dictionary<char, FontHelper.Character>) ch = _cachedAtlases[size];
-                _currentTexture = ch.Item1;
-                _characters = ch.Item2;
+                _currentTexture = value.Item1;
+                _characters = value.Item2;
             }
             else
             {

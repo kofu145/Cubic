@@ -41,6 +41,11 @@ public class CheckBox : UIElement
             color = Theme.HoverColor;
         if (Clicked)
             color = Theme.ClickColor;
+
+        uint textSize = (uint) (TextSize * UI.GetReferenceMultiplier());
+        Size size = Theme.Font.MeasureString(textSize, Text);
+        Theme.Font.Draw(graphics.SpriteRenderer, textSize, Text, new Vector2(rect.X + rect.Width / 2 + rect.Width / 2 + 5, rect.Y + rect.Height / 2), Color.Black, 0,
+            new Vector2(0, size.Height / 2), Vector2.One);
         
         graphics.SpriteRenderer.DrawBorderRectangle(rect.Location.ToVector2(), rect.Size.ToVector2(), Theme.BorderWidth,
             Theme.BorderColor, color, 0, Vector2.Zero);

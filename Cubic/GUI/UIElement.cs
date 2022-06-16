@@ -9,9 +9,14 @@ namespace Cubic.GUI;
 public abstract class UIElement
 {
     /// <summary>
-    /// This event is fired whenever this element is hovered.
+    /// This event is fired the entire time this element is hovered over.
     /// </summary>
     public event OnHover Hover;
+
+    /// <summary>
+    /// This event is fired <b>once</b>, as soon as the element is hovered over.
+    /// </summary>
+    public event OnHoverOnce HoverOnce;
     
     /// <summary>
     /// This event is fired whenever this element is clicked.
@@ -50,6 +55,7 @@ public abstract class UIElement
     protected bool Clicked;
     protected bool Pressed;
     protected Point ClickPoint;
+    private bool _fireHoverOnce;
 
     /// <summary>
     /// The scroll offset of the element. It's down to the element to process this. <b>Please don't modify this value.</b>
@@ -93,6 +99,7 @@ public abstract class UIElement
         Offset = Vector2.Zero;
         Theme = UI.Theme;
         AllowHover = true;
+        _fireHoverOnce = true;
     }
 
     protected internal virtual void Update(ref bool mouseCaptured)
@@ -109,6 +116,13 @@ public abstract class UIElement
             if (CaptureMouse)
                 mouseCaptured = true;
             Hover?.Invoke();
+            UI.RaiseHovered(this);
+            if (_fireHoverOnce)
+            {
+                _fireHoverOnce = false;
+                HoverOnce?.Invoke();
+                UI.RaiseHoveredOnce(this);
+            }
 
             if (Input.MouseButtonDown(MouseButtons.Left))
             {
@@ -120,6 +134,7 @@ public abstract class UIElement
             {
                 Clicked = false;
                 Click?.Invoke();
+                UI.RaiseClicked(this);
                 Pressed = true;
             }
         }
@@ -127,7 +142,8 @@ public abstract class UIElement
         {
             if (Input.MouseButtonDown(MouseButtons.Left))
                 Focused = false;
-            
+
+            _fireHoverOnce = true;
             Clicked = false;
             Pressed = false;
         }
@@ -140,4 +156,6 @@ public abstract class UIElement
     public delegate void OnClick();
 
     public delegate void OnHover();
+
+    public delegate void OnHoverOnce();
 }

@@ -83,6 +83,20 @@ public class Entity : IDisposable
         return null;
     }
 
+    public Component GetComponent(Type component)
+    {
+        if (component.BaseType != typeof(Component))
+            throw new CubicException($"Given component must derive off {typeof(Component)}.");
+        
+        foreach (Component comp in _components)
+        {
+            if (comp?.GetType() == component)
+                return comp;
+        }
+
+        return null;
+    }
+
     protected internal virtual void Update()
     {
         _updating = true;
@@ -160,9 +174,7 @@ public class Entity : IDisposable
                 _components[_componentCount] = null;
 
                 GC.Collect();
-                
-                Console.WriteLine(_components.Length);
-                
+
                 return;
             }
         }

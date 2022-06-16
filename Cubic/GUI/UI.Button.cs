@@ -48,6 +48,6 @@ public static partial class UI
         _texts.Add((text, textSize, new Vector2(pos.X + pos.Width / 2, pos.Y + pos.Height / 2), Theme.TextColor,
             true, false, _currentID));
 
-        return ElementClicked(pos) || (selected && Input.ControllerButtonPressed(ControllerButton.A));
+        return IsElementClicked(pos) || (selected && Input.ControllerButtonPressed(ControllerButton.A));
     }
 }
