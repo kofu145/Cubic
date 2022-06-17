@@ -24,25 +24,10 @@ public class Texture2D : Texture
         get
         {
             Bind();
-            fixed (byte* data = new byte[Size.Width * Size.Height * 4])
-            {
+            byte[] dataArray = new byte[Size.Width * Size.Height * 4];
+            fixed (byte* data = dataArray)
                 Gl.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-
-                byte[] datArray = new byte[Size.Width * Size.Height * 4];
-                for (int x = 0; x < Size.Width; x++)
-                {
-                    // TODO: Find if there is a better way to do this
-                    for (int y = 0; y < Size.Height; y++)
-                    {
-                        datArray[(y * Size.Width + x) * 4] = data[(y * Size.Width + x) * 4];
-                        datArray[(y * Size.Width + x) * 4 + 1] = data[(y * Size.Width + x) * 4 + 1];
-                        datArray[(y * Size.Width + x) * 4 + 2] = data[(y * Size.Width + x) * 4 + 2];
-                        datArray[(y * Size.Width + x) * 4 + 3] = data[(y * Size.Width + x) * 4 + 3];
-                    }
-                }
-
-                return datArray;
-            }
+            return dataArray;
         }
     }
     

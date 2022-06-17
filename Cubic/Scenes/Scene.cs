@@ -19,7 +19,7 @@ public abstract class Scene : IDisposable
 
     protected internal CubicGame Game { get; internal set; }
     protected Graphics Graphics => Game.GraphicsInternal;
-    protected internal readonly World World;
+    protected internal World World;
 
     private readonly Dictionary<string, Entity> _entitiesQueue;
     private readonly List<string> _entitiesToRemove;

@@ -18,7 +18,6 @@ public class RenderTarget : Texture
         Gl.BindTexture(TextureTarget.Texture2D, Handle);
         Gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint) size.Width, (uint) size.Height, 0, PixelFormat.Rgba,
             PixelType.UnsignedByte, null);
-        Gl.BindTexture(TextureTarget.Texture2D, 0);
 
         Gl.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
             TextureTarget.Texture2D, Handle, 0);
@@ -27,6 +26,7 @@ public class RenderTarget : Texture
         Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Repeat);
 
         Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        Gl.BindTexture(TextureTarget.Texture2D, 0);
 
         Size = size;
     }
