@@ -14,17 +14,19 @@ public static class SceneManager
     internal static Scene Active;
     private static Type _switchScene;
     private static object[] _instParams;
+    private static string _sceneName;
 
     internal static void Initialize(CubicGame game)
     {
         if (_scenes.Count < 1)
             throw new CubicException("There must be at least one scene registered before the application can launch.");
 
-        Type scene = _scenes.ElementAt(0).Value;
+        (string name, Type scene) = _scenes.ElementAt(0);
         Active = (Scene) Activator.CreateInstance(scene);
         if (Active == null)
             throw new CubicException("Scene could not be instantiated.");
         Active.Game = game;
+        Active.Name = name;
         Camera main = new Camera();
         Camera.Main = main;
         Active.AddEntity("Main Camera", main);
@@ -51,6 +53,7 @@ public static class SceneManager
             if (Active == null)
                 throw new CubicException("Scene could not be instantiated.");
             Active.Game = game;
+            Active.Name = _sceneName;
             Camera main = new Camera();
             Camera.Main = main;
             Active.AddEntity("Main Camera", main);
@@ -90,6 +93,7 @@ public static class SceneManager
     public static void SetScene(string name, params object[] instParams)
     {
         _switchScene = _scenes[name];
+        _sceneName = name;
         _instParams = instParams;
     }
 }

@@ -19,7 +19,7 @@ public class Entity : IDisposable
     
     public Transform Transform;
     
-    private Component[] _components;
+    internal Component[] Components;
     private List<ComponentState> _componentStates;
     private int _componentCount;
 
@@ -28,7 +28,7 @@ public class Entity : IDisposable
     public Entity(Transform transform)
     {
         Transform = transform;
-        _components = new Component[5];
+        Components = new Component[5];
         _componentStates = new List<ComponentState>();
     }
 
@@ -41,7 +41,7 @@ public class Entity : IDisposable
     /// <exception cref="CubicException"></exception>
     public void AddComponent(Component component)
     {
-        foreach (Component comp in _components)
+        foreach (Component comp in Components)
         {
             if (comp == null)
                 continue;
@@ -74,7 +74,7 @@ public class Entity : IDisposable
 
     public T GetComponent<T>() where T : Component
     {
-        foreach (Component component in _components)
+        foreach (Component component in Components)
         {
             if (component?.GetType() == typeof(T))
                 return (T) component;
@@ -88,7 +88,7 @@ public class Entity : IDisposable
         if (component.BaseType != typeof(Component))
             throw new CubicException($"Given component must derive off {typeof(Component)}.");
         
-        foreach (Component comp in _components)
+        foreach (Component comp in Components)
         {
             if (comp?.GetType() == component)
                 return comp;
@@ -100,7 +100,7 @@ public class Entity : IDisposable
     protected internal virtual void Update()
     {
         _updating = true;
-        foreach (Component component in _components)
+        foreach (Component component in Components)
         {
             if (component is not { Enabled: true })
                 continue;
@@ -121,7 +121,7 @@ public class Entity : IDisposable
 
     protected internal virtual void Draw()
     {
-        foreach (Component component in _components)
+        foreach (Component component in Components)
         {
             if (component is not { Enabled: true })
                 continue;
@@ -133,7 +133,7 @@ public class Entity : IDisposable
     {
         Game = game;
         
-        foreach (Component comp in _components)
+        foreach (Component comp in Components)
         {
             if (comp == null)
                 continue;
@@ -150,9 +150,9 @@ public class Entity : IDisposable
 
     private void CreateComponent(Component comp)
     {
-        if (_componentCount + 1 > _components.Length)
-            Array.Resize(ref _components, _components.Length * 2);
-        _components[_componentCount] = comp;
+        if (_componentCount + 1 > Components.Length)
+            Array.Resize(ref Components, Components.Length * 2);
+        Components[_componentCount] = comp;
         _componentCount++;
 
         if (!_initialized)
@@ -164,14 +164,14 @@ public class Entity : IDisposable
 
     private void DeleteComponent(Type component)
     {
-        for (int i = 0; i < _components.Length; i++)
+        for (int i = 0; i < Components.Length; i++)
         {
-            if (_components[i]?.GetType() == component)
+            if (Components[i]?.GetType() == component)
             {
                 _componentCount--;
                 // https://github.com/prime31/Nez/blob/master/Nez.Portable/Utils/Collections/FastList.cs#L103
-                Array.Copy(_components, i + 1, _components, i, _componentCount - i);
-                _components[_componentCount] = null;
+                Array.Copy(Components, i + 1, Components, i, _componentCount - i);
+                Components[_componentCount] = null;
 
                 GC.Collect();
 
@@ -198,7 +198,7 @@ public class Entity : IDisposable
 
     public void Dispose()
     {
-        foreach (Component comp in _components)
+        foreach (Component comp in Components)
             comp?.Unload();
     }
 }

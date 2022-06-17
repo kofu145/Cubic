@@ -13,6 +13,8 @@ namespace Cubic.Scenes;
 
 public abstract class Scene : IDisposable
 {
+    public string Name { get; internal set; }
+    
     internal readonly List<IDisposable> CreatedResources;
 
     private bool _updating;
