@@ -84,8 +84,9 @@ public class View : UIElement
         
         Rectangle rect = Position;
         UI.CalculatePos(Anchor, ref rect, IgnoreReferenceResolution, Offset, Viewport);
-        
-        graphics.SpriteRenderer.DrawRectangle(rect.Location.ToVector2(), rect.Size.ToVector2(), Theme.WindowColor, 0, Vector2.Zero);
+
+        graphics.SpriteRenderer.DrawBorderRectangle(rect.Location.ToVector2(), rect.Size.ToVector2(),
+            Theme.WindowBorderWidth, Theme.WindowBorder, Theme.WindowColor, 0, Vector2.Zero);
 
         graphics.SpriteRenderer.End();
         Rectangle scissor = graphics.Scissor;

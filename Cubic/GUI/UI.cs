@@ -295,7 +295,22 @@ public static partial class UI
     }
 
     internal static void RaiseHovered(UIElement element) => ElementHovered?.Invoke(element);
-    internal static void RaiseHoveredOnce(UIElement element) => ElementHoveredOnce?.Invoke(element);
+
+    internal static void RaiseHoveredOnce(UIElement element)
+    {
+        /*switch (element)
+        {
+            case Button b:
+                Input.SetMouseCursor(MouseCursor.Hand);
+                break;
+            case TextBox t:
+                Input.SetMouseCursor(MouseCursor.IBeam);
+                break;
+        }*/
+
+        ElementHoveredOnce?.Invoke(element);
+    }
+
     internal static void RaiseClicked(UIElement element) => ElementClicked?.Invoke(element);
 
     public delegate void OnElementHovered(UIElement element);

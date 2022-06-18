@@ -27,6 +27,10 @@ public struct UITheme
 
     public Color WindowColor;
 
+    public Color WindowBorder;
+
+    public int WindowBorderWidth;
+
     public Color AccentTextColor;
 
     public Color SelectionColor;
@@ -45,6 +49,8 @@ public struct UITheme
         CheckBoxPadding = 5;
         CheckedColor = Color.DimGray;
         WindowColor = Color.White;
+        WindowBorder = Color.Black;
+        WindowBorderWidth = 1;
         AccentTextColor = Color.DimGray;
         SelectionColor = Color.CornflowerBlue;
     }

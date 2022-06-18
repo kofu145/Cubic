@@ -31,6 +31,8 @@ public static unsafe class Input
 
     private static Cursor* _currentCursor;
     private static bool _setCursor;
+    private static bool _cursorHasBeenSetBefore;
+    private static MouseCursor _currentMouseCursor;
 
     private static MouseMode _mouseMode;
     private static bool _cursorStateChanged;
@@ -226,6 +228,15 @@ public static unsafe class Input
             _currentCursor = GLFW.CreateCursor(&image, 0, 0);
             _setCursor = true;
         }
+    }
+
+    public static void SetMouseCursor(MouseCursor cursor)
+    {
+        if (cursor == _currentMouseCursor)
+            return;
+        _currentMouseCursor = cursor;
+        _currentCursor = GLFW.CreateStandardCursor((CursorShape) cursor);
+        _setCursor = true;
     }
     
     #endregion
@@ -459,6 +470,9 @@ public static unsafe class Input
 
         if (_setCursor)
         {
+            if (_cursorHasBeenSetBefore)
+                GLFW.DestroyCursor(_currentCursor);
+            _cursorHasBeenSetBefore = true;
             _setCursor = false;
             GLFW.SetCursor(window.Handle, _currentCursor);
         }
@@ -702,4 +716,14 @@ public enum ControllerTrigger
 {
     LeftTrigger,
     RightTrigger
+}
+
+public enum MouseCursor
+{
+    Normal = 0x36001,
+    IBeam,
+    Crosshair,
+    Hand,
+    HorizontalResize,
+    VerticalResize
 }
