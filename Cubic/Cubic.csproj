@@ -5,6 +5,16 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <PackageVersion>1.0.0-a1</PackageVersion>
+        <Title>Cubic</Title>
+        <Authors>Ollie Robinson</Authors>
+        <Description>A fast &amp; easy cross-platform 2D &amp; 3D game engine for C#. </Description>
+        <Copyright>Isometric Software</Copyright>
+        <PackageProjectUrl>https://github.com/IsometricSoftware/Cubic</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/IsometricSoftware/Cubic/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/IsometricSoftware/Cubic</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Game engine;OpenGL;</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,18 +31,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="openal32.dll" />
       <Content Include="openal32.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        <Pack>true</Pack>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <PackageCopyToOutput>True</PackageCopyToOutput>
       </Content>
-      <None Update="Roboto-Regular.ttf">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      <Content Include="Roboto-Regular.ttf">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <PackageCopyToOutput>True</PackageCopyToOutput>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="gamecontrollerdb.txt" />
       <EmbeddedResource Include="gamecontrollerdb.txt" />
     </ItemGroup>
 
