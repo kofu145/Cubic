@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Cubic.Content.Serialization;
 using Cubic.Entities.Components;
 using Cubic.Windowing;
 
@@ -29,6 +30,13 @@ public class Entity : IDisposable
     {
         Transform = transform;
         Components = new Component[5];
+        _componentStates = new List<ComponentState>();
+    }
+
+    public Entity(SerializableEntity sEntity)
+    {
+        Transform = sEntity.Transform;
+        Components = sEntity.Components.ToArray();
         _componentStates = new List<ComponentState>();
     }
 

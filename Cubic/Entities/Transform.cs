@@ -1,9 +1,11 @@
 using System;
 using System.Numerics;
 using Cubic.Utilities;
+using Newtonsoft.Json;
 
 namespace Cubic.Entities;
 
+[JsonObject(MemberSerialization.Fields)]
 public class Transform
 {
     /// <summary>

@@ -28,14 +28,14 @@ public static unsafe class Input
 
     private static readonly HashSet<MouseButtons> _buttonsHeld = new HashSet<MouseButtons>();
     private static readonly HashSet<MouseButtons> _frameButtons = new HashSet<MouseButtons>();
-
-    private static Cursor* _currentCursor;
+    
     private static bool _setCursor;
-    private static bool _cursorHasBeenSetBefore;
     private static MouseCursor _currentMouseCursor;
 
+    private static Cursor* _currentCursor;
     private static MouseMode _mouseMode;
     private static bool _cursorStateChanged;
+    private static bool _cursorHasBeenSetBefore;
 
     /// <summary>
     /// Get an array of all keyboard keys currently held down.
@@ -215,7 +215,7 @@ public static unsafe class Input
         MousePosition = Vector2.Transform(MousePosition, invTransform);
     }
 
-    public static void SetMouseCursor(Bitmap mouse)
+    /*public static void SetMouseCursor(Bitmap mouse)
     {
         fixed (byte* p = mouse.Data)
         {
@@ -225,17 +225,16 @@ public static unsafe class Input
                 Height = mouse.Size.Height,
                 Pixels = p
             };
-            _currentCursor = GLFW.CreateCursor(&image, 0, 0);
+            
             _setCursor = true;
         }
-    }
+    }*/
 
     public static void SetMouseCursor(MouseCursor cursor)
     {
         if (cursor == _currentMouseCursor)
             return;
         _currentMouseCursor = cursor;
-        _currentCursor = GLFW.CreateStandardCursor((CursorShape) cursor);
         _setCursor = true;
     }
     
@@ -470,10 +469,12 @@ public static unsafe class Input
 
         if (_setCursor)
         {
+            Cursor* c = GLFW.CreateStandardCursor((CursorShape) _currentMouseCursor);
             if (_cursorHasBeenSetBefore)
                 GLFW.DestroyCursor(_currentCursor);
             _cursorHasBeenSetBefore = true;
             _setCursor = false;
+            _currentCursor = c;
             GLFW.SetCursor(window.Handle, _currentCursor);
         }
     }

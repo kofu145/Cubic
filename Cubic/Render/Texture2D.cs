@@ -16,7 +16,7 @@ public class Texture2D : Texture
     /// </summary>
     public string Path { get; }
 
-    /// <summary>
+    /*/// <summary>
     /// The raw byte data of this texture. Useful for JSON serialization.
     /// </summary>
     public unsafe byte[] Data
@@ -29,8 +29,9 @@ public class Texture2D : Texture
                 Gl.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
             return dataArray;
         }
-    }
+    }*/
     
+    [JsonConstructor]
     public Texture2D(string path, bool autoDispose = true) : base(autoDispose)
     {
         ImageResult result = ImageResult.FromMemory(File.ReadAllBytes(path));
@@ -57,14 +58,6 @@ public class Texture2D : Texture
     {
         Handle = CreateTexture(bitmap.Size.Width, bitmap.Size.Height, bitmap.Data);
         Size = bitmap.Size;
-    }
-
-    [JsonConstructor]
-    public Texture2D(string path, byte[] data, Size size) : base(true)
-    {
-        Handle = CreateTexture(size.Width, size.Height, data);
-        Size = size;
-        Path = path;
     }
 
     public unsafe void SetData(IntPtr data, int x, int y, int width, int height)

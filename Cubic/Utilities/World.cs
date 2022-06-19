@@ -7,7 +7,7 @@ namespace Cubic.Utilities;
 
 public class World
 {
-    private Color _clearColor;
+    private Color _clearColor = Color.Black;
     internal Vector4 ClearColorInternal = new Vector4(0, 0, 0, 1);
 
     public Color ClearColor
