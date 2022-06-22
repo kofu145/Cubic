@@ -172,7 +172,7 @@ public abstract class Scene : IDisposable
         return entities.ToArray();
     }
 
-    public Entity[] GetAllEntities() => (Entity[]) (IEnumerable<Entity>) _entities.Values;
+    public Entity[] GetAllEntities() => _entities.Values.ToArray();
 
     public void AddScreen(Screen screen, string name)
     {

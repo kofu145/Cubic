@@ -18,8 +18,11 @@ public class Camera2D : Entity
     {
         if (UseCustomTransformMatrix)
             return;
-        // TODO: Add rotation and scale too.
-        TransformMatrix = Matrix4x4.CreateScale(Transform.Scale) * Matrix4x4.CreateTranslation(new Vector3(-Transform.Position.ToVector2(), 0));
+        TransformMatrix = Matrix4x4.CreateTranslation(-Transform.Position) * 
+                          Matrix4x4.CreateTranslation(new Vector3(-Transform.Origin, 0)) * 
+                          Matrix4x4.CreateFromQuaternion(Transform.Rotation) * 
+                          Matrix4x4.CreateScale(Transform.Scale) * 
+                          Matrix4x4.CreateTranslation(new Vector3(Transform.Origin, 0));
     }
     
     public static Camera2D Main { get; internal set; }

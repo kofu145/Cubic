@@ -21,9 +21,11 @@ public class Bitmap
 
     public readonly ColorSpace ColorSpace;
     
-    public Bitmap(string path)
+    public Bitmap(string path) : this(File.ReadAllBytes(path)) { }
+    
+    public Bitmap(byte[] data)
     {
-        ImageResult result = ImageResult.FromMemory(File.ReadAllBytes(path));
+        ImageResult result = ImageResult.FromMemory(data);
         Data = result.Data;
         Size = new Size(result.Width, result.Height);
         ColorSpace = result.Comp switch

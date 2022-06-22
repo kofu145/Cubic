@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using Cubic.Content;
 using Cubic.Render;
 using Cubic.Utilities;
 using Silk.NET.GLFW;
@@ -193,23 +194,25 @@ public sealed unsafe class GameWindow : IDisposable
             throw new ContextCreationException(GraphicsApi.OpenGL33);
         }
 
-        if (_settings.Icon != default)
+        if (_settings.Icon == default)
         {
-            // The icon must be an RGBA image otherwise it won't work - we convert it if it is not in RGBA colour space.
-            if (_settings.Icon.ColorSpace != ColorSpace.RGBA)
-                _settings.Icon = Bitmap.ConvertToColorSpace(_settings.Icon, ColorSpace.RGBA);
-            fixed (byte* p = _settings.Icon.Data)
+            _settings.Icon = new Bitmap(ContentManager.LoadEmbeddedResource("Cubic.Cubic-Logo.png"));
+        }
+        
+        // The icon must be an RGBA image otherwise it won't work - we convert it if it is not in RGBA colour space.
+        if (_settings.Icon.ColorSpace != ColorSpace.RGBA)
+            _settings.Icon = Bitmap.ConvertToColorSpace(_settings.Icon, ColorSpace.RGBA);
+        fixed (byte* p = _settings.Icon.Data)
+        {
+            fixed (Image* img = new Image[1])
             {
-                fixed (Image* img = new Image[1])
+                img[0] = new Image()
                 {
-                    img[0] = new Image()
-                    {
-                        Width = _settings.Icon.Size.Width,
-                        Height = _settings.Icon.Size.Height,
-                        Pixels = p
-                    };
-                    GLFW.SetWindowIcon(Handle, 1, img);
-                }
+                    Width = _settings.Icon.Size.Width,
+                    Height = _settings.Icon.Size.Height,
+                    Pixels = p
+                };
+                GLFW.SetWindowIcon(Handle, 1, img);
             }
         }
 
