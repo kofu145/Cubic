@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using Cubic.Utilities;
 using Cubic.Windowing;
 using Silk.NET.GLFW;
@@ -149,43 +148,6 @@ public class Graphics : IDisposable
 
     public Bitmap Capture() => Capture(Viewport);
 
-    /*public RenderObject CreateRenderObject()
-    {
-        int vao = Gl.GenVertexArray();
-        RenderObject obj = new RenderObject(vao);
-        return obj;
-    }
-
-    public Buffer CreateBuffer(BufferType type, int size)
-    {
-        int buf = Gl.GenBuffer();
-        Buffer buffer = new Buffer(buf,
-            (type & BufferType.VertexBuffer) == BufferType.VertexBuffer
-                ? BufferTarget.ArrayBuffer
-                : BufferTarget.ElementArrayBuffer);
-
-        Gl.BufferData(buffer.Target, size, IntPtr.Zero,
-            (type & BufferType.Dynamic) == BufferType.Dynamic
-                ? BufferUsageHint.DynamicDraw
-                : BufferUsageHint.StaticDraw);
-
-        return buffer;
-    }
-
-    public void UpdateBuffer<T>(Buffer buffer, int offset, T[] data) where T : struct
-    {
-        Gl.BindBuffer(buffer.Target, buffer.Handle);
-        Gl.BufferSubData(buffer.Target, new IntPtr(offset), data.Length * Marshal.SizeOf<T>(), data);
-    }
-
-    public void BindBufferToRenderObject(RenderObject obj, Buffer buffer)
-    {
-        Gl.BindVertexArray(obj.Handle);
-        Gl.BindBuffer(buffer.Target, buffer.Handle);
-        Gl.BindVertexArray(0);
-        Gl.BindBuffer(buffer.Target, 0);
-    }*/
-
     public void Dispose()
     {
         SpriteRenderer.Dispose();
@@ -194,12 +156,4 @@ public class Graphics : IDisposable
     }
 
     public delegate void OnResize(Size size);
-}
-
-public enum BufferType
-{
-    VertexBuffer = 1 << 1,
-    IndexBuffer = 1 << 2,
-    
-    Dynamic = 1 << 3
 }

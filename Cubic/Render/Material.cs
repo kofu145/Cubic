@@ -1,5 +1,4 @@
 using System.Drawing;
-using Cubic.Render;
 
 namespace Cubic.Render;
 

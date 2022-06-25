@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using Silk.NET.OpenGL;
 using static Cubic.Render.Graphics;

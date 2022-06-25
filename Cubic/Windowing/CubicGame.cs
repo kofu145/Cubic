@@ -1,5 +1,4 @@
 using System;
-using BepuPhysics;
 using Cubic.Audio;
 using Cubic.GUI;
 using Cubic.Render;
@@ -23,7 +22,6 @@ public class CubicGame : IDisposable
 
     public readonly GameWindow Window;
     internal Graphics GraphicsInternal;
-    internal Simulation Simulation;
 
     protected Graphics Graphics => GraphicsInternal;
     protected Scene CurrentScene => SceneManager.Active;

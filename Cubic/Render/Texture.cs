@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
+using System.Text.Json.Serialization;
 using Cubic.Scenes;
-using Newtonsoft.Json;
 using Silk.NET.OpenGL;
 using static Cubic.Render.Graphics;
 

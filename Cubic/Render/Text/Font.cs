@@ -33,7 +33,7 @@ public struct Font : IDisposable
     /// <param name="unicodeRangeEnd">The ending character of the unicode set.</param>
     /// <param name="texWidth">The width of the font atlas's texture. By default, this is 1024.</param>
     /// <param name="texHeight">The height of the font atlas's texture. By default, this is 1024.</param>
-    /// <exception cref="CubicException">Thrown if the font does not exist.</exception>
+    /// <exception cref="Cubic.CubicException">Thrown if the font does not exist.</exception>
     public Font(string fontPath, uint unicodeRangeStart = 0, uint unicodeRangeEnd = 128, int texWidth = 1024,
         int texHeight = 1024, bool autoDispose = true) : this(unicodeRangeStart, unicodeRangeEnd, texWidth, texHeight,
         autoDispose)
@@ -80,7 +80,7 @@ public struct Font : IDisposable
     /// <param name="extraLineSpacing">Any additional spacing between lines. This can also be a negative number if you want less spacing.</param>
     /// <param name="ignoreParams">If true, parameters (such as color, etc) will be ignored. Useful for text boxes.</param>
     /// <param name="smartPlacement">If true (default), the text will be placed so that it appears more accurate to the given position.</param>
-    /// <exception cref="CubicException">Thrown if an incorrect parameter is given to the text drawer.</exception>
+    /// <exception cref="Cubic.CubicException">Thrown if an incorrect parameter is given to the text drawer.</exception>
     public void Draw(SpriteRenderer renderer, uint size, string text, Vector2 position, Color startColor,
         float rotation, Vector2 origin, Vector2 scale, int depth = 0, int extraLineSpacing = 0, bool ignoreParams = false, bool smartPlacement = true, int wrapWidth = 0)
     {

@@ -1,6 +1,5 @@
 using System.Numerics;
 using BulletSharp;
-using Cubic;
 using Cubic.Entities;
 using Cubic.Render;
 using Cubic.Windowing;

@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using Cubic.Utilities;
-using static Cubic.Render.Graphics;
 using Silk.NET.OpenGL;
+using static Cubic.Render.Graphics;
 using Rectangle = System.Drawing.Rectangle;
 
 namespace Cubic.Render;
@@ -166,7 +164,7 @@ void main()
     /// </summary>
     /// <param name="transform">The optional transformation (camera) matrix to use for this batch session.</param>
     /// <param name="sample">Which sample type this batch should use.</param>
-    /// <exception cref="CubicException">Thrown if you try to call <see cref="Begin"/> before a batch session has ended.</exception>
+    /// <exception cref="Cubic.CubicException">Thrown if you try to call <see cref="Begin"/> before a batch session has ended.</exception>
     public void Begin(Matrix4x4? transform = null, TextureSample sample = TextureSample.Linear, Shader shader = null)
     {
         if (_begun)
@@ -203,7 +201,7 @@ void main()
     /// <param name="flip">The type of optional flip the sprite will display on screen.</param>
     /// <param name="depth">The depth the sprite will be drawn at. A sprite with a greater depth will be placed <b>behind</b> other sprites with lesser depths.</param>
     /// <param name="useTexture">If false, the texture will be drawn as the tint colour. The alpha values, however, of the texture will still be respected. Transparent parts of the texture will remain transparent (or translucent).</param>
-    /// <exception cref="CubicException">Thrown if a draw call is issued when there is no current batch session.</exception>
+    /// <exception cref="Cubic.CubicException">Thrown if a draw call is issued when there is no current batch session.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the <see cref="flip"/> value provided is invalid.</exception>
     public void Draw(Texture texture, Vector2 position, Rectangle? source, Color tint, float rotation, Vector2 origin,
         Vector2 scale, SpriteFlipMode flip, float depth = 0, bool useTexture = true)
@@ -338,7 +336,7 @@ void main()
     /// <summary>
     /// End the current batch session, and push all remaining sprites to the screen.
     /// </summary>
-    /// <exception cref="CubicException">Thrown if you try to call <see cref="End"/> when there is no current batch session.</exception>
+    /// <exception cref="Cubic.CubicException">Thrown if you try to call <see cref="End"/> when there is no current batch session.</exception>
     public void End()
     {
         if (!_begun)

@@ -1,11 +1,11 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Text.Json.Serialization;
 using Cubic.Utilities;
-using Newtonsoft.Json;
 using Silk.NET.OpenGL;
-using static Cubic.Render.Graphics;
 using StbImageSharp;
+using static Cubic.Render.Graphics;
 
 namespace Cubic.Render;
 

@@ -5,8 +5,8 @@ using System.IO;
 using System.Numerics;
 using System.Text;
 using Cubic.Utilities;
-using static Cubic.Render.Graphics;
 using Silk.NET.OpenGL;
+using static Cubic.Render.Graphics;
 
 namespace Cubic.Render;
 
