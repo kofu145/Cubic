@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Silk.NET.Core.Contexts;
 using Silk.NET.OpenGL;
 
@@ -42,6 +45,7 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
         Gl.BindBuffer(buf.Target, buf.Handle);
         fixed (void* dat = data)
             Gl.BufferSubData(buf.Target, offset, (nuint) (data.Length * Unsafe.SizeOf<T>()), dat);
+        buf.Type = data.GetType();
     }
 
     public override unsafe Texture CreateTexture(uint width, uint height, PixelFormat format)
@@ -117,8 +121,60 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
         Gl.Clear((uint) ClearBufferMask.ColorBufferBit | (uint) ClearBufferMask.DepthBufferBit);
     }
 
+    public override void SetShaderProgram(ShaderProgram program)
+    {
+        Gl.UseProgram(((OpenGl33ShaderProgram) program).Handle);
+    }
+
+    public override void SetVertexBuffer(Buffer vertexBuffer)
+    {
+        OpenGL33Buffer buf = (OpenGL33Buffer) vertexBuffer;
+        Gl.BindBuffer(buf.Target, buf.Handle);
+        SetupAttribs(buf.Type);
+    }
+
+    public override void SetIndexBuffer(Buffer indexBuffer)
+    {
+        OpenGL33Buffer buf = (OpenGL33Buffer) indexBuffer;
+        Gl.BindBuffer(buf.Target, buf.Handle);
+    }
+
+    public override void SetTexture(Texture texture)
+    {
+        Gl.ActiveTexture(TextureUnit.Texture0);
+        Gl.BindTexture(TextureTarget.Texture2D, ((OpenGL33Texture) texture).Handle);
+    }
+
+    public override unsafe void DrawElements(uint count)
+    {
+        Gl.DrawElements(PrimitiveType.Triangles, count, DrawElementsType.UnsignedShort, null);
+    }
+
     public override void Dispose()
     {
-        throw new NotImplementedException();
+        Gl.DeleteVertexArray(_vao);
+    }
+
+    private static unsafe void SetupAttribs(Type type)
+    {
+        FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+        uint location = 0;
+        int offset = 0;
+        uint totalSizeInBytes = 0;
+        List<int> sizes = new List<int>();
+        foreach (FieldInfo info in fields)
+        {
+            int size = Marshal.SizeOf(info.FieldType);
+            sizes.Add(size);
+            totalSizeInBytes += (uint) size;
+        }
+
+        foreach (int size in sizes)
+        {
+            Gl.EnableVertexAttribArray(location);
+            Gl.VertexAttribPointer(location, size / 4, VertexAttribPointerType.Float, false, totalSizeInBytes, (void*) offset);
+            offset += size;
+            location += 1;
+        }
     }
 }

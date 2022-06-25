@@ -26,5 +26,15 @@ public abstract class GraphicsDevice : IDisposable
 
     public abstract void Clear(Vector4 color);
 
+    public abstract void SetShaderProgram(ShaderProgram program);
+
+    public abstract void SetVertexBuffer(Buffer vertexBuffer);
+
+    public abstract void SetIndexBuffer(Buffer indexBuffer);
+
+    public abstract void SetTexture(Texture texture);
+
+    public abstract void DrawElements(uint count);
+
     public abstract void Dispose();
 }
