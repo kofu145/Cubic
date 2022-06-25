@@ -3,12 +3,12 @@ using static Cubic.Graphics.Platforms.OpenGL33.OpenGL33GraphicsDevice;
 
 namespace Cubic.Graphics.Platforms.OpenGL33;
 
-public class OpenGL33GraphicsBuffer : GraphicsBuffer
+public class OpenGL33Buffer : Buffer
 {
     public readonly uint Handle;
     public readonly BufferTargetARB Target;
     
-    public OpenGL33GraphicsBuffer(uint id, BufferTargetARB target)
+    public OpenGL33Buffer(uint id, BufferTargetARB target)
     {
         Handle = id;
         Target = target;

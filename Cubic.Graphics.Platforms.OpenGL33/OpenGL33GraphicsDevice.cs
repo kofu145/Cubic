@@ -22,7 +22,7 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
     public override Rectangle Viewport { get; set; }
     public override Rectangle Scissor { get; set; }
 
-    public override unsafe GraphicsBuffer CreateBuffer(BufferType type, uint size)
+    public override unsafe Buffer CreateBuffer(BufferType type, uint size)
     {
         uint handle = Gl.GenBuffer();
         BufferTargetARB target = type switch
@@ -33,12 +33,12 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
         };
         Gl.BindBuffer(target, handle);
         Gl.BufferData(target, size, null, BufferUsageARB.DynamicDraw);
-        return new OpenGL33GraphicsBuffer(handle, target);
+        return new OpenGL33Buffer(handle, target);
     }
 
-    public override unsafe void UpdateBuffer<T>(GraphicsBuffer buffer, int offset, T[] data)
+    public override unsafe void UpdateBuffer<T>(Buffer buffer, int offset, T[] data)
     {
-        OpenGL33GraphicsBuffer buf = (OpenGL33GraphicsBuffer) buffer;
+        OpenGL33Buffer buf = (OpenGL33Buffer) buffer;
         Gl.BindBuffer(buf.Target, buf.Handle);
         fixed (void* dat = data)
             Gl.BufferSubData(buf.Target, offset, (nuint) (data.Length * Unsafe.SizeOf<T>()), dat);
@@ -67,6 +67,42 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
         Gl.BindTexture(TextureTarget.Texture2D, tex.Handle);
         fixed (void* dat = data)
             Gl.TexSubImage2D(TextureTarget.Texture2D, 0, x, y, width, height, tex.Format, PixelType.UnsignedByte, dat);
+    }
+
+    public override ShaderProgram CreateShaderProgram(params Shader[] shaders)
+    {
+        uint handle = Gl.CreateProgram();
+        foreach (OpenGL33Shader shader in shaders)
+            Gl.AttachShader(handle, shader.Handle);
+        Gl.LinkProgram(handle);
+        Gl.GetProgram(handle, ProgramPropertyARB.LinkStatus, out int status);
+        if (status != (int) GLEnum.True)
+            throw new GraphicsException($"Error linking program.\n\n{Gl.GetProgramInfoLog(handle)}");
+        foreach (OpenGL33Shader shader in shaders)
+            Gl.DetachShader(handle, shader.Handle);
+
+        return new OpenGl33ShaderProgram(handle);
+    }
+
+    public override Shader CreateShader(ShaderType type, string code)
+    {
+        Silk.NET.OpenGL.ShaderType sType = type switch
+        {
+            ShaderType.Vertex => Silk.NET.OpenGL.ShaderType.VertexShader,
+            ShaderType.Fragment => Silk.NET.OpenGL.ShaderType.FragmentShader,
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
+
+        code = code.Insert(0, "#version 330 core\n");
+
+        uint s = Gl.CreateShader(sType);
+        Gl.ShaderSource(s, code);
+        Gl.CompileShader(s);
+        Gl.GetShader(s, ShaderParameterName.CompileStatus, out int status);
+        if (status != (int) GLEnum.True)
+            throw new GraphicsException($"Error compiling shader.\n\n{Gl.GetShaderInfoLog(s)}");
+
+        return new OpenGL33Shader(s);
     }
 
     public override void Clear(Color color)

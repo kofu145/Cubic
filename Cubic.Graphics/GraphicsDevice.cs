@@ -10,13 +10,17 @@ public abstract class GraphicsDevice : IDisposable
     
     public abstract Rectangle Scissor { get; set; }
     
-    public abstract GraphicsBuffer CreateBuffer(BufferType type, uint size);
+    public abstract Buffer CreateBuffer(BufferType type, uint size);
 
-    public abstract void UpdateBuffer<T>(GraphicsBuffer buffer, int offset, T[] data) where T : unmanaged;
+    public abstract void UpdateBuffer<T>(Buffer buffer, int offset, T[] data) where T : unmanaged;
 
     public abstract Texture CreateTexture(uint width, uint height, PixelFormat format);
 
     public abstract void UpdateTexture<T>(Texture texture, int x, int y, uint width, uint height, T[] data) where T : unmanaged;
+
+    public abstract ShaderProgram CreateShaderProgram(params Shader[] shaders);
+
+    public abstract Shader CreateShader(ShaderType type, string code);
 
     public abstract void Clear(Color color);
 
