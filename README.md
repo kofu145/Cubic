@@ -1,3 +1,5 @@
+**NOTE:** Cubic.Next is the next generation of Cubic, with better graphics and physics capabilities. Do not expect this to be very stable, or that the API will remain the same. Frequent, large changes will be occuring. Please switch back to the master branch if you would like a more stable Cubic experience.
+
 # Cubic
 
 A fast & easy cross-platform 2D & 3D game engine for C#.

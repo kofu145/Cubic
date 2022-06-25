@@ -9,7 +9,13 @@ namespace Cubic.Windowing;
 
 public class CubicGame : IDisposable
 {
+    public event OnInitialize GameInitialize;
+    public event OnUpdate GameUpdate;
+    public event OnDraw GameDraw;
+    
     private GameSettings _settings;
+
+    private static CubicGame _instance;
 
     private ImGuiRenderer _imGuiRenderer;
 
@@ -46,6 +52,7 @@ public class CubicGame : IDisposable
     {
         _settings = settings;
         Window = new GameWindow(settings);
+        _instance = this;
     }
 
     public void Run()
@@ -96,13 +103,18 @@ public class CubicGame : IDisposable
         }
     }
 
-    protected virtual void Initialize() => SceneManager.Initialize(this);
+    protected virtual void Initialize()
+    {
+        SceneManager.Initialize(this);
+        GameInitialize?.Invoke(this, GraphicsInternal);
+    }
 
     protected virtual void Update()
     {
         UI.Update();
         _imGuiRenderer.Update(Time.DeltaTime);
         SceneManager.Update(this);
+        GameUpdate?.Invoke(this, GraphicsInternal);
     }
 
     protected virtual void Draw()
@@ -110,6 +122,7 @@ public class CubicGame : IDisposable
         SceneManager.Draw();
         UI.Draw(GraphicsInternal);
         _imGuiRenderer.Render();
+        GameDraw?.Invoke(this, GraphicsInternal);
     }
 
     public void Dispose()
@@ -130,4 +143,9 @@ public class CubicGame : IDisposable
         Texture2D.Blank = new Texture2D(1, 1, new byte[] { 255, 255, 255, 255 }, false);
         Texture2D.Void = new Texture2D(1, 1, new byte[] { 0, 0, 0, 255 }, false);
     }
+
+    public delegate void OnInitialize(CubicGame game, Graphics graphics);
+    public delegate void OnUpdate(CubicGame game, Graphics graphics);
+
+    public delegate void OnDraw(CubicGame game, Graphics graphics);
 }

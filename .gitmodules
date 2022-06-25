@@ -1,0 +1,3 @@
+[submodule "Cubic.Physics/BulletSharpPInvoke"]
+	path = Cubic.Physics/BulletSharpPInvoke
+	url = https://github.com/AndresTraks/BulletSharpPInvoke

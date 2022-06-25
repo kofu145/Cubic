@@ -47,6 +47,9 @@ public class Transform
         set => Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, value);
     }
 
+    public Matrix4x4 TransformMatrix => Matrix4x4.CreateScale(Scale) * Matrix4x4.CreateFromQuaternion(Rotation) *
+                                        Matrix4x4.CreateTranslation(Position);
+
     public Transform()
     {
         Position = Vector3.Zero;
