@@ -35,7 +35,7 @@ public class ImGuiRenderer : IDisposable
 
     private Dictionary<string, ImFontPtr> _fonts;
 
-    internal ImGuiRenderer(Graphics graphics)
+    internal ImGuiRenderer(GraphicsMachine graphics)
     {
         Scale = Vector2.One;
         _fonts = new Dictionary<string, ImFontPtr>();

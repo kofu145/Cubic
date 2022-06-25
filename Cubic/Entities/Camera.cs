@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Numerics;
 using Cubic.Utilities;
+using Cubic.Windowing;
 
 namespace Cubic.Entities;
 
@@ -58,7 +59,7 @@ public class Camera : Entity
         base.Initialize();
         
         GenerateProjectionMatrix();
-        Game.GraphicsInternal.ViewportResized += ViewportResized;
+        CubicGame.GraphicsInternal.ViewportResized += ViewportResized;
     }
 
     internal void GenerateViewMatrix()
@@ -68,7 +69,7 @@ public class Camera : Entity
 
     internal void GenerateProjectionMatrix()
     {
-        Size winSize = Game.GraphicsInternal.Viewport.Size;
+        Size winSize = CubicGame.GraphicsInternal.Viewport.Size;
         ProjectionMatrix =
             Matrix4x4.CreatePerspectiveFieldOfView(_fov, winSize.Width / (float) winSize.Height, _near, _far);
     }

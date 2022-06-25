@@ -26,6 +26,22 @@ public abstract class GraphicsDevice : IDisposable
 
     public abstract void Clear(Vector4 color);
 
+    public abstract void SetUniform(ShaderProgram program, string uniformName, bool value);
+
+    public abstract void SetUniform(ShaderProgram program, string uniformName, int value);
+
+    public abstract void SetUniform(ShaderProgram program, string uniformName, float value);
+
+    public abstract void SetUniform(ShaderProgram program, string uniformName, Vector2 value);
+    
+    public abstract void SetUniform(ShaderProgram program, string uniformName, Vector3 value);
+    
+    public abstract void SetUniform(ShaderProgram program, string uniformName, Vector4 value);
+
+    public abstract void SetUniform(ShaderProgram program, string uniformName, Color color);
+
+    public abstract void SetUniform(ShaderProgram program, string uniformName, Matrix4x4 matrix, bool transpose = true);
+
     public abstract void SetShaderProgram(ShaderProgram program);
 
     public abstract void SetVertexBuffer(Buffer vertexBuffer);

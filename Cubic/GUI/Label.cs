@@ -18,7 +18,7 @@ public class Label : UIElement
         TextSize = size;
     }
 
-    protected internal override void Draw(Graphics graphics)
+    protected internal override void Draw(GraphicsMachine graphics)
     {
         base.Draw(graphics);
 

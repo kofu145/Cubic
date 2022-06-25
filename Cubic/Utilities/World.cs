@@ -22,7 +22,7 @@ public class World
 
     public TextureSample SampleType = TextureSample.Nearest;
 
-    public Skybox Skybox;
+    //public Skybox Skybox;
 
     public DirectionalLight Sun = new DirectionalLight(new Vector2(0, 75), Color.White, 0.1f, 0.7f, 1.0f);
 }

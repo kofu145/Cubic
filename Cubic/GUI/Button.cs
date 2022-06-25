@@ -27,7 +27,7 @@ public class Button : UIElement
         TextureOffset = Point.Empty;
     }
 
-    protected internal override void Draw(Graphics graphics)
+    protected internal override void Draw(GraphicsMachine graphics)
     {
         base.Draw(graphics);
 

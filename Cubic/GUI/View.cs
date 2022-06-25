@@ -78,7 +78,7 @@ public class View : UIElement
         base.Update(ref mouseCaptured);
     }
 
-    protected internal override void Draw(Graphics graphics)
+    protected internal override void Draw(GraphicsMachine graphics)
     {
         base.Draw(graphics);
         

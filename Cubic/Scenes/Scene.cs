@@ -20,7 +20,7 @@ public abstract class Scene : IDisposable
     private bool _updating;
 
     protected internal CubicGame Game { get; internal set; }
-    protected Graphics Graphics => Game.GraphicsInternal;
+    protected GraphicsMachine Graphics => CubicGame.GraphicsInternal;
     protected internal World World;
 
     private readonly Dictionary<string, Entity> _entitiesQueue;
@@ -93,7 +93,7 @@ public abstract class Scene : IDisposable
         foreach (IDisposable resource in CreatedResources)
             resource.Dispose();
         
-        World.Skybox?.Dispose();
+        //World.Skybox?.Dispose();
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public abstract class Scene : IDisposable
     {
         Camera.Main.GenerateViewMatrix();
         Camera2D.Main.GenerateTransformMatrix();
-        World.Skybox?.Draw(Camera.Main);
+        //World.Skybox?.Draw(Camera.Main);
         Graphics.SpriteRenderer.Begin(Camera2D.Main.TransformMatrix, World.SampleType);
         
         // Order the entities by their distance to the camera to support transparent sorting.

@@ -1,14 +1,15 @@
 using System;
 using System.Drawing;
 using System.Numerics;
+using Cubic.Graphics;
+using Cubic.Graphics.Platforms.OpenGL33;
 using Cubic.Utilities;
 using Cubic.Windowing;
 using Silk.NET.GLFW;
-using Silk.NET.OpenGL;
 
 namespace Cubic.Render;
 
-public class Graphics : IDisposable
+public class GraphicsMachine : IDisposable
 {
     public event OnResize ViewportResized;
     
@@ -16,10 +17,7 @@ public class Graphics : IDisposable
 
     public readonly SpriteRenderer SpriteRenderer;
 
-    private Rectangle _viewport;
-    private Rectangle _scissor;
-
-    internal static GL Gl;
+    public static GraphicsDevice GraphicsDevice { get; private set; }
 
     public bool VSync
     {
@@ -28,26 +26,17 @@ public class Graphics : IDisposable
 
     public Rectangle Viewport
     {
-        get => _viewport;
-        set
-        {
-            _viewport = value;
-            Gl.Viewport(value.X, value.Y, (uint) value.Width, (uint) value.Height);
-            ViewportResized?.Invoke(value.Size);
-        }
+        get => GraphicsDevice.Viewport;
+        set => GraphicsDevice.Viewport = value;
     }
 
     public Rectangle Scissor
     {
-        get => _scissor;
-        set
-        {
-            _scissor = value;
-            Gl.Scissor(value.X, Viewport.Height - value.Height - value.Y, (uint) value.Width, (uint) value.Height);
-        }
+        get => GraphicsDevice.Scissor;
+        set => GraphicsDevice.Scissor = value;
     }
 
-    public void SetRenderTarget(RenderTarget target)
+    /*public void SetRenderTarget(RenderTarget target)
     {
         if (target == null)
         {
@@ -60,35 +49,33 @@ public class Graphics : IDisposable
         Gl.BindFramebuffer(FramebufferTarget.Framebuffer, target.Fbo);
         Viewport = new Rectangle(0, 0, target.Size.Width, target.Size.Height);
         Scissor = Viewport;
-    }
+    }*/
 
     public void Clear(Vector4 clearColor)
     {
-        Gl.ClearColor(clearColor.X, clearColor.Y, clearColor.Z, clearColor.W);
-        Gl.Clear((uint) ClearBufferMask.ColorBufferBit | (uint) ClearBufferMask.DepthBufferBit);
+        GraphicsDevice.Clear(clearColor);
     }
 
     public void Clear(Color clearColor)
     {
-        Gl.ClearColor(clearColor);
-        Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        GraphicsDevice.Clear(clearColor);
     }
 
-    internal unsafe Graphics(GameWindow window, GameSettings settings)
+    internal unsafe GraphicsMachine(GameWindow window, GameSettings settings)
     {
         _window = window;
 
         window.Resize += WindowResized;
-        
-        Gl = GL.GetApi(new GlfwContext(GameWindow.GLFW, window.Handle));
+
+        GraphicsDevice = new OpenGL33GraphicsDevice(new GlfwContext(GameWindow.GLFW, window.Handle));
 
         VSync = settings.VSync;
 
         Viewport = new Rectangle(0, 0, window.Size.Width, window.Size.Height);
         
-        SpriteRenderer = new SpriteRenderer(this);
+        SpriteRenderer = new SpriteRenderer(GraphicsDevice);
         
-        Gl.Enable(EnableCap.Blend);
+        /*Gl.Enable(EnableCap.Blend);
         Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         
         Gl.Enable(EnableCap.CullFace);
@@ -102,7 +89,7 @@ public class Graphics : IDisposable
         Scissor = Viewport;
         
         if (settings.MsaaSamples > 0)
-            Gl.Enable(EnableCap.Multisample);
+            Gl.Enable(EnableCap.Multisample);*/
     }
     
 
@@ -123,7 +110,7 @@ public class Graphics : IDisposable
         Viewport = new Rectangle(0, 0, size.Width, size.Height);
     }
 
-    public unsafe Bitmap Capture(Rectangle region)
+    /*public unsafe Bitmap Capture(Rectangle region)
     {
         fixed (byte* upsideDownData = new byte[region.Width * region.Height * 3])
         {
@@ -146,7 +133,7 @@ public class Graphics : IDisposable
         }
     }
 
-    public Bitmap Capture() => Capture(Viewport);
+    public Bitmap Capture() => Capture(Viewport);*/
 
     public void Dispose()
     {

@@ -3,13 +3,13 @@ using System.Drawing;
 using System.Text.Json.Serialization;
 using Cubic.Scenes;
 using Silk.NET.OpenGL;
-using static Cubic.Render.Graphics;
+using static Cubic.Render.GraphicsMachine;
 
 namespace Cubic.Render;
 
 public abstract class Texture : IDisposable
 {
-    internal uint Handle;
+    internal Cubic.Graphics.Texture Tex;
     
     [JsonIgnore]
     public Size Size { get; protected set; }
@@ -20,13 +20,9 @@ public abstract class Texture : IDisposable
              SceneManager.Active.CreatedResources.Add(this);
     }
 
-    internal abstract void Bind(TextureUnit textureUnit = TextureUnit.Texture0);
-
-    internal abstract void Unbind();
-    
     public virtual void Dispose()
     {
-        Gl.DeleteTexture(Handle);
+        Tex.Dispose();
 #if DEBUG
         Console.WriteLine("Texture disposed");
 #endif

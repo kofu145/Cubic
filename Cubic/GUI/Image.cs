@@ -18,7 +18,7 @@ public class Image : UIElement
         Tint = tint == default ? Color.White : tint;
     }
 
-    protected internal override void Draw(Graphics graphics)
+    protected internal override void Draw(GraphicsMachine graphics)
     {
         base.Draw(graphics);
         

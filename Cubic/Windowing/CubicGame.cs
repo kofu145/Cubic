@@ -16,14 +16,14 @@ public class CubicGame : IDisposable
 
     private static CubicGame _instance;
 
-    private ImGuiRenderer _imGuiRenderer;
+    //private ImGuiRenderer _imGuiRenderer;
 
-    public ImGuiRenderer ImGui => _imGuiRenderer;
+    //public ImGuiRenderer ImGui => _imGuiRenderer;
 
     public readonly GameWindow Window;
-    internal Graphics GraphicsInternal;
+    internal static GraphicsMachine GraphicsInternal;
 
-    protected Graphics Graphics => GraphicsInternal;
+    protected GraphicsMachine Graphics => GraphicsInternal;
     protected Scene CurrentScene => SceneManager.Active;
     public AudioDevice AudioDevice { get; private set; }
 
@@ -61,13 +61,13 @@ public class CubicGame : IDisposable
         
         Window.Prepare();
 
-        GraphicsInternal = new Graphics(Window, _settings);
+        GraphicsInternal = new GraphicsMachine(Window, _settings);
         Window.Visible = _settings.StartVisible;
         TargetFps = _settings.TargetFps;
 
         AudioDevice = new AudioDevice(_settings.AudioChannels);
 
-        _imGuiRenderer = new ImGuiRenderer(GraphicsInternal);
+        //_imGuiRenderer = new ImGuiRenderer(GraphicsInternal);
         
         SetValues();
 
@@ -110,7 +110,7 @@ public class CubicGame : IDisposable
     protected virtual void Update()
     {
         UI.Update();
-        _imGuiRenderer.Update(Time.DeltaTime);
+        //_imGuiRenderer.Update(Time.DeltaTime);
         SceneManager.Update(this);
         GameUpdate?.Invoke(this, GraphicsInternal);
     }
@@ -119,7 +119,7 @@ public class CubicGame : IDisposable
     {
         SceneManager.Draw();
         UI.Draw(GraphicsInternal);
-        _imGuiRenderer.Render();
+        //_imGuiRenderer.Render();
         GameDraw?.Invoke(this, GraphicsInternal);
     }
 
@@ -142,8 +142,8 @@ public class CubicGame : IDisposable
         Texture2D.Void = new Texture2D(1, 1, new byte[] { 0, 0, 0, 255 }, false);
     }
 
-    public delegate void OnInitialize(CubicGame game, Graphics graphics);
-    public delegate void OnUpdate(CubicGame game, Graphics graphics);
+    public delegate void OnInitialize(CubicGame game, GraphicsMachine graphics);
+    public delegate void OnUpdate(CubicGame game, GraphicsMachine graphics);
 
-    public delegate void OnDraw(CubicGame game, Graphics graphics);
+    public delegate void OnDraw(CubicGame game, GraphicsMachine graphics);
 }

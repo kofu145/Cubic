@@ -13,7 +13,7 @@ public abstract class Component
     protected internal Entity Entity { get; internal set; }
 
     protected CubicGame Game => Entity.Game;
-    protected Graphics Graphics => Game.GraphicsInternal;
+    protected GraphicsMachine Graphics => CubicGame.GraphicsInternal;
 
     protected Scene CurrentScene => SceneManager.Active;
 

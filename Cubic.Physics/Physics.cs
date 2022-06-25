@@ -43,7 +43,7 @@ public static class Physics
         return body;
     }
 
-    private static void Update(CubicGame game, Graphics graphics)
+    private static void Update(CubicGame game, GraphicsMachine graphics)
     {
         World.StepSimulation(Time.DeltaTime);
     }

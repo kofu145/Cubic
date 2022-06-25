@@ -45,7 +45,7 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
         Gl.BindBuffer(buf.Target, buf.Handle);
         fixed (void* dat = data)
             Gl.BufferSubData(buf.Target, offset, (nuint) (data.Length * Unsafe.SizeOf<T>()), dat);
-        buf.Type = data.GetType();
+        buf.Type = data.GetType().GetElementType();
     }
 
     public override unsafe Texture CreateTexture(uint width, uint height, PixelFormat format)
@@ -71,6 +71,12 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
         Gl.BindTexture(TextureTarget.Texture2D, tex.Handle);
         fixed (void* dat = data)
             Gl.TexSubImage2D(TextureTarget.Texture2D, 0, x, y, width, height, tex.Format, PixelType.UnsignedByte, dat);
+        Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Repeat);
+        Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Repeat);
+        
+        Gl.TexParameter(TextureTarget.Texture2D, GLEnum.TextureMinFilter, (int) TextureMinFilter.Linear);
+        Gl.TexParameter(TextureTarget.Texture2D, GLEnum.TextureMagFilter, (int) TextureMagFilter.Linear);
+        Gl.GenerateMipmap(TextureTarget.Texture2D);
     }
 
     public override ShaderProgram CreateShaderProgram(params Shader[] shaders)
@@ -85,7 +91,16 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
         foreach (OpenGL33Shader shader in shaders)
             Gl.DetachShader(handle, shader.Handle);
 
-        return new OpenGl33ShaderProgram(handle);
+        Dictionary<string, int> uLocations = new Dictionary<string, int>();
+        Gl.GetProgram(handle, ProgramPropertyARB.ActiveUniforms, out int numUniforms);
+        for (uint i = 0; i < numUniforms; i++)
+        {
+            string name = Gl.GetActiveUniform(handle, i, out _, out _);
+            int location = Gl.GetUniformLocation(handle, name);
+            uLocations.Add(name, location);
+        }
+        
+        return new OpenGl33ShaderProgram(handle, uLocations);
     }
 
     public override Shader CreateShader(ShaderType type, string code)
@@ -117,8 +132,65 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
 
     public override void Clear(Vector4 color)
     {
-        Gl.ClearColor(color.X / 255f, color.Y / 255f, color.Z / 255f, color.W / 255f);
+        Gl.ClearColor(color.X, color.Y, color.Z, color.W);
         Gl.Clear((uint) ClearBufferMask.ColorBufferBit | (uint) ClearBufferMask.DepthBufferBit);
+    }
+
+    public override void SetUniform(ShaderProgram program, string uniformName, bool value)
+    {
+        OpenGl33ShaderProgram prg = (OpenGl33ShaderProgram) program;
+        Gl.UseProgram(prg.Handle);
+        Gl.Uniform1(prg.UniformLocations[uniformName], value ? 1 : 0);
+    }
+
+    public override void SetUniform(ShaderProgram program, string uniformName, int value)
+    {
+        OpenGl33ShaderProgram prg = (OpenGl33ShaderProgram) program;
+        Gl.UseProgram(prg.Handle);
+        Gl.Uniform1(prg.UniformLocations[uniformName], value);
+    }
+
+    public override void SetUniform(ShaderProgram program, string uniformName, float value)
+    {
+        OpenGl33ShaderProgram prg = (OpenGl33ShaderProgram) program;
+        Gl.UseProgram(prg.Handle);
+        Gl.Uniform1(prg.UniformLocations[uniformName], value);
+    }
+
+    public override void SetUniform(ShaderProgram program, string uniformName, Vector2 value)
+    {
+        OpenGl33ShaderProgram prg = (OpenGl33ShaderProgram) program;
+        Gl.UseProgram(prg.Handle);
+        Gl.Uniform2(prg.UniformLocations[uniformName], ref value);
+    }
+
+    public override void SetUniform(ShaderProgram program, string uniformName, Vector3 value)
+    {
+        OpenGl33ShaderProgram prg = (OpenGl33ShaderProgram) program;
+        Gl.UseProgram(prg.Handle);
+        Gl.Uniform3(prg.UniformLocations[uniformName], ref value);
+    }
+
+    public override void SetUniform(ShaderProgram program, string uniformName, Vector4 value)
+    {
+        OpenGl33ShaderProgram prg = (OpenGl33ShaderProgram) program;
+        Gl.UseProgram(prg.Handle);
+        Gl.Uniform4(prg.UniformLocations[uniformName], ref value);
+    }
+
+    public override void SetUniform(ShaderProgram program, string uniformName, Color color)
+    {
+        OpenGl33ShaderProgram prg = (OpenGl33ShaderProgram) program;
+        Gl.UseProgram(prg.Handle);
+        Vector4 normalized = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
+        Gl.Uniform4(prg.UniformLocations[uniformName], ref normalized);
+    }
+
+    public override unsafe void SetUniform(ShaderProgram program, string uniformName, Matrix4x4 matrix, bool transpose = true)
+    {
+        OpenGl33ShaderProgram prg = (OpenGl33ShaderProgram) program;
+        Gl.UseProgram(prg.Handle);
+        Gl.UniformMatrix4(prg.UniformLocations[uniformName], 1, transpose, (float*) &matrix);
     }
 
     public override void SetShaderProgram(ShaderProgram program)
@@ -147,7 +219,7 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
 
     public override unsafe void DrawElements(uint count)
     {
-        Gl.DrawElements(PrimitiveType.Triangles, count, DrawElementsType.UnsignedShort, null);
+        Gl.DrawElements(PrimitiveType.Triangles, count, DrawElementsType.UnsignedInt, null);
     }
 
     public override void Dispose()
@@ -157,6 +229,7 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
 
     private static unsafe void SetupAttribs(Type type)
     {
+        Console.WriteLine("dfjkgknjdfgnkldsf");
         FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
         uint location = 0;
         int offset = 0;
