@@ -12,7 +12,7 @@ public class CubeMap : Texture
     {
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
         Tex = device.CreateTexture((uint) top.Size.Width, (uint) top.Size.Height, PixelFormat.RGB,
-            usage: TextureUsage.Cubemap);
+            usage: TextureUsage.Cubemap, wrap: TextureWrap.Clamp);
         Tex.Update(0, 0, (uint) top.Size.Width, (uint) top.Size.Height, top.Data, CubemapPosition.PositiveY);
         Tex.Update(0, 0, (uint) bottom.Size.Width, (uint) bottom.Size.Height, bottom.Data, CubemapPosition.NegativeY);
         Tex.Update(0, 0, (uint) front.Size.Width, (uint) front.Size.Height, front.Data, CubemapPosition.PositiveZ);

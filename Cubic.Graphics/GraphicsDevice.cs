@@ -17,7 +17,7 @@ public abstract class GraphicsDevice : IDisposable
     public abstract Buffer CreateBuffer(BufferType type, uint size);
 
     public abstract Texture CreateTexture(uint width, uint height, PixelFormat format,
-        TextureSample sample = TextureSample.Linear, bool mipmap = true, TextureUsage usage = TextureUsage.Texture);
+        TextureSample sample = TextureSample.Linear, bool mipmap = true, TextureUsage usage = TextureUsage.Texture, TextureWrap wrap = TextureWrap.Repeat);
 
     public abstract Framebuffer CreateFramebuffer();
 

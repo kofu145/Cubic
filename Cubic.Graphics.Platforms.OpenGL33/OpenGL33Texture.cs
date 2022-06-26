@@ -11,20 +11,22 @@ public class OpenGL33Texture : Texture
     public TextureUsage TextureUsage;
     public bool Mipmap;
     private TextureSample _sample;
+    private TextureWrap _wrap;
+    public TextureTarget Target;
 
-    internal unsafe OpenGL33Texture(uint width, uint height, PixelFormat format, TextureSample sample, bool mipmap, TextureUsage usage)
+    internal unsafe OpenGL33Texture(uint width, uint height, PixelFormat format, TextureSample sample, bool mipmap, TextureUsage usage, TextureWrap wrap)
     {
         Mipmap = mipmap;
         TextureUsage = usage;
         Handle = Gl.GenTexture();
-        TextureTarget target = usage switch
+        Target = usage switch
         {
             TextureUsage.Texture => TextureTarget.Texture2D,
             TextureUsage.Framebuffer => TextureTarget.Texture2D,
             TextureUsage.Cubemap => TextureTarget.TextureCubeMap,
             _ => throw new ArgumentOutOfRangeException(nameof(usage), usage, null)
         };
-        Gl.BindTexture(target, Handle);
+        Gl.BindTexture(Target, Handle);
         Format = format switch
         {
             PixelFormat.RGB => Silk.NET.OpenGL.PixelFormat.Rgb,
@@ -47,14 +49,22 @@ public class OpenGL33Texture : Texture
                 break;
         }
 
+        _wrap = wrap;
 
-        Gl.TexParameter(target, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Repeat);
-        Gl.TexParameter(target, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Repeat);
+        TextureWrapMode mode = wrap switch
+        {
+            TextureWrap.Repeat => TextureWrapMode.Repeat,
+            TextureWrap.Clamp => TextureWrapMode.ClampToEdge,
+            _ => throw new ArgumentOutOfRangeException(nameof(wrap), wrap, null)
+        };
+        
+        Gl.TexParameter(Target, TextureParameterName.TextureWrapS, (int) mode);
+        Gl.TexParameter(Target, TextureParameterName.TextureWrapT, (int) mode);
         if (usage == TextureUsage.Framebuffer)
-            Gl.TexParameter(target, GLEnum.TextureWrapR, (int) TextureWrapMode.Repeat);
-        Gl.TexParameter(target, GLEnum.TextureMinFilter,
+            Gl.TexParameter(Target, GLEnum.TextureWrapR, (int) mode);
+        Gl.TexParameter(Target, GLEnum.TextureMinFilter,
             sample == TextureSample.Linear ? (int) TextureMinFilter.Linear : (int) TextureMinFilter.Nearest);
-        Gl.TexParameter(target, GLEnum.TextureMagFilter,
+        Gl.TexParameter(Target, GLEnum.TextureMagFilter,
             sample == TextureSample.Linear ? (int) TextureMagFilter.Linear : (int) TextureMagFilter.Nearest);
     }
 
@@ -76,6 +86,25 @@ public class OpenGL33Texture : Texture
     {
         get => TextureUsage;
         set => TextureUsage = value;
+    }
+
+    public override TextureWrap Wrap
+    {
+        get => TextureWrap.Clamp;
+        set
+        {
+            TextureWrapMode mode = value switch
+            {
+                TextureWrap.Repeat => TextureWrapMode.Repeat,
+                TextureWrap.Clamp => TextureWrapMode.ClampToEdge,
+                _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+            };
+            
+            Gl.TexParameter(Target, TextureParameterName.TextureWrapS, (int) mode);
+            Gl.TexParameter(Target, TextureParameterName.TextureWrapT, (int) mode);
+            if (TextureUsage == TextureUsage.Framebuffer)
+                Gl.TexParameter(Target, GLEnum.TextureWrapR, (int) mode);
+        }
     }
 
     public override unsafe void Update<T>(int x, int y, uint width, uint height, T[] data)

@@ -100,13 +100,12 @@ void main()
         _shader = new Shader(VertexShader, FragmentShader);
     }
 
-    internal unsafe void Draw(Camera camera)
+    internal void Draw(Camera camera)
     {
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
         device.Options.CullFace = CullFace.Front;
         device.Options.DepthMask = false;
         device.SetShader(_shader.Program);
-        Matrix4x4 view = camera.ViewMatrix;
         _shader.Set("uProjection", camera.ProjectionMatrix);
         // Convert the camera's 4x4 view matrix to a 3x3 rotation matrix - we only need rotation, not translation.
         _shader.Set("uView", camera.ViewMatrix.To3x3Matrix());
