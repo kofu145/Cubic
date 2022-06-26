@@ -63,7 +63,12 @@ public class OpenGl33Texture : Texture
         if (usage == TextureUsage.Framebuffer)
             Gl.TexParameter(Target, GLEnum.TextureWrapR, (int) mode);
         Gl.TexParameter(Target, GLEnum.TextureMinFilter,
-            sample == TextureSample.Linear ? (int) TextureMinFilter.Linear : (int) TextureMinFilter.Nearest);
+            sample == TextureSample.Linear
+                ?
+                mipmap ? (int) TextureMinFilter.LinearMipmapLinear : (int) TextureMinFilter.Linear
+                : mipmap
+                    ? (int) TextureMinFilter.NearestMipmapNearest
+                    : (int) TextureMinFilter.Nearest);
         Gl.TexParameter(Target, GLEnum.TextureMagFilter,
             sample == TextureSample.Linear ? (int) TextureMagFilter.Linear : (int) TextureMagFilter.Nearest);
     }
@@ -75,8 +80,13 @@ public class OpenGl33Texture : Texture
         {
             _sample = value;
             Gl.BindTexture(TextureTarget.Texture2D, Handle);
-            Gl.TexParameter(TextureTarget.Texture2D, GLEnum.TextureMinFilter,
-                value == TextureSample.Linear ? (int) TextureMinFilter.Linear : (int) TextureMinFilter.Nearest);
+            Gl.TexParameter(Target, GLEnum.TextureMinFilter,
+                value == TextureSample.Linear
+                    ?
+                    Mipmap ? (int) TextureMinFilter.LinearMipmapLinear : (int) TextureMinFilter.Linear
+                    : Mipmap
+                        ? (int) TextureMinFilter.NearestMipmapNearest
+                        : (int) TextureMinFilter.Nearest);
             Gl.TexParameter(TextureTarget.Texture2D, GLEnum.TextureMagFilter,
                 value == TextureSample.Linear ? (int) TextureMagFilter.Linear : (int) TextureMagFilter.Nearest);
         }
@@ -150,6 +160,8 @@ public class OpenGl33Texture : Texture
     {
         Gl.BindTexture(TextureTarget.Texture2D, Handle);
         Gl.GenerateMipmap(TextureTarget.Texture2D);
+        Mipmap = true;
+        Sample = _sample;
     }
 
     public override void Dispose()
