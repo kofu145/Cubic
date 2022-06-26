@@ -17,7 +17,7 @@ public class RenderTarget : Texture
         Framebuffer = device.CreateFramebuffer();
         Tex = device.CreateTexture((uint) size.Width, (uint) size.Height, Graphics.PixelFormat.RGBA,
             usage: TextureUsage.Framebuffer);
-        device.AttachTextureToFramebuffer(Framebuffer, Tex);
+        Framebuffer.AttachTexture(Tex);
 
         Size = size;
     }

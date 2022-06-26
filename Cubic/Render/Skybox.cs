@@ -92,10 +92,10 @@ void main()
 
         _vertexBuffer =
             device.CreateBuffer(BufferType.VertexBuffer, (uint) (_vertices.Length * sizeof(VertexPosition)));
-        device.UpdateBuffer(_vertexBuffer, 0, _vertices);
+        _vertexBuffer.Update(0, _vertices);
 
         _indexBuffer = device.CreateBuffer(BufferType.IndexBuffer, (uint) (_indices.Length * sizeof(uint)));
-        device.UpdateBuffer(_indexBuffer, 0, _indices);
+        _indexBuffer.Update(0, _indices);
 
         _shader = new Shader(VertexShader, FragmentShader);
     }
@@ -103,9 +103,9 @@ void main()
     internal unsafe void Draw(Camera camera)
     {
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
-        device.CullFace = CullFace.Front;
-        device.DepthMask = false;
-        device.SetShaderProgram(_shader.Program);
+        device.Options.CullFace = CullFace.Front;
+        device.Options.DepthMask = false;
+        device.SetShader(_shader.Program);
         Matrix4x4 view = camera.ViewMatrix;
         _shader.Set("uProjection", camera.ProjectionMatrix);
         // Convert the camera's 4x4 view matrix to a 3x3 rotation matrix - we only need rotation, not translation.
@@ -114,8 +114,8 @@ void main()
         device.SetTexture(0, _cubeMap.Tex);
         device.DrawElements((uint) _indices.Length);
 
-        device.CullFace = CullFace.Back;
-        device.DepthMask = true;
+        device.Options.CullFace = CullFace.Back;
+        device.Options.DepthMask = true;
     }
 
     public void Dispose()

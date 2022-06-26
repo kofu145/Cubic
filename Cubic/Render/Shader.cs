@@ -1,69 +1,59 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Numerics;
-using System.Text;
 using Cubic.Graphics;
-using Cubic.Utilities;
-using Cubic.Windowing;
-using static Cubic.Render.CubicGraphics;
-using ShaderType = Cubic.Graphics.ShaderType;
 
 namespace Cubic.Render;
 
 public class Shader : IDisposable
 {
-    internal ShaderProgram Program;
-
-    private Dictionary<string, int> _uniformLocations;
+    internal Cubic.Graphics.Shader Program;
 
     public Shader(string vertex, string fragment, ShaderLoadType loadType = ShaderLoadType.String)
     {
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
-        using Cubic.Graphics.Shader vShader = device.CreateShader(ShaderType.Vertex, vertex);
-        using Cubic.Graphics.Shader fShader = device.CreateShader(ShaderType.Fragment, fragment);
-        Program = device.CreateShaderProgram(vShader, fShader);
+        Program = device.CreateShader(new ShaderAttachment(AttachmentType.Vertex, vertex),
+            new ShaderAttachment(AttachmentType.Fragment, fragment));
     }
 
     public void Set(string uniformName, bool value)
     {
-        CubicGraphics.GraphicsDevice.SetUniform(Program, uniformName, value);
+        Program.SetUniform(uniformName, value);
     }
     
     public void Set(string uniformName, int value)
     {
-        CubicGraphics.GraphicsDevice.SetUniform(Program, uniformName, value);
+        Program.SetUniform(uniformName, value);
     }
     
     public void Set(string uniformName, float value)
     {
-        CubicGraphics.GraphicsDevice.SetUniform(Program, uniformName, value);
+        Program.SetUniform(uniformName, value);
     }
 
     public void Set(string uniformName, Vector2 value)
     {
-        CubicGraphics.GraphicsDevice.SetUniform(Program, uniformName, value);
+        Program.SetUniform(uniformName, value);
     }
     
     public void Set(string uniformName, Vector3 value)
     {
-        CubicGraphics.GraphicsDevice.SetUniform(Program, uniformName, value);
+        Program.SetUniform(uniformName, value);
     }
     
     public void Set(string uniformName, Vector4 value)
     {
-        CubicGraphics.GraphicsDevice.SetUniform(Program, uniformName, value);
+        Program.SetUniform(uniformName, value);
     }
 
     public void Set(string uniformName, Color color)
     {
-        CubicGraphics.GraphicsDevice.SetUniform(Program, uniformName, color);
+        Program.SetUniform(uniformName, color);
     }
 
     public unsafe void Set(string uniformName, Matrix4x4 value, bool transpose = true)
     {
-        CubicGraphics.GraphicsDevice.SetUniform(Program, uniformName, value, transpose);
+        Program.SetUniform(uniformName, value, transpose);
     }
 
     public void Dispose()

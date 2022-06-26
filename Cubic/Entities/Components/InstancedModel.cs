@@ -36,8 +36,8 @@ public class InstancedModel : Component
             ModelMatrices = new List<Matrix4x4>()
         };
         
-        device.UpdateBuffer(group.VertexBuffer, 0, primitive.Vertices);
-        device.UpdateBuffer(group.IndexBuffer, 0, primitive.Indices);
+        group.VertexBuffer.Update(0, primitive.Vertices);
+        group.IndexBuffer.Update(0, primitive.Indices);
 
         _shader = new Shader(Model.VertexShader, Model.FragmentShader);
 
@@ -78,7 +78,7 @@ public class InstancedModel : Component
             device.SetTexture(0, modelGroup.Material.Albedo.Tex);
             device.SetTexture(1, modelGroup.Material.Specular.Tex);
             
-            device.SetShaderProgram(_shader.Program);
+            device.SetShader(_shader.Program);
             
             device.SetVertexBuffer(modelGroup.VertexBuffer);
             device.SetIndexBuffer(modelGroup.IndexBuffer);

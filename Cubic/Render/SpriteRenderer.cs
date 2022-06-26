@@ -125,7 +125,7 @@ void main()
         _indexBuffer = _graphics.CreateBuffer(BufferType.IndexBuffer, MaxSprites * IndexSizeInBytes);
 
         _shader = new Shader(VertexShader, FragmentShader);
-        _graphics.SetShaderProgram(_shader.Program);
+        _graphics.SetShader(_shader.Program);
 
         _projectionMatrix = Matrix4x4.CreateOrthographicOffCenter(0, _graphics.Viewport.Width,
             _graphics.Viewport.Height, 0, -1f, 1f);
@@ -382,21 +382,21 @@ void main()
         Gl.FrontFace(FrontFaceDirection.CW);
         Gl.Enable(EnableCap.DepthTest);*/
 
-        _graphics.DepthTest = DepthTest.Disable;
+        _graphics.Options.DepthTest = DepthTest.Disable;
         
-        _graphics.SetShaderProgram(_shaderToUse.Program);
+        _graphics.SetShader(_shaderToUse.Program);
         _graphics.SetTexture(0, _currentTexture.Tex);
-        _graphics.SetTextureSample(_currentTexture.Tex, _sample);
+        _currentTexture.Tex.Sample = _sample;
 
-        _graphics.UpdateBuffer(_vertexBuffer, 0, _spriteVertices);
-        _graphics.UpdateBuffer(_indexBuffer, 0, _spriteIndices);
+        _vertexBuffer.Update(0, _spriteVertices);
+        _indexBuffer.Update(0, _spriteIndices);
         
         _graphics.SetVertexBuffer(_vertexBuffer);
         _graphics.SetIndexBuffer(_indexBuffer);
         
         _graphics.DrawElements(_currentSpriteIndex * NumIndices);
 
-        _graphics.DepthTest = DepthTest.LessEqual;
+        _graphics.Options.DepthTest = DepthTest.LessEqual;
 
         Metrics.DrawCallsInternal++;
         

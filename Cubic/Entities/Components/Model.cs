@@ -132,10 +132,10 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
 
         _vertexBuffer = device.CreateBuffer(BufferType.VertexBuffer,
             (uint) (Vertices.Length * sizeof(VertexPositionTextureNormal)));
-        device.UpdateBuffer(_vertexBuffer, 0, Vertices);
+        _vertexBuffer.Update(0, Vertices);
 
         _indexBuffer = device.CreateBuffer(BufferType.IndexBuffer, (uint) (Indices.Length * sizeof(uint)));
-        device.UpdateBuffer(_indexBuffer, 0, Indices);
+        _indexBuffer.Update(0, Indices);
     }
 
     protected internal override unsafe void Draw()
@@ -167,7 +167,7 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
         device.SetTexture(0, Material.Albedo.Tex);
         device.SetTexture(1, Material.Specular.Tex);
         
-        device.SetShaderProgram(_shader.Program);
+        device.SetShader(_shader.Program);
         
         device.SetVertexBuffer(_vertexBuffer);
         device.SetIndexBuffer(_indexBuffer);

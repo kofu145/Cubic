@@ -1,6 +1,6 @@
 namespace Cubic.Graphics;
 
-public enum ShaderType
+public enum AttachmentType
 {
     Vertex,
     Fragment,

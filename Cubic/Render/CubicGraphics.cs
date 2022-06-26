@@ -73,8 +73,8 @@ public class CubicGraphics : IDisposable
         
         SpriteRenderer = new SpriteRenderer(GraphicsDevice);
 
-        GraphicsDevice.DepthTest = DepthTest.LessEqual;
-        GraphicsDevice.EnableScissor = true;
+        GraphicsDevice.Options.DepthTest = DepthTest.LessEqual;
+        GraphicsDevice.Options.EnableScissor = true;
         
 
         /*Gl.Enable(EnableCap.Blend);
