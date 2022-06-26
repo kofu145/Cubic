@@ -382,7 +382,9 @@ void main()
         Gl.FrontFace(FrontFaceDirection.CW);
         Gl.Enable(EnableCap.DepthTest);*/
 
+        DepthTest current = _graphics.Options.DepthTest;
         _graphics.Options.DepthTest = DepthTest.Disable;
+        _graphics.Options.CullDirection = CullDirection.CounterClockwise;
         
         _graphics.SetShader(_shaderToUse.Program);
         _graphics.SetTexture(0, _currentTexture.Tex);
@@ -396,7 +398,8 @@ void main()
         
         _graphics.DrawElements(_currentSpriteIndex * NumIndices);
 
-        _graphics.Options.DepthTest = DepthTest.LessEqual;
+        _graphics.Options.DepthTest = current;
+        _graphics.Options.CullDirection = CullDirection.Clockwise;
 
         Metrics.DrawCallsInternal++;
         

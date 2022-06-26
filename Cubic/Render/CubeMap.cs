@@ -1,3 +1,4 @@
+using System;
 using Cubic.Graphics;
 using Cubic.Utilities;
 using Silk.NET.OpenGL;
@@ -10,7 +11,7 @@ public class CubeMap : Texture
     public CubeMap(Bitmap top, Bitmap bottom, Bitmap front, Bitmap back, Bitmap right, Bitmap left, bool autoDispose = true) : base(autoDispose)
     {
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
-        Tex = device.CreateTexture((uint) top.Size.Width, (uint) top.Size.Height, PixelFormat.RGBA,
+        Tex = device.CreateTexture((uint) top.Size.Width, (uint) top.Size.Height, PixelFormat.RGB,
             usage: TextureUsage.Cubemap);
         Tex.Update(0, 0, (uint) top.Size.Width, (uint) top.Size.Height, top.Data, CubemapPosition.PositiveY);
         Tex.Update(0, 0, (uint) bottom.Size.Width, (uint) bottom.Size.Height, bottom.Data, CubemapPosition.NegativeY);

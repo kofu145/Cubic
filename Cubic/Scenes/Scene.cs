@@ -106,7 +106,7 @@ public abstract class Scene : IDisposable
     {
         Camera.Main.GenerateViewMatrix();
         Camera2D.Main.GenerateTransformMatrix();
-        //World.Skybox?.Draw(Camera.Main);
+        World.Skybox?.Draw(Camera.Main);
         Graphics.SpriteRenderer.Begin(Camera2D.Main.TransformMatrix, World.SampleType);
         
         // Order the entities by their distance to the camera to support transparent sorting.
