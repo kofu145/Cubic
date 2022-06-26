@@ -8,7 +8,7 @@ public class OpenGl33ShaderProgram : ShaderProgram
     public uint Handle;
     public Dictionary<string, int> UniformLocations;
 
-    public OpenGl33ShaderProgram(uint handle, Dictionary<string, int> uniformLocations)
+    internal OpenGl33ShaderProgram(uint handle, Dictionary<string, int> uniformLocations)
     {
         Handle = handle;
         UniformLocations = uniformLocations;

@@ -7,7 +7,7 @@ namespace Cubic.GUI;
 public abstract class Screen
 {
     protected internal CubicGame Game { get; internal set; }
-    protected GraphicsMachine Graphics => CubicGame.GraphicsInternal;
+    protected CubicGraphics Graphics => CubicGame.GraphicsInternal;
 
     protected Scene CurrentScene => SceneManager.Active;
     

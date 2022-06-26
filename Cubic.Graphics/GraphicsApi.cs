@@ -1,4 +1,4 @@
-namespace Cubic.Render;
+namespace Cubic.Graphics;
 
 public enum GraphicsApi
 {

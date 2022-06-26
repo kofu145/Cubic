@@ -7,7 +7,7 @@ using Cubic.Utilities;
 using Cubic.Windowing;
 using Silk.NET.OpenGL;
 using StbImageSharp;
-using static Cubic.Render.GraphicsMachine;
+using static Cubic.Render.CubicGraphics;
 using PixelFormat = Cubic.Graphics.PixelFormat;
 
 namespace Cubic.Render;
@@ -50,19 +50,22 @@ public class Texture2D : Texture
 
     public unsafe void SetData(IntPtr data, int x, int y, int width, int height)
     {
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
+        device.UpdateTexture(Tex, x, y, (uint) width, (uint) height, data);
     }
 
     public unsafe void SetData(byte[] data, int x, int y, int width, int height)
     {
-        GraphicsDevice device = GraphicsMachine.GraphicsDevice;
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
         device.UpdateTexture(Tex, x, y, (uint) width, (uint) height, data);
     }
 
     private static unsafe Cubic.Graphics.Texture CreateTexture(int width, int height, byte[] data, PixelFormat format = PixelFormat.RGBA)
     {
-        GraphicsDevice device = GraphicsMachine.GraphicsDevice;
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
         Cubic.Graphics.Texture tex = device.CreateTexture((uint) width, (uint) height, format);
-        device.UpdateTexture(tex, 0, 0, (uint) width, (uint) height, data);
+        if (data != null)
+            device.UpdateTexture(tex, 0, 0, (uint) width, (uint) height, data);
         return tex;
     }
 

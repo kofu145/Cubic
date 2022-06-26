@@ -18,7 +18,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FreeTypeSharp" Version="2.0.0.10-ci" />
+      <PackageReference Include="FreeTypeSharp" Version="2.0.0.8-ci" />
       <PackageReference Include="ImGui.NET" Version="1.87.3" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="Silk.NET.GLFW" Version="2.15.0" />
@@ -45,18 +45,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Render\CubeMap.cs" />
-      <None Include="Render\CubeMap.cs" />
       <Compile Remove="Render\ImGuiRenderer.cs" />
       <None Include="Render\ImGuiRenderer.cs" />
-      <Compile Remove="Render\RenderTarget.cs" />
-      <None Include="Render\RenderTarget.cs" />
-      <Compile Remove="Render\Skybox.cs" />
-      <None Include="Render\Skybox.cs" />
-      <Compile Remove="Entities\Components\InstancedModel.cs" />
-      <None Include="Entities\Components\InstancedModel.cs" />
-      <Compile Remove="Entities\Components\Model.cs" />
-      <None Include="Entities\Components\Model.cs" />
     </ItemGroup>
 
     <ItemGroup>

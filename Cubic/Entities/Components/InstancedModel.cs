@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Cubic.Graphics;
 using Cubic.Primitives;
 using Cubic.Render;
 using Cubic.Render.Lighting;
 using Cubic.Scenes;
 using Cubic.Utilities;
 using Silk.NET.OpenGL;
-using static Cubic.Render.Graphics;
+using Buffer = Cubic.Graphics.Buffer;
 using Shader = Cubic.Render.Shader;
 
 namespace Cubic.Entities.Components;
@@ -24,42 +25,22 @@ public class InstancedModel : Component
     
     public unsafe ModelGroup CreateModelGroup(IPrimitive primitive, Material material)
     {
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
+        
         ModelGroup group = new ModelGroup()
         {
-            Vao = Gl.GenVertexArray(),
-            Vbo = Gl.GenBuffer(),
-            Ebo = Gl.GenBuffer(),
+            VertexBuffer = device.CreateBuffer(BufferType.VertexBuffer, (uint) (primitive.Vertices.Length * sizeof(VertexPositionTextureNormal))),
+            IndexBuffer = device.CreateBuffer(BufferType.IndexBuffer, (uint) (primitive.Indices.Length * sizeof(uint))),
             IndicesLength = primitive.Indices.Length,
             Material = material,
             ModelMatrices = new List<Matrix4x4>()
         };
         
-        Gl.BindVertexArray(group.Vao);
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, group.Vbo);
-        fixed (VertexPositionTextureNormal* vptn = primitive.Vertices)
-        {
-            Gl.BufferData(BufferTargetARB.ArrayBuffer,
-                (nuint) (primitive.Vertices.Length * sizeof(VertexPositionTextureNormal)), vptn,
-                BufferUsageARB.StaticDraw);
-        }
-        
-        Gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, group.Ebo);
-        fixed (uint* p = primitive.Indices)
-        {
-            Gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint) (primitive.Indices.Length * sizeof(uint)), p,
-                BufferUsageARB.StaticDraw);
-        }
+        device.UpdateBuffer(group.VertexBuffer, 0, primitive.Vertices);
+        device.UpdateBuffer(group.IndexBuffer, 0, primitive.Indices);
 
         _shader = new Shader(Model.VertexShader, Model.FragmentShader);
-        
-        Gl.UseProgram(_shader.Handle);
-        RenderUtils.VertexAttribs(typeof(VertexPositionTextureNormal));
-        
-        Gl.BindVertexArray(0);
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
-        Gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
-        Gl.UseProgram(0);
-        
+
         _instances.Add(group);
 
         return group;
@@ -74,8 +55,6 @@ public class InstancedModel : Component
 
         foreach (ModelGroup modelGroup in _instances)
         {
-            Gl.BindVertexArray(modelGroup.Vao);
-            Gl.UseProgram(_shader.Handle);
             _shader.Set("uProjection", Camera.Main.ProjectionMatrix);
             _shader.Set("uView", Camera.Main.ViewMatrix);
             _shader.Set("uCameraPos", Camera.Main.Transform.Position);
@@ -94,24 +73,22 @@ public class InstancedModel : Component
             _shader.Set("uSun.diffuse", sunColor * sun.DiffuseMultiplier);
             _shader.Set("uSun.specular", sunColor * sun.SpecularMultiplier);
 
-            modelGroup.Material.Albedo.Bind(TextureUnit.Texture0);
-            modelGroup.Material.Specular.Bind(TextureUnit.Texture1);
-
-            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
-                (int) TextureMinFilter.LinearMipmapLinear);
-            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
-                (int) TextureMagFilter.Linear);
+            GraphicsDevice device = CubicGraphics.GraphicsDevice;
+            
+            device.SetTexture(0, modelGroup.Material.Albedo.Tex);
+            device.SetTexture(1, modelGroup.Material.Specular.Tex);
+            
+            device.SetShaderProgram(_shader.Program);
+            
+            device.SetVertexBuffer(modelGroup.VertexBuffer);
+            device.SetIndexBuffer(modelGroup.IndexBuffer);
 
             foreach (Matrix4x4 mat in modelGroup.ModelMatrices)
             {
-                _shader.Set("uModel", mat * Matrix4x4.CreateFromQuaternion(Transform.Rotation) * Matrix4x4.CreateTranslation(Transform.Position));
-                Gl.DrawElements(PrimitiveType.Triangles, (uint) modelGroup.IndicesLength, DrawElementsType.UnsignedInt,
-                    null);
+                _shader.Set("uModel", mat * Transform.TransformMatrix);
+                device.DrawElements((uint) modelGroup.IndicesLength);
                 Metrics.DrawCallsInternal++;
             }
-
-            modelGroup.Material.Albedo.Unbind();
-            modelGroup.Material.Specular.Unbind();
         }
     }
 
@@ -121,18 +98,16 @@ public class InstancedModel : Component
 
         foreach (ModelGroup group in _instances)
         {
-            Gl.DeleteVertexArray(group.Vao);
-            Gl.DeleteBuffer(group.Vbo);
-            Gl.DeleteBuffer(group.Ebo);
+            group.VertexBuffer.Dispose();
+            group.IndexBuffer.Dispose();
         }
     }
 }
 
 public struct ModelGroup
-{ 
-    internal uint Vao;
-    internal uint Vbo;
-    internal uint Ebo;
+{
+    internal Buffer VertexBuffer;
+    internal Buffer IndexBuffer;
     internal int IndicesLength;
     public Material Material;
     public List<Matrix4x4> ModelMatrices;

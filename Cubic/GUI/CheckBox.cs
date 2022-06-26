@@ -29,7 +29,7 @@ public class CheckBox : UIElement
             Checked = !Checked;
     }
 
-    protected internal override void Draw(GraphicsMachine graphics)
+    protected internal override void Draw(CubicGraphics graphics)
     {
         base.Draw(graphics);
         

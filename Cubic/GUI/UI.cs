@@ -229,7 +229,7 @@ public static partial class UI
         }
     }
 
-    internal static void Draw(GraphicsMachine graphics)
+    internal static void Draw(CubicGraphics graphics)
     {
         // Update the framebuffer size per frame to allow the anchoring system to work.
         _framebufferSize = graphics.Viewport.Size;

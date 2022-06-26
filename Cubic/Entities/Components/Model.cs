@@ -1,12 +1,13 @@
 using System;
 using System.Numerics;
+using Cubic.Graphics;
 using Cubic.Primitives;
 using Cubic.Render;
 using Cubic.Render.Lighting;
 using Cubic.Scenes;
 using Cubic.Utilities;
 using Silk.NET.OpenGL;
-using static Cubic.Render.Graphics;
+using Buffer = Cubic.Graphics.Buffer;
 using Shader = Cubic.Render.Shader;
 
 namespace Cubic.Entities.Components;
@@ -17,8 +18,8 @@ public class Model : Component
     public readonly uint[] Indices;
 
     private uint _vao;
-    private uint _vbo;
-    private uint _ebo;
+    private Buffer _vertexBuffer;
+    private Buffer _indexBuffer;
 
     private static Shader _shader;
     private static bool _shaderDisposed;
@@ -127,34 +128,20 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
             _shaderDisposed = false;
         }
 
-        _vao = Gl.GenVertexArray();
-        Gl.BindVertexArray(_vao);
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
 
-        _vbo = Gl.GenBuffer();
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
-        fixed (VertexPositionTextureNormal* vptn = Vertices)
-            Gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint) (Vertices.Length * sizeof(VertexPositionTextureNormal)), vptn, BufferUsageARB.StaticDraw);
+        _vertexBuffer = device.CreateBuffer(BufferType.VertexBuffer,
+            (uint) (Vertices.Length * sizeof(VertexPositionTextureNormal)));
+        device.UpdateBuffer(_vertexBuffer, 0, Vertices);
 
-        _ebo = Gl.GenBuffer();
-        Gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _ebo);
-        fixed (uint* p = Indices)
-            Gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint) (Indices.Length * sizeof(uint)), p, BufferUsageARB.StaticDraw);
-        
-        Gl.UseProgram(_shader.Handle);
-        
-        RenderUtils.VertexAttribs(typeof(VertexPositionTextureNormal));
-
-        Gl.BindVertexArray(0);
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
-        Gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
+        _indexBuffer = device.CreateBuffer(BufferType.IndexBuffer, (uint) (Indices.Length * sizeof(uint)));
+        device.UpdateBuffer(_indexBuffer, 0, Indices);
     }
 
     protected internal override unsafe void Draw()
     {
         base.Draw();
         
-        Gl.BindVertexArray(_vao);
-        Gl.UseProgram(_shader.Handle);
         _shader.Set("uProjection", Camera.Main.ProjectionMatrix);
         _shader.Set("uView", Camera.Main.ViewMatrix);
         _shader.Set("uModel",  Transform.TransformMatrix);
@@ -175,17 +162,18 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
         _shader.Set("uSun.diffuse", sunColor * sun.DiffuseMultiplier);
         _shader.Set("uSun.specular", sunColor * sun.SpecularMultiplier);
 
-        Material.Albedo.Bind(TextureUnit.Texture0);
-        Material.Specular.Bind(TextureUnit.Texture1);
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
         
-        Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.LinearMipmapLinear);
-        Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Linear);
+        device.SetTexture(0, Material.Albedo.Tex);
+        device.SetTexture(1, Material.Specular.Tex);
         
-        Gl.DrawElements(PrimitiveType.Triangles, (uint) Indices.Length, DrawElementsType.UnsignedInt, null);
+        device.SetShaderProgram(_shader.Program);
+        
+        device.SetVertexBuffer(_vertexBuffer);
+        device.SetIndexBuffer(_indexBuffer);
+
+        device.DrawElements((uint) Indices.Length);
         Metrics.DrawCallsInternal++;
-        
-        Material.Albedo.Unbind();
-        Material.Specular.Unbind();
     }
 
     protected internal override void Unload()

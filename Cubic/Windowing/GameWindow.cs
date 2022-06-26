@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using Cubic.Content;
+using Cubic.Graphics;
 using Cubic.Render;
 using Cubic.Utilities;
 using Silk.NET.GLFW;

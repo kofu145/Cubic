@@ -1,5 +1,6 @@
 using System.Drawing;
 using Cubic.Audio;
+using Cubic.Graphics;
 using Cubic.Render;
 using Cubic.Utilities;
 

@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Text.Json.Serialization;
 using Cubic.Scenes;
 using Silk.NET.OpenGL;
-using static Cubic.Render.GraphicsMachine;
+using static Cubic.Render.CubicGraphics;
 
 namespace Cubic.Render;
 

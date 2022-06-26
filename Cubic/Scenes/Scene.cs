@@ -20,7 +20,7 @@ public abstract class Scene : IDisposable
     private bool _updating;
 
     protected internal CubicGame Game { get; internal set; }
-    protected GraphicsMachine Graphics => CubicGame.GraphicsInternal;
+    protected CubicGraphics Graphics => CubicGame.GraphicsInternal;
     protected internal World World;
 
     private readonly Dictionary<string, Entity> _entitiesQueue;

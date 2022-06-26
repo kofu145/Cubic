@@ -21,9 +21,9 @@ public class CubicGame : IDisposable
     //public ImGuiRenderer ImGui => _imGuiRenderer;
 
     public readonly GameWindow Window;
-    internal static GraphicsMachine GraphicsInternal;
+    internal static CubicGraphics GraphicsInternal;
 
-    protected GraphicsMachine Graphics => GraphicsInternal;
+    protected CubicGraphics Graphics => GraphicsInternal;
     protected Scene CurrentScene => SceneManager.Active;
     public AudioDevice AudioDevice { get; private set; }
 
@@ -61,7 +61,7 @@ public class CubicGame : IDisposable
         
         Window.Prepare();
 
-        GraphicsInternal = new GraphicsMachine(Window, _settings);
+        GraphicsInternal = new CubicGraphics(Window, _settings);
         Window.Visible = _settings.StartVisible;
         TargetFps = _settings.TargetFps;
 
@@ -142,8 +142,8 @@ public class CubicGame : IDisposable
         Texture2D.Void = new Texture2D(1, 1, new byte[] { 0, 0, 0, 255 }, false);
     }
 
-    public delegate void OnInitialize(CubicGame game, GraphicsMachine graphics);
-    public delegate void OnUpdate(CubicGame game, GraphicsMachine graphics);
+    public delegate void OnInitialize(CubicGame game, CubicGraphics graphics);
+    public delegate void OnUpdate(CubicGame game, CubicGraphics graphics);
 
-    public delegate void OnDraw(CubicGame game, GraphicsMachine graphics);
+    public delegate void OnDraw(CubicGame game, CubicGraphics graphics);
 }

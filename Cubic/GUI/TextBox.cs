@@ -293,7 +293,7 @@ public class TextBox : UIElement
         _textInserted = false;
     }
 
-    protected internal override void Draw(GraphicsMachine graphics)
+    protected internal override void Draw(CubicGraphics graphics)
     {
         base.Draw(graphics);
         

@@ -10,7 +10,7 @@ public class OpenGL33Buffer : Buffer
     public readonly BufferTargetARB Target;
     public Type Type;
     
-    public OpenGL33Buffer(uint id, BufferTargetARB target)
+    internal OpenGL33Buffer(uint id, BufferTargetARB target)
     {
         Handle = id;
         Target = target;

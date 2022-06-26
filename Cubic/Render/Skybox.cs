@@ -1,9 +1,10 @@
 using System;
 using System.Numerics;
 using Cubic.Entities;
+using Cubic.Graphics;
 using Cubic.Utilities;
 using Silk.NET.OpenGL;
-using static Cubic.Render.Graphics;
+using Buffer = Cubic.Graphics.Buffer;
 
 namespace Cubic.Render;
 
@@ -77,10 +78,9 @@ void main()
 {
     out_color = texture(uSkybox, frag_texCoords);
 }";
-    
-    private uint _vao;
-    private uint _vbo;
-    private uint _ebo;
+
+    private Buffer _vertexBuffer;
+    private Buffer _indexBuffer;
     private Shader _shader;
     private CubeMap _cubeMap;
 
@@ -88,55 +88,41 @@ void main()
     {
         _cubeMap = cubeMap;
 
-        _vao = Gl.GenVertexArray();
-        Gl.BindVertexArray(_vao);
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
 
-        _vbo = Gl.GenBuffer();
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
-        fixed (VertexPosition* vp = _vertices)
-            Gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint) (_vertices.Length * sizeof(VertexPosition)), vp, BufferUsageARB.StaticDraw);
+        _vertexBuffer =
+            device.CreateBuffer(BufferType.VertexBuffer, (uint) (_vertices.Length * sizeof(VertexPosition)));
+        device.UpdateBuffer(_vertexBuffer, 0, _vertices);
 
-        _ebo = Gl.GenBuffer();
-        Gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _ebo);
-        fixed (uint* p = _indices)
-            Gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint) (_indices.Length * sizeof(uint)), p, BufferUsageARB.StaticDraw);
+        _indexBuffer = device.CreateBuffer(BufferType.IndexBuffer, (uint) (_indices.Length * sizeof(uint)));
+        device.UpdateBuffer(_indexBuffer, 0, _indices);
 
         _shader = new Shader(VertexShader, FragmentShader);
-        Gl.UseProgram(_shader.Handle);
-        
-        RenderUtils.VertexAttribs(typeof(VertexPosition));
-        
-        Gl.BindVertexArray(0);
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
-        Gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
     }
 
     internal unsafe void Draw(Camera camera)
     {
-        Gl.CullFace(CullFaceMode.Front);
-        Gl.DepthMask(false);
-        Gl.UseProgram(_shader.Handle);
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
+        device.CullFace = CullFace.Front;
+        device.DepthMask = false;
+        device.SetShaderProgram(_shader.Program);
         Matrix4x4 view = camera.ViewMatrix;
         _shader.Set("uProjection", camera.ProjectionMatrix);
         // Convert the camera's 4x4 view matrix to a 3x3 rotation matrix - we only need rotation, not translation.
         _shader.Set("uView", camera.ViewMatrix.To3x3Matrix());
         
-        Gl.BindVertexArray(_vao);
-        _cubeMap.Bind();
-        Gl.DrawElements(PrimitiveType.Triangles, (uint) _indices.Length, DrawElementsType.UnsignedInt, null);
-        
-        Gl.BindTexture(TextureTarget.TextureCubeMap, 0);
-        Gl.BindVertexArray(0);
-        Gl.CullFace(CullFaceMode.Back);
-        Gl.DepthMask(true);
+        device.SetTexture(0, _cubeMap.Tex);
+        device.DrawElements((uint) _indices.Length);
+
+        device.CullFace = CullFace.Back;
+        device.DepthMask = true;
     }
 
     public void Dispose()
     {
         _cubeMap.Dispose();
-        Gl.DeleteVertexArray(_vao);
-        Gl.DeleteBuffer(_vbo);
-        Gl.DeleteBuffer(_ebo);
+        _vertexBuffer.Dispose();
+        _indexBuffer.Dispose();
         _shader.Dispose();
     }
 }

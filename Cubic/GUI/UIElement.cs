@@ -149,7 +149,7 @@ public abstract class UIElement
         }
     }
 
-    protected internal virtual void Draw(GraphicsMachine graphics) { }
+    protected internal virtual void Draw(CubicGraphics graphics) { }
 
     protected internal virtual void Remove() { }
 

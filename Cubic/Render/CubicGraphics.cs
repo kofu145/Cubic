@@ -9,10 +9,8 @@ using Silk.NET.GLFW;
 
 namespace Cubic.Render;
 
-public class GraphicsMachine : IDisposable
+public class CubicGraphics : IDisposable
 {
-    public event OnResize ViewportResized;
-    
     private GameWindow _window;
 
     public readonly SpriteRenderer SpriteRenderer;
@@ -36,20 +34,20 @@ public class GraphicsMachine : IDisposable
         set => GraphicsDevice.Scissor = value;
     }
 
-    /*public void SetRenderTarget(RenderTarget target)
+    public void SetRenderTarget(RenderTarget target)
     {
         if (target == null)
         {
-            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GraphicsDevice.SetFramebuffer(null);
             Viewport = new Rectangle(0, 0, _window.Size.Width, _window.Size.Height);
             Scissor = Viewport;
             return;
         }
 
-        Gl.BindFramebuffer(FramebufferTarget.Framebuffer, target.Fbo);
+        GraphicsDevice.SetFramebuffer(target.Framebuffer);
         Viewport = new Rectangle(0, 0, target.Size.Width, target.Size.Height);
         Scissor = Viewport;
-    }*/
+    }
 
     public void Clear(Vector4 clearColor)
     {
@@ -61,7 +59,7 @@ public class GraphicsMachine : IDisposable
         GraphicsDevice.Clear(clearColor);
     }
 
-    internal unsafe GraphicsMachine(GameWindow window, GameSettings settings)
+    internal unsafe CubicGraphics(GameWindow window, GameSettings settings)
     {
         _window = window;
 
@@ -74,7 +72,11 @@ public class GraphicsMachine : IDisposable
         Viewport = new Rectangle(0, 0, window.Size.Width, window.Size.Height);
         
         SpriteRenderer = new SpriteRenderer(GraphicsDevice);
+
+        GraphicsDevice.DepthTest = DepthTest.LessEqual;
+        GraphicsDevice.EnableScissor = true;
         
+
         /*Gl.Enable(EnableCap.Blend);
         Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         

@@ -1,4 +1,5 @@
 using System;
+using Cubic.Graphics;
 using Cubic.Render;
 
 namespace Cubic.Windowing;

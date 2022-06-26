@@ -5,7 +5,7 @@ using System.Numerics;
 using Cubic.Graphics;
 using Cubic.Utilities;
 using Silk.NET.OpenGL;
-using static Cubic.Render.GraphicsMachine;
+using static Cubic.Render.CubicGraphics;
 using Rectangle = System.Drawing.Rectangle;
 using Buffer = Cubic.Graphics.Buffer;
 
@@ -132,17 +132,17 @@ void main()
 
         FramebufferSize = _graphics.Viewport.Size;
 
-        //_graphics.ViewportResized += GraphicsOnViewportResized;
+        _graphics.ViewportResized += GraphicsOnViewportResized;
 
         _useTextureState = false;
     }
 
-    private void GraphicsOnViewportResized(Size size)
+    private void GraphicsOnViewportResized(Rectangle rectangle)
     {
-        _projectionMatrix = Matrix4x4.CreateOrthographicOffCenter(0, _graphics.Viewport.Width,
-            _graphics.Viewport.Height, 0, -1, 1);
+        _projectionMatrix = Matrix4x4.CreateOrthographicOffCenter(0, rectangle.Width,
+            rectangle.Height, 0, -1, 1);
 
-        FramebufferSize = size;
+        FramebufferSize = rectangle.Size;
     }
 
     /// <summary>
@@ -381,9 +381,12 @@ void main()
         Gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
         Gl.FrontFace(FrontFaceDirection.CW);
         Gl.Enable(EnableCap.DepthTest);*/
+
+        _graphics.DepthTest = DepthTest.Disable;
         
         _graphics.SetShaderProgram(_shaderToUse.Program);
-        _graphics.SetTexture(_currentTexture.Tex);
+        _graphics.SetTexture(0, _currentTexture.Tex);
+        _graphics.SetTextureSample(_currentTexture.Tex, _sample);
 
         _graphics.UpdateBuffer(_vertexBuffer, 0, _spriteVertices);
         _graphics.UpdateBuffer(_indexBuffer, 0, _spriteIndices);
@@ -392,6 +395,8 @@ void main()
         _graphics.SetIndexBuffer(_indexBuffer);
         
         _graphics.DrawElements(_currentSpriteIndex * NumIndices);
+
+        _graphics.DepthTest = DepthTest.LessEqual;
 
         Metrics.DrawCallsInternal++;
         
@@ -403,7 +408,7 @@ void main()
         _vertexBuffer.Dispose();
         _indexBuffer.Dispose();
         _shader.Dispose();
-        //_graphics.ViewportResized -= GraphicsOnViewportResized;
+        _graphics.ViewportResized -= GraphicsOnViewportResized;
     }
 
     private struct Sprite
