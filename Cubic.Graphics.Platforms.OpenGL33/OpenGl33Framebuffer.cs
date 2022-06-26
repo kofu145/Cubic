@@ -1,16 +1,16 @@
 using System;
 using Silk.NET.OpenGL;
-using static Cubic.Graphics.Platforms.OpenGL33.OpenGL33GraphicsDevice;
+using static Cubic.Graphics.Platforms.OpenGL33.OpenGl33GraphicsDevice;
 
 namespace Cubic.Graphics.Platforms.OpenGL33;
 
-public class OpenGL33Framebuffer : Framebuffer
+public class OpenGl33Framebuffer : Framebuffer
 {
     public uint Handle;
     
     public override void AttachTexture(Texture texture, int colorAttachment = 0)
     {
-        OpenGL33Texture tex = (OpenGL33Texture) texture;
+        OpenGl33Texture tex = (OpenGl33Texture) texture;
         switch (tex.TextureUsage)
         {
             case TextureUsage.Texture:
@@ -26,7 +26,7 @@ public class OpenGL33Framebuffer : Framebuffer
         }
     }
     
-    internal OpenGL33Framebuffer(uint handle)
+    internal OpenGl33Framebuffer(uint handle)
     {
         Handle = handle;
     }

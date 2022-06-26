@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Cubic.Graphics.Platforms.OpenGL33;
 
-public struct AttribSetup
+internal struct AttribSetup
 {
     public uint TotalSize;
 

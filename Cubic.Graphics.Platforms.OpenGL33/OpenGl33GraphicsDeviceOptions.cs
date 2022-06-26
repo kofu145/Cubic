@@ -1,10 +1,10 @@
 using System;
 using Silk.NET.OpenGL;
-using static Cubic.Graphics.Platforms.OpenGL33.OpenGL33GraphicsDevice;
+using static Cubic.Graphics.Platforms.OpenGL33.OpenGl33GraphicsDevice;
 
 namespace Cubic.Graphics.Platforms.OpenGL33;
 
-public class OpenGL33GraphicsDeviceOptions : GraphicsDeviceOptions
+public class OpenGl33GraphicsDeviceOptions : GraphicsDeviceOptions
 {
     private DepthTest _depthTest;
     private bool _depthEnabled;

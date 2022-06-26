@@ -1,10 +1,10 @@
 using System;
 using Silk.NET.OpenGL;
-using static Cubic.Graphics.Platforms.OpenGL33.OpenGL33GraphicsDevice;
+using static Cubic.Graphics.Platforms.OpenGL33.OpenGl33GraphicsDevice;
 
 namespace Cubic.Graphics.Platforms.OpenGL33;
 
-public class OpenGL33Texture : Texture
+public class OpenGl33Texture : Texture
 {
     public uint Handle;
     public Silk.NET.OpenGL.PixelFormat Format;
@@ -14,7 +14,7 @@ public class OpenGL33Texture : Texture
     private TextureWrap _wrap;
     public TextureTarget Target;
 
-    internal unsafe OpenGL33Texture(uint width, uint height, PixelFormat format, TextureSample sample, bool mipmap, TextureUsage usage, TextureWrap wrap)
+    internal unsafe OpenGl33Texture(uint width, uint height, PixelFormat format, TextureSample sample, bool mipmap, TextureUsage usage, TextureWrap wrap)
     {
         Mipmap = mipmap;
         TextureUsage = usage;

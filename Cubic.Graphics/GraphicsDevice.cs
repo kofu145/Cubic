@@ -23,6 +23,8 @@ public abstract class GraphicsDevice : IDisposable
 
     public abstract Shader CreateShader(params ShaderAttachment[] attachments);
 
+    public abstract byte[] GetPixels(Rectangle region);
+
     public abstract void Clear(Color color);
 
     public abstract void Clear(Vector4 color);

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using Silk.NET.OpenGL;
-using static Cubic.Graphics.Platforms.OpenGL33.OpenGL33GraphicsDevice;
+using static Cubic.Graphics.Platforms.OpenGL33.OpenGl33GraphicsDevice;
 
 namespace Cubic.Graphics.Platforms.OpenGL33;
 
-public class OpenGL33Shader : Shader
+public class OpenGl33Shader : Shader
 {
     public uint Handle;
     public Dictionary<string, int> UniformLocations;
@@ -61,7 +61,7 @@ public class OpenGL33Shader : Shader
         Gl.UniformMatrix4(UniformLocations[uniformName], 1, transpose, (float*) &matrix);
     }
 
-    internal OpenGL33Shader(ShaderAttachment[] attachments)
+    internal OpenGl33Shader(ShaderAttachment[] attachments)
     {
         Handle = Gl.CreateProgram();
         

@@ -1,17 +1,17 @@
 using System;
 using System.Runtime.CompilerServices;
 using Silk.NET.OpenGL;
-using static Cubic.Graphics.Platforms.OpenGL33.OpenGL33GraphicsDevice;
+using static Cubic.Graphics.Platforms.OpenGL33.OpenGl33GraphicsDevice;
 
 namespace Cubic.Graphics.Platforms.OpenGL33;
 
-public class OpenGL33Buffer : Buffer
+public class OpenGl33Buffer : Buffer
 {
     public readonly uint Handle;
     public readonly BufferTargetARB Target;
     public Type Type;
     
-    internal unsafe OpenGL33Buffer(BufferType type, uint size)
+    internal unsafe OpenGl33Buffer(BufferType type, uint size)
     {
         Handle = Gl.GenBuffer();
         Target = type switch

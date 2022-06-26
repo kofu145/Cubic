@@ -65,7 +65,7 @@ public class CubicGraphics : IDisposable
 
         window.Resize += WindowResized;
 
-        GraphicsDevice = new OpenGL33GraphicsDevice(new GlfwContext(GameWindow.GLFW, window.Handle));
+        GraphicsDevice = new OpenGl33GraphicsDevice(new GlfwContext(GameWindow.GLFW, window.Handle));
 
         VSync = settings.VSync;
 
@@ -114,30 +114,12 @@ public class CubicGraphics : IDisposable
         Viewport = new Rectangle(0, 0, size.Width, size.Height);
     }
 
-    /*public unsafe Bitmap Capture(Rectangle region)
+    public Bitmap Capture(Rectangle region)
     {
-        fixed (byte* upsideDownData = new byte[region.Width * region.Height * 3])
-        {
-            Gl.ReadPixels(0, 0, (uint) region.Width, (uint) region.Height, PixelFormat.Rgb, PixelType.UnsignedByte, upsideDownData);
-            // We need to reverse the data as it's stored upside down because OpenGl
-            // We also convert from RGB to RGBA too.
-            byte[] data = new byte[region.Width * region.Height * 4];
-            for (int x = 0; x < region.Width; x++)
-            {
-                for (int y = 0; y < region.Height; y++)
-                {
-                    data[(y * region.Width + x) * 4] = upsideDownData[((region.Height - 1 - y) * region.Width + x) * 3];
-                    data[(y * region.Width + x) * 4 + 1] = upsideDownData[((region.Height - 1 - y) * region.Width + x) * 3 + 1];
-                    data[(y * region.Width + x) * 4 + 2] = upsideDownData[((region.Height - 1 - y) * region.Width + x) * 3 + 2];
-                    data[(y * region.Width + x) * 4 + 3] = 255;
-                }
-            }
-
-            return new Bitmap(region.Width, region.Height, data);
-        }
+        return new Bitmap(region.Width, region.Height, GraphicsDevice.GetPixels(region));
     }
 
-    public Bitmap Capture() => Capture(Viewport);*/
+    public Bitmap Capture() => Capture(Viewport);
 
     public void Dispose()
     {

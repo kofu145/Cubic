@@ -10,7 +10,7 @@ using Silk.NET.OpenGL;
 
 namespace Cubic.Graphics.Platforms.OpenGL33;
 
-public sealed class OpenGL33GraphicsDevice : GraphicsDevice
+public sealed class OpenGl33GraphicsDevice : GraphicsDevice
 {
     public override event OnViewportResized ViewportResized;
     public override GraphicsDeviceOptions Options { get; protected set; }
@@ -23,14 +23,14 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
 
     private IGLContext _context;
     
-    public OpenGL33GraphicsDevice(IGLContext context)
+    public OpenGl33GraphicsDevice(IGLContext context)
     {
         Gl = GL.GetApi(context);
         _vao = Gl.GenVertexArray();
         Gl.BindVertexArray(_vao);
         _context = context;
         _attribsCache = new Dictionary<Type, AttribSetup>();
-        Options = new OpenGL33GraphicsDeviceOptions();
+        Options = new OpenGl33GraphicsDeviceOptions();
         
         // TODO: This
         Gl.Enable(EnableCap.Blend);
@@ -60,22 +60,51 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
 
     public override Buffer CreateBuffer(BufferType type, uint size)
     {
-        return new OpenGL33Buffer(type, size);
+        return new OpenGl33Buffer(type, size);
     }
 
     public override Texture CreateTexture(uint width, uint height, PixelFormat format, TextureSample sample = TextureSample.Linear, bool mipmap = true, TextureUsage usage = TextureUsage.Texture, TextureWrap wrap = TextureWrap.Repeat)
     {
-        return new OpenGL33Texture(width, height, format, sample, mipmap, usage, wrap);
+        return new OpenGl33Texture(width, height, format, sample, mipmap, usage, wrap);
     }
 
     public override Framebuffer CreateFramebuffer()
     {
-        return new OpenGL33Framebuffer(Gl.CreateFramebuffer());
+        return new OpenGl33Framebuffer(Gl.CreateFramebuffer());
     }
 
     public override Shader CreateShader(params ShaderAttachment[] attachments)
     {
-        return new OpenGL33Shader(attachments);
+        return new OpenGl33Shader(attachments);
+    }
+
+    public override unsafe byte[] GetPixels(Rectangle region)
+    {
+        byte[] pixels = new byte[region.Width * region.Height * 4];
+        fixed (byte* pixelPointer = pixels)
+            Gl.ReadPixels(region.X, region.Y, (uint) region.Width, (uint) region.Height, Silk.NET.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, pixelPointer);
+
+        for (int x = 0; x < region.Width; x++)
+        {
+            for (int y = 0; y < region.Height / 2; y++)
+            {
+                int loc = (y * region.Width + x) * 4;
+                int invLoc = ((region.Height - 1 - y) * region.Width + x) * 4;
+                byte r = pixels[invLoc];
+                byte g = pixels[invLoc + 1];
+                byte b = pixels[invLoc + 2];
+                pixels[invLoc] = pixels[loc];
+                pixels[invLoc + 1] = pixels[loc + 1];
+                pixels[invLoc + 2] = pixels[loc + 2];
+                pixels[invLoc + 3] = 255;
+                pixels[loc] = r;
+                pixels[loc + 1] = g;
+                pixels[loc + 2] = b;
+                pixels[loc + 3] = 255;
+            }
+        }
+        
+        return pixels;
     }
 
     public override void Clear(Color color)
@@ -92,25 +121,25 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
 
     public override void SetShader(Shader shader)
     {
-        Gl.UseProgram(((OpenGL33Shader) shader).Handle);
+        Gl.UseProgram(((OpenGl33Shader) shader).Handle);
     }
 
     public override void SetVertexBuffer(Buffer vertexBuffer)
     {
-        OpenGL33Buffer buf = (OpenGL33Buffer) vertexBuffer;
+        OpenGl33Buffer buf = (OpenGl33Buffer) vertexBuffer;
         Gl.BindBuffer(buf.Target, buf.Handle);
         SetupAttribs(buf.Type);
     }
 
     public override void SetIndexBuffer(Buffer indexBuffer)
     {
-        OpenGL33Buffer buf = (OpenGL33Buffer) indexBuffer;
+        OpenGl33Buffer buf = (OpenGl33Buffer) indexBuffer;
         Gl.BindBuffer(buf.Target, buf.Handle);
     }
 
     public override void SetTexture(uint slot, Texture texture)
     {
-        OpenGL33Texture tex = (OpenGL33Texture) texture;
+        OpenGl33Texture tex = (OpenGl33Texture) texture;
         TextureTarget target = tex.TextureUsage switch
         {
             TextureUsage.Texture => TextureTarget.Texture2D,
@@ -124,7 +153,7 @@ public sealed class OpenGL33GraphicsDevice : GraphicsDevice
 
     public override void SetFramebuffer(Framebuffer framebuffer)
     {
-        Gl.BindFramebuffer(FramebufferTarget.Framebuffer, ((OpenGL33Framebuffer) framebuffer)?.Handle ?? 0);
+        Gl.BindFramebuffer(FramebufferTarget.Framebuffer, ((OpenGl33Framebuffer) framebuffer)?.Handle ?? 0);
     }
 
     public override unsafe void DrawElements(uint count)
