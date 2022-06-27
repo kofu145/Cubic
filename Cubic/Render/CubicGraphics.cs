@@ -77,23 +77,6 @@ public class CubicGraphics : IDisposable
         GraphicsDevice.Options.EnableScissor = true;
         GraphicsDevice.Options.CullDirection = CullDirection.CounterClockwise;
         GraphicsDevice.Options.CullFace = CullFace.Back;
-
-
-        /*Gl.Enable(EnableCap.Blend);
-        Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-        
-        Gl.Enable(EnableCap.CullFace);
-        Gl.CullFace(CullFaceMode.Back);
-        Gl.FrontFace(FrontFaceDirection.CW);
-        
-        Gl.Enable(EnableCap.DepthTest);
-        Gl.DepthFunc(DepthFunction.Lequal);
-        
-        Gl.Enable(EnableCap.ScissorTest);
-        Scissor = Viewport;
-        
-        if (settings.MsaaSamples > 0)
-            Gl.Enable(EnableCap.Multisample);*/
     }
     
 

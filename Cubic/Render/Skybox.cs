@@ -113,7 +113,7 @@ void main()
         device.SetTexture(0, _cubeMap.Tex);
         device.SetVertexBuffer(_vertexBuffer);
         device.SetIndexBuffer(_indexBuffer);
-        device.DrawElements((uint) _indices.Length);
+        device.Draw((uint) _indices.Length);
 
         device.Options.CullFace = CullFace.Back;
         device.Options.DepthMask = true;

@@ -16,9 +16,9 @@ public class CubicGame : IDisposable
 
     private static CubicGame _instance;
 
-    //private ImGuiRenderer _imGuiRenderer;
+    private ImGuiRenderer _imGuiRenderer;
 
-    //public ImGuiRenderer ImGui => _imGuiRenderer;
+    public ImGuiRenderer ImGui => _imGuiRenderer;
 
     public readonly GameWindow Window;
     internal static CubicGraphics GraphicsInternal;
@@ -67,7 +67,7 @@ public class CubicGame : IDisposable
 
         AudioDevice = new AudioDevice(_settings.AudioChannels);
 
-        //_imGuiRenderer = new ImGuiRenderer(GraphicsInternal);
+        _imGuiRenderer = new ImGuiRenderer(GraphicsInternal);
         
         SetValues();
 
@@ -110,7 +110,7 @@ public class CubicGame : IDisposable
     protected virtual void Update()
     {
         UI.Update();
-        //_imGuiRenderer.Update(Time.DeltaTime);
+        _imGuiRenderer.Update(Time.DeltaTime);
         SceneManager.Update(this);
         GameUpdate?.Invoke(this, GraphicsInternal);
     }
@@ -119,7 +119,7 @@ public class CubicGame : IDisposable
     {
         SceneManager.Draw();
         UI.Draw(GraphicsInternal);
-        //_imGuiRenderer.Render();
+        _imGuiRenderer.Render();
         GameDraw?.Invoke(this, GraphicsInternal);
     }
 

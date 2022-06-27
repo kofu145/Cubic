@@ -153,7 +153,8 @@ public class OpenGl33Texture : Texture
         Gl.BindTexture(TextureTarget.Texture2D, Handle);
         Gl.TexSubImage2D(TextureTarget.Texture2D, 0, x, y, width, height, Format, PixelType.UnsignedByte, data.ToPointer());
         
-        Gl.GenerateMipmap(TextureTarget.Texture2D);
+        if (Mipmap)
+            Gl.GenerateMipmap(TextureTarget.Texture2D);
     }
 
     public override void GenerateMipmaps()

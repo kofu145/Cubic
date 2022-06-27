@@ -131,6 +131,13 @@ public sealed class OpenGl33GraphicsDevice : GraphicsDevice
         SetupAttribs(buf.Type);
     }
 
+    public override void SetVertexBuffer(Buffer vertexBuffer, uint stride, params ShaderLayout[] layout)
+    {
+        OpenGl33Buffer buf = (OpenGl33Buffer) vertexBuffer;
+        Gl.BindBuffer(buf.Target, buf.Handle);
+        SetupAttribs(stride, layout);
+    }
+
     public override void SetIndexBuffer(Buffer indexBuffer)
     {
         OpenGl33Buffer buf = (OpenGl33Buffer) indexBuffer;
@@ -151,14 +158,29 @@ public sealed class OpenGl33GraphicsDevice : GraphicsDevice
         Gl.BindTexture(target, tex.Handle);
     }
 
+    public override void SetTexture(uint slot, IntPtr texture)
+    {
+        Gl.BindTexture(TextureTarget.Texture2D, (uint) texture.ToInt32());
+    }
+
     public override void SetFramebuffer(Framebuffer framebuffer)
     {
         Gl.BindFramebuffer(FramebufferTarget.Framebuffer, ((OpenGl33Framebuffer) framebuffer)?.Handle ?? 0);
     }
 
-    public override unsafe void DrawElements(uint count)
+    public override unsafe void Draw(uint count)
     {
         Gl.DrawElements(PrimitiveType.Triangles, count, DrawElementsType.UnsignedInt, null);
+    }
+
+    public override unsafe void Draw(uint count, int indices)
+    {
+        Gl.DrawElements(PrimitiveType.Triangles, count, DrawElementsType.UnsignedInt, (void*) indices);
+    }
+
+    public override unsafe void Draw(uint count, int indices, int baseVertex)
+    {
+        Gl.DrawElementsBaseVertex(PrimitiveType.Triangles, count, DrawElementsType.UnsignedShort, (void*) indices, baseVertex);
     }
 
     public override void Dispose()
@@ -173,27 +195,58 @@ public sealed class OpenGl33GraphicsDevice : GraphicsDevice
             FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
             uint totalSizeInBytes = 0;
             List<int> sizes = new List<int>();
+            List<VertexAttribPointerType> types = new List<VertexAttribPointerType>();
             foreach (FieldInfo info in fields)
             {
+                VertexAttribPointerType pointerType = VertexAttribPointerType.Float;
+                Attribute attrib = info.GetCustomAttribute(typeof(AttribTypeAttribute));
+                if (attrib != null)
+                {
+                    Console.WriteLine(((AttribTypeAttribute) attrib).Type);
+                    pointerType = ((AttribTypeAttribute) attrib).Type == AttribType.Byte
+                        ? VertexAttribPointerType.UnsignedByte
+                        : VertexAttribPointerType.Float;
+                }
                 int size = Marshal.SizeOf(info.FieldType);
                 sizes.Add(size);
                 totalSizeInBytes += (uint) size;
+                types.Add(pointerType);
             }
             
             Console.WriteLine($"Create attrib of type {type}");
             
-            setup = new AttribSetup(totalSizeInBytes, sizes);
+            setup = new AttribSetup(totalSizeInBytes, sizes, types);
             _attribsCache.Add(type, setup);
         }
         
         uint location = 0;
         int offset = 0;
 
-        foreach (int size in setup.Sizes)
+        for (int i = 0; i < setup.Sizes.Length; i++)
         {
+            int size = setup.Sizes[i];
+            VertexAttribPointerType vType = setup.Types[i];
             Gl.EnableVertexAttribArray(location);
-            Gl.VertexAttribPointer(location, size / 4, VertexAttribPointerType.Float, false, setup.TotalSize, (void*) offset);
+            Gl.VertexAttribPointer(location, size / 4, vType, false, setup.TotalSize, (void*) offset);
             offset += size;
+            location += 1;
+        }
+    }
+
+    private unsafe void SetupAttribs(uint stride, ShaderLayout[] layouts)
+    {
+        uint location = 0;
+        int offset = 0;
+
+        for (int i = 0; i < layouts.Length; i++)
+        {
+            int size = layouts[i].Size;
+            VertexAttribPointerType vType = layouts[i].Type == AttribType.Byte
+                ? VertexAttribPointerType.UnsignedByte
+                : VertexAttribPointerType.Float;
+            Gl.EnableVertexAttribArray(location);
+            Gl.VertexAttribPointer(location, size, vType, layouts[i].Normalize, stride, (void*) offset);
+            offset += size * 4;
             location += 1;
         }
     }

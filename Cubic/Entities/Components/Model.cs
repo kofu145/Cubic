@@ -172,7 +172,7 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
         device.SetVertexBuffer(_vertexBuffer);
         device.SetIndexBuffer(_indexBuffer);
 
-        device.DrawElements((uint) Indices.Length);
+        device.Draw((uint) Indices.Length);
         Metrics.DrawCallsInternal++;
     }
 

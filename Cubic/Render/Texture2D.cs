@@ -61,9 +61,13 @@ public class Texture2D : Texture
     private static unsafe Cubic.Graphics.Texture CreateTexture(int width, int height, byte[] data, PixelFormat format = PixelFormat.RGBA)
     {
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
-        Cubic.Graphics.Texture tex = device.CreateTexture((uint) width, (uint) height, format);
+        Cubic.Graphics.Texture tex = device.CreateTexture((uint) width, (uint) height, format, mipmap: false);
         if (data != null)
+        {
             tex.Update(0, 0, (uint) width, (uint) height, data);
+            tex.GenerateMipmaps();
+        }
+
         return tex;
     }
 

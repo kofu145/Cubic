@@ -86,7 +86,7 @@ public class InstancedModel : Component
             foreach (Matrix4x4 mat in modelGroup.ModelMatrices)
             {
                 _shader.Set("uModel", mat * Transform.TransformMatrix);
-                device.DrawElements((uint) modelGroup.IndicesLength);
+                device.Draw((uint) modelGroup.IndicesLength);
                 Metrics.DrawCallsInternal++;
             }
         }

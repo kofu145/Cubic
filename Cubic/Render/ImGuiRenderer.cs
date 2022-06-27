@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Cubic.Graphics;
+using Cubic.Graphics.Platforms.OpenGL33;
 using ImGuiNET;
 using Silk.NET.OpenGL;
-using static Cubic.Render.Graphics;
+using Buffer = Cubic.Graphics.Buffer;
 
 namespace Cubic.Render;
 
@@ -16,9 +18,8 @@ public class ImGuiRenderer : IDisposable
 
     private bool _frameBegun;
 
-    private uint _vao;
-    private uint _vbo;
-    private uint _ebo;
+    private Buffer _vertexBuffer;
+    private Buffer _indexBuffer;
 
     private uint _vboSize;
     private uint _eboSize;
@@ -35,15 +36,18 @@ public class ImGuiRenderer : IDisposable
 
     private Dictionary<string, ImFontPtr> _fonts;
 
-    internal ImGuiRenderer(GraphicsMachine graphics)
+    private uint _stride;
+    private ShaderLayout[] _layouts;
+
+    internal ImGuiRenderer(CubicGraphics graphics)
     {
         Scale = Vector2.One;
         _fonts = new Dictionary<string, ImFontPtr>();
 
         _windowWidth = graphics.Viewport.Width;
         _windowHeight = graphics.Viewport.Height;
-        
-        graphics.ViewportResized += WindowOnResize;
+            
+        CubicGraphics.GraphicsDevice.ViewportResized += WindowOnResize;
         Input.TextInput += PressChar;
 
         _pressedChars = new List<char>();
@@ -64,27 +68,20 @@ public class ImGuiRenderer : IDisposable
         _frameBegun = true;
     }
 
-    private void WindowOnResize(Size size)
+    private void WindowOnResize(Rectangle viewport)
     {
-        _windowWidth = size.Width;
-        _windowHeight = size.Height;
+        _windowWidth = viewport.Width;
+        _windowHeight = viewport.Height;
     }
 
     private unsafe void CreateDeviceResources()
     {
-        _vao = Gl.GenVertexArray();
-        
         _vboSize = 10000;
         _eboSize = 2000;
 
-        _vbo = Gl.GenBuffer();
-        _ebo = Gl.GenBuffer();
-        
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
-        Gl.BufferData(BufferTargetARB.ArrayBuffer, _vboSize, null, BufferUsageARB.DynamicDraw);
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, _ebo);
-        Gl.BufferData(BufferTargetARB.ArrayBuffer, _eboSize, null, BufferUsageARB.DynamicDraw);
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
+        _vertexBuffer = device.CreateBuffer(BufferType.VertexBuffer, _vboSize);
+        _indexBuffer = device.CreateBuffer(BufferType.IndexBuffer, _eboSize);
 
         RecreateFontDeviceTexture();
 
@@ -119,29 +116,14 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
 }";
 
         _shader = new Shader(vertexSource, fragmentSource);
-        Gl.UseProgram(_shader.Handle);
-        
-        Gl.BindVertexArray(_vao);
-        
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
-        Gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _ebo);
 
-        uint stride = (uint) Unsafe.SizeOf<ImDrawVert>();
-
-        uint vertexLocation = 0;
-        Gl.EnableVertexAttribArray(vertexLocation);
-        Gl.VertexAttribPointer(vertexLocation, 2, VertexAttribPointerType.Float, false, stride, (void*) 0);
-
-        uint texCoordLocation = 1;
-        Gl.EnableVertexAttribArray(texCoordLocation);
-        Gl.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, stride, (void*) 8);
-
-        uint colorLocation = 2;
-        Gl.EnableVertexAttribArray(colorLocation);
-        Gl.VertexAttribPointer(colorLocation, 4, VertexAttribPointerType.UnsignedByte, true, stride, (void*) 16);
-        
-        Gl.BindVertexArray(0);
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+        _stride = (uint) Unsafe.SizeOf<ImDrawVert>();
+        _layouts = new[]
+        {
+            new ShaderLayout(2, AttribType.Float),
+            new ShaderLayout(2, AttribType.Float),
+            new ShaderLayout(4, AttribType.Byte, true)
+        };
     }
 
     private void RecreateFontDeviceTexture()
@@ -152,7 +134,7 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         _fontTexture = new Texture2D(width, height, false);
         _fontTexture.SetData(pixels, 0, 0, width, height);
         
-        io.Fonts.SetTexID((IntPtr) _fontTexture.Handle);
+        io.Fonts.SetTexID((IntPtr) ((OpenGl33Texture) _fontTexture.Tex).Handle);
         
         io.Fonts.ClearTexData();
     }
@@ -259,9 +241,7 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         {
             _vboSize = (uint) Math.Max(_vboSize * 1.5f, totalVbSize);
             
-            Gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
-            Gl.BufferData(BufferTargetARB.ArrayBuffer, _vboSize, null, BufferUsageARB.DynamicDraw);
-            Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+            _vertexBuffer.Resize(_vboSize);
         }
 
         uint totalIbSize = (uint) (drawData.TotalIdxCount * sizeof(ushort));
@@ -269,51 +249,33 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         {
             _eboSize = (uint) Math.Max(_eboSize * 1.5f, totalIbSize);
             
-            Gl.BindBuffer(BufferTargetARB.ArrayBuffer, _ebo);
-            Gl.BufferData(BufferTargetARB.ArrayBuffer, _eboSize, null, BufferUsageARB.DynamicDraw);
-            Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+            _indexBuffer.Resize(_eboSize);
         }
 
         for (int i = 0; i < drawData.CmdListsCount; i++)
         {
             ImDrawListPtr cmdList = drawData.CmdListsRange[i];
             
-            Gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
-            Gl.BufferSubData(BufferTargetARB.ArrayBuffer,
-                (nint) (vertexOffsetInVertices * Unsafe.SizeOf<ImDrawVert>()), (nuint) (cmdList.VtxBuffer.Size * Unsafe.SizeOf<ImDrawVert>()), cmdList.VtxBuffer.Data.ToPointer());
-            
-            Gl.BindBuffer(BufferTargetARB.ArrayBuffer, _ebo);
-            Gl.BufferSubData(BufferTargetARB.ArrayBuffer, (nint) (indexOffsetInElements * sizeof(ushort)),
-                (nuint) (cmdList.IdxBuffer.Size * sizeof(ushort)), cmdList.IdxBuffer.Data.ToPointer());
+            _vertexBuffer.Update<ImDrawVert>((int) vertexOffsetInVertices, (uint) cmdList.VtxBuffer.Size, cmdList.VtxBuffer.Data);
+            _indexBuffer.Update<ushort>((int) indexOffsetInElements, (uint) cmdList.IdxBuffer.Size, cmdList.IdxBuffer.Data);
 
             vertexOffsetInVertices += (uint) cmdList.VtxBuffer.Size;
             indexOffsetInElements += (uint) cmdList.IdxBuffer.Size;
         }
-        
-        Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
 
         ImGuiIOPtr io = ImGui.GetIO();
 
         Matrix4x4 mvp = Matrix4x4.CreateOrthographicOffCenter(0.0f, io.DisplaySize.X, io.DisplaySize.Y, 0.0f, -1, 1);
-        Gl.UseProgram(_shader.Handle);
         _shader.Set("uProjection", mvp, false);
         _shader.Set("uTexture", 0);
-        
-        Gl.BindVertexArray(_vao);
-        
+
         drawData.ScaleClipRects(io.DisplayFramebufferScale);
 
-        bool wasBlendEnabled = Gl.IsEnabled(EnableCap.Blend);
-        bool wasScissorEnabled = Gl.IsEnabled(EnableCap.ScissorTest);
-        bool wasCullingEnabled = Gl.IsEnabled(EnableCap.CullFace);
-        bool wasDepthTestEnabled = Gl.IsEnabled(EnableCap.DepthTest);
-        
-        Gl.Enable(EnableCap.Blend);
-        Gl.Enable(EnableCap.ScissorTest);
-        Gl.BlendEquation(GLEnum.FuncAdd);
-        Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-        Gl.Disable(EnableCap.CullFace);
-        Gl.Disable(EnableCap.DepthTest);
+        GraphicsDevice device = CubicGraphics.GraphicsDevice;
+        CullFace lastCull = device.Options.CullFace;
+        DepthTest lastTest = device.Options.DepthTest;
+        device.Options.CullFace = CullFace.None;
+        device.Options.DepthTest = DepthTest.Disable;
 
         int vtxOffset = 0;
         int idxOffset = 0;
@@ -327,41 +289,35 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
                 if (pcmd.UserCallback != IntPtr.Zero)
                     throw new NotImplementedException();
                 
-                Gl.ActiveTexture(TextureUnit.Texture0);
-                Gl.BindTexture(TextureTarget.Texture2D, (uint) pcmd.TextureId.ToInt32());
-                Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
-                    (int) TextureMinFilter.Linear);
-                Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
-                    (int) TextureMinFilter.Linear);
+                device.SetTexture(0, pcmd.TextureId);
+                device.SetShader(_shader.Program);
 
+                Vector2 clipOff = drawData.DisplayPos;
                 Vector4 clipRect = pcmd.ClipRect;
-                Gl.Scissor((int) clipRect.X, _windowHeight - (int) clipRect.W, (uint) (clipRect.Z - clipRect.X),
-                    (uint) (clipRect.W - clipRect.Y));
+                device.Scissor = new Rectangle((int) (clipRect.X - clipOff.X), (int) (clipRect.Y - clipOff.Y),
+                    (int) (clipRect.Z - clipOff.X - clipRect.X), (int) (clipRect.W - clipOff.Y - clipRect.Y));
+                
+                Console.WriteLine(device.Scissor);
 
-                Gl.DrawElementsBaseVertex(PrimitiveType.Triangles,  pcmd.ElemCount,
-                    DrawElementsType.UnsignedShort, (void*) (idxOffset * sizeof(ushort)), vtxOffset);
+                device.SetVertexBuffer(_vertexBuffer, _stride, _layouts);
+                device.SetIndexBuffer(_indexBuffer);
+
+                device.Draw(pcmd.ElemCount, idxOffset * sizeof(ushort), vtxOffset);
 
                 idxOffset += (int) pcmd.ElemCount;
             }
 
             vtxOffset += cmdList.VtxBuffer.Size;
         }
-        
-        if (!wasBlendEnabled)
-            Gl.Disable(EnableCap.Blend);
-        if (!wasScissorEnabled)
-            Gl.Disable(EnableCap.ScissorTest);
-        if (wasCullingEnabled)
-            Gl.Enable(EnableCap.CullFace);
-        if (wasDepthTestEnabled)
-            Gl.Enable(EnableCap.DepthTest);
+
+        device.Options.DepthTest = lastTest;
+        device.Options.CullFace = lastCull;
     }
     
     public void Dispose()
     {
-        Gl.DeleteVertexArray(_vbo);
-        Gl.DeleteBuffer(_vbo);
-        Gl.DeleteBuffer(_ebo);
+        _vertexBuffer.Dispose();
+        _indexBuffer.Dispose();
         _fontTexture.Dispose();
         _shader.Dispose();
         GC.SuppressFinalize(this);
@@ -387,6 +343,6 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
 
     public IntPtr TextureToImGui(Texture texture)
     {
-        return (IntPtr) texture.Handle;
+        return (IntPtr) ((OpenGl33Texture) texture.Tex).Handle;
     }
 }

@@ -22,14 +22,31 @@ public class OpenGl33Buffer : Buffer
         };
         Gl.BindBuffer(Target, Handle);
         Gl.BufferData(Target, size, null, BufferUsageARB.DynamicDraw);
+        Size = size;
     }
+
+    public override uint Size { get; protected set; }
 
     public override unsafe void Update<T>(int offset, T[] data)
     {
         Gl.BindBuffer(Target, Handle);
         fixed (void* dat = data)
-            Gl.BufferSubData(Target, offset, (nuint) (data.Length * Unsafe.SizeOf<T>()), dat);
-        Type = data.GetType().GetElementType();
+            Gl.BufferSubData(Target, offset * Unsafe.SizeOf<T>(), (nuint) (data.Length * Unsafe.SizeOf<T>()), dat);
+        Type = typeof(T);
+    }
+
+    public override unsafe void Update<T>(int offset, uint dataLength, IntPtr data)
+    {
+        Gl.BindBuffer(Target, Handle);
+        Gl.BufferSubData(Target, offset * Unsafe.SizeOf<T>(), (nuint) (dataLength * Unsafe.SizeOf<T>()), data.ToPointer());
+        Type = typeof(T);
+    }
+
+    public override unsafe void Resize(uint size)
+    {
+        Gl.BindBuffer(Target, Handle);
+        Gl.BufferData(Target, size, null, BufferUsageARB.DynamicDraw);
+        Size = size;
     }
 
     public override void Dispose()

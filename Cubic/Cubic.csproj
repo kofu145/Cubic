@@ -45,11 +45,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Render\ImGuiRenderer.cs" />
-      <None Include="Render\ImGuiRenderer.cs" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Cubic.Graphics.Platforms.OpenGL33\Cubic.Graphics.Platforms.OpenGL33.csproj" />
       <ProjectReference Include="..\Cubic.Graphics\Cubic.Graphics.csproj" />
     </ItemGroup>

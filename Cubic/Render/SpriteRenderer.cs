@@ -396,7 +396,7 @@ void main()
         _graphics.SetVertexBuffer(_vertexBuffer);
         _graphics.SetIndexBuffer(_indexBuffer);
         
-        _graphics.DrawElements(_currentSpriteIndex * NumIndices);
+        _graphics.Draw(_currentSpriteIndex * NumIndices);
 
         _graphics.Options.DepthTest = current;
         _graphics.Options.CullDirection = CullDirection.Clockwise;
