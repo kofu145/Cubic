@@ -296,8 +296,6 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
                 Vector4 clipRect = pcmd.ClipRect;
                 device.Scissor = new Rectangle((int) (clipRect.X - clipOff.X), (int) (clipRect.Y - clipOff.Y),
                     (int) (clipRect.Z - clipOff.X - clipRect.X), (int) (clipRect.W - clipOff.Y - clipRect.Y));
-                
-                Console.WriteLine(device.Scissor);
 
                 device.SetVertexBuffer(_vertexBuffer, _stride, _layouts);
                 device.SetIndexBuffer(_indexBuffer);
