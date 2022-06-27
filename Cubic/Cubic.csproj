@@ -18,13 +18,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BepuPhysics" Version="2.4.0" />
       <PackageReference Include="FreeTypeSharp" Version="1.1.3" />
       <PackageReference Include="ImGui.NET" Version="1.87.3" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="Silk.NET.GLFW" Version="2.15.0" />
       <PackageReference Include="Silk.NET.OpenAL" Version="2.15.0" />
-      <PackageReference Include="Silk.NET.OpenGL" Version="2.15.0" />
       <PackageReference Include="StbImageSharp" Version="2.27.7" />
       <PackageReference Include="StbImageWriteSharp" Version="1.13.5" />
       <PackageReference Include="StbVorbisSharp" Version="1.16.2" />
@@ -44,6 +42,11 @@
     <ItemGroup>
       <EmbeddedResource Include="Cubic-Logo.png" />
       <EmbeddedResource Include="gamecontrollerdb.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Cubic.Graphics.Platforms.OpenGL33\Cubic.Graphics.Platforms.OpenGL33.csproj" />
+        <ProjectReference Include="..\Cubic.Graphics\Cubic.Graphics.csproj" />
     </ItemGroup>
 
 </Project>
