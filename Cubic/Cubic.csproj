@@ -5,7 +5,7 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <PackageVersion>1.0.0-a2</PackageVersion>
+        <PackageVersion>0.1.0</PackageVersion>
         <Title>Cubic</Title>
         <Authors>Ollie Robinson</Authors>
         <Description>A fast &amp; easy cross-platform 2D &amp; 3D game engine for C#. </Description>
@@ -19,7 +19,8 @@
 
     <ItemGroup>
       <PackageReference Include="BepuPhysics" Version="2.4.0" />
-      <PackageReference Include="FreeTypeSharp" Version="2.0.0.8-ci" />
+      <PackageReference Condition="$([MSBuild]::IsOSPlatform('Linux'))" Include="FreeTypeSharp" Version="2.0.0.12-ci" />
+      <PackageReference Condition="$([MSBuild]::IsOSPlatform('Windows')) Or $([MSBuild]::IsOSPlatform('OSX'))" Include="FreeTypeSharp" Version="1.1.3" />
       <PackageReference Include="ImGui.NET" Version="1.87.3" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="Silk.NET.GLFW" Version="2.15.0" />
