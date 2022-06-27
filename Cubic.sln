@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cubic.Graphics", "Cubic.Gra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cubic.Graphics.Platforms.OpenGL33", "Cubic.Graphics.Platforms.OpenGL33\Cubic.Graphics.Platforms.OpenGL33.csproj", "{0192B5D7-3C9D-4E91-8C60-2980F395D13E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulletSharp.DotNetCore", "BulletSharpPInvoke\BulletSharp\BulletSharp.DotNetCore.csproj", "{A2F7EB46-0CBD-4844-AFE2-06CB5C2AE222}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{0192B5D7-3C9D-4E91-8C60-2980F395D13E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0192B5D7-3C9D-4E91-8C60-2980F395D13E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0192B5D7-3C9D-4E91-8C60-2980F395D13E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2F7EB46-0CBD-4844-AFE2-06CB5C2AE222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2F7EB46-0CBD-4844-AFE2-06CB5C2AE222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2F7EB46-0CBD-4844-AFE2-06CB5C2AE222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2F7EB46-0CBD-4844-AFE2-06CB5C2AE222}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
