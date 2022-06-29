@@ -10,6 +10,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cubic.Graphics.Platforms.Op
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulletSharp.DotNetCore", "BulletSharpPInvoke\BulletSharp\BulletSharp.DotNetCore.csproj", "{A2F7EB46-0CBD-4844-AFE2-06CB5C2AE222}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cubic.Freetype", "Cubic.Freetype\Cubic.Freetype.csproj", "{1B493A99-7035-46A9-ACCF-267C109DD44B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cubic.Graphics.Platforms.GLES20", "Cubic.Graphics.Platforms.GLES20\Cubic.Graphics.Platforms.GLES20.csproj", "{6BFDB091-8667-4BA2-96A1-86A807565A75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{A2F7EB46-0CBD-4844-AFE2-06CB5C2AE222}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2F7EB46-0CBD-4844-AFE2-06CB5C2AE222}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2F7EB46-0CBD-4844-AFE2-06CB5C2AE222}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B493A99-7035-46A9-ACCF-267C109DD44B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B493A99-7035-46A9-ACCF-267C109DD44B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B493A99-7035-46A9-ACCF-267C109DD44B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B493A99-7035-46A9-ACCF-267C109DD44B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BFDB091-8667-4BA2-96A1-86A807565A75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BFDB091-8667-4BA2-96A1-86A807565A75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BFDB091-8667-4BA2-96A1-86A807565A75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BFDB091-8667-4BA2-96A1-86A807565A75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
