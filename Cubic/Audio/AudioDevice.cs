@@ -50,8 +50,8 @@ public sealed unsafe class AudioDevice : IDisposable
     
     internal unsafe AudioDevice(int numChannels)
     {
-        Al = AL.GetApi();
-        ALContext alc = ALContext.GetApi();
+        Al = AL.GetApi(true);
+        ALContext alc = ALContext.GetApi(true);
         _device = alc.OpenDevice(null);
         _context = alc.CreateContext(_device, null);
         alc.MakeContextCurrent(_context);
@@ -386,7 +386,7 @@ public sealed unsafe class AudioDevice : IDisposable
             Al.DeleteSources(NumChannels, sources);
         }
 
-        ALContext alc = ALContext.GetApi();
+        ALContext alc = ALContext.GetApi(true);
         alc.MakeContextCurrent(null);
         alc.DestroyContext(_context);
         alc.CloseDevice(_device);
