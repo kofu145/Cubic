@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using Cubic.Content;
 using Cubic.Render;
 using Cubic.Render.Text;
 using Cubic.Utilities;
@@ -48,15 +49,8 @@ public static partial class UI
         _reversedElements = new List<UIElement>();
         _elementPositions = new List<(int, Rectangle)>();
         
-        /*Assembly assembly = Assembly.GetCallingAssembly();
-        const string name = "Cubic.Roboto-Regular.ttf";
-        using Stream stream = assembly.GetManifestResourceStream(name);
-        using MemoryStream memStr = new MemoryStream();
-        stream.CopyTo(memStr);
-        _defaultFont = new Font(memStr.GetBuffer());*/
-
         if (createFont)
-            DefaultFont = new Font("Roboto-Regular.ttf", autoDispose: false);
+            DefaultFont = new Font(ContentManager.LoadEmbeddedResource("Cubic.Roboto-Regular.ttf"), autoDispose: false);
 
         Theme = new UITheme();
         _charBuffer = new List<char>();

@@ -32,15 +32,12 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
           <PackageCopyToOutput>True</PackageCopyToOutput>
       </Content>
-      <Content Include="Roboto-Regular.ttf">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-          <PackageCopyToOutput>True</PackageCopyToOutput>
-      </Content>
     </ItemGroup>
 
     <ItemGroup>
       <EmbeddedResource Include="Cubic-Logo.png" />
       <EmbeddedResource Include="gamecontrollerdb.txt" />
+      <EmbeddedResource Include="Roboto-Regular.ttf" />
     </ItemGroup>
 
     <ItemGroup>

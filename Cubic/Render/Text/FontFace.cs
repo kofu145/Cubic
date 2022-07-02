@@ -16,14 +16,17 @@ internal unsafe struct FontFace : IDisposable
         Face = face;
     }
 
-    /*public unsafe FontFace(byte[] data)
+    public FontFace(byte[] data)
     {
+        FT_Face* face;
         fixed (byte* p = data)
         {
-            if (FT_New_Memory_Face(FontHelper.FreeType.Native, (IntPtr) p, data.Length, 0, out NativePtr) != FT_Error.FT_Err_Ok)
+            if (FT_New_Memory_Face(FontHelper.FreeType, p, data.Length, 0, (FT_Face*) &face) != 0)
                 throw new CubicException("Font could not be loaded!");
         }
-    }*/
+
+        Face = face;
+    }
 
     public void Dispose()
     {

@@ -41,10 +41,11 @@ public struct Font : IDisposable
         _face = new FontFace(fontPath);
     }
 
-    /*internal Font(byte[] data) : this(0, 128, 1024, 1024, false)
+    public Font(byte[] data, uint unicodeRangeStart = 0, uint unicodeRangeEnd = 128, int texWidth = 1024,
+        int texHeight = 1024, bool autoDispose = true) : this(unicodeRangeStart, unicodeRangeEnd, texWidth, texHeight, autoDispose)
     {
-        _face = new FontFace(File.ReadAllBytes("Content/Fonts/inversionz.ttf"));
-    }*/
+        _face = new FontFace(data);
+    }
 
     private Font(uint unicodeRangeStart, uint unicodeRangeEnd, int texWidth, int texHeight, bool autoDispose)
     {
