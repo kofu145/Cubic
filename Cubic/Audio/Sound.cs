@@ -61,7 +61,6 @@ public partial class Sound : IDisposable
     /// <list type="bullet">
     ///     <item>.wav</item>
     ///     <item>.ogg</item>
-    ///     <item>.ctra</item>
     ///     <item>.s3m</item>
     ///     <item>.it</item>
     /// </list>
@@ -88,11 +87,6 @@ public partial class Sound : IDisposable
             case ".wav":
                 Data = LoadWav(File.ReadAllBytes(path), out Channels, out SampleRate, out BitsPerSample);
                 _type = SoundType.PCM;
-                break;
-            case ".ctra":
-                Data = LoadCtra(File.OpenRead(path), out Channels, out SampleRate, out BitsPerSample,
-                    out soundLoopPoint, out endLoopPoint);
-                _type = SoundType.Track;
                 break;
             case ".ogg":
                 _vorbis = Vorbis.FromMemory(File.ReadAllBytes(path));

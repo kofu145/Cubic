@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Reflection;
-using FreeTypeSharp;
-using FreeTypeSharp.Native;
-using static FreeTypeSharp.Native.FT;
+using Cubic.Freetype;
+using static Cubic.Freetype.FreeType;
 
 namespace Cubic.Render.Text;
 
@@ -16,13 +15,15 @@ public static class FontHelper
 {
     #region Internal bits
 
-    internal static readonly FreeTypeLibrary FreeType;
+    internal static readonly IntPtr FreeType;
 
     internal static readonly Dictionary<string, Color> ColorNames;
 
-    static FontHelper()
+    static unsafe FontHelper()
     {
-        FreeType = new FreeTypeLibrary();
+        IntPtr ft;
+        FT_Init_FreeType(&ft);
+        FreeType = ft;
 
         ColorNames = new Dictionary<string, Color>();
         PropertyInfo[] colorProperties = typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static);
@@ -34,23 +35,21 @@ public static class FontHelper
         uint fontSize, uint asciiRangeStart, uint asciiRangeEnd)
     {
         Dictionary<char, Character> characters = new Dictionary<char, Character>();
-        FT_Set_Pixel_Sizes(face.NativePtr, 0, fontSize);
+        FT_Set_Pixel_Sizes(face.Face, 0, fontSize);
 
         uint offsetX = 0;
         uint offsetY = 0;
-        
-        FreeTypeFaceFacade facade = new FreeTypeFaceFacade(FreeType, face.NativePtr);
 
         // First we run through and gather metrics on each character, generating a texture for the first 128 ASCII
         // characters
         for (uint c = asciiRangeStart; c < asciiRangeEnd; c++)
         {
-            FT_Load_Char(face.NativePtr, c, FT_LOAD_RENDER);
+            FT_Load_Char(face.Face, c, LoadRender);
 
             // Calculate our character's offset based on the last glyph's size.
             // Here, we wrap the glyph to the next "line" of the texture if it overflows the texture's size.
-            FT_Bitmap glyph = facade.GlyphBitmap;
-            if (offsetX + glyph.width >= texture.Size.Width)
+            FT_Bitmap glyph = face.Face->Glyph->Bitmap;
+            if (offsetX + glyph.Width >= texture.Size.Width)
             {
                 offsetY += fontSize;
                 offsetX = 0;
@@ -62,13 +61,13 @@ public static class FontHelper
             // This garbage does this.
             // First calculate the grayscale size of the glyph. Easy enough, just the width x height (fontsize),
             // multiplied by 8 (as each char is 8 bits).
-            uint size = glyph.width * glyph.rows * 8;
+            uint size = glyph.Width * glyph.Rows * 8;
             int offset = 0;
             // We need to create an array that is 4x this size, as we need 4 channels while the current data only has
             // one channel.
             byte[] data = new byte[size * 4];
             // Convert the glyph's buffer to a byte ptr.
-            byte* buf = (byte*) glyph.buffer.ToPointer();
+            byte* buf = glyph.Buffer;
             // We repeat this 4 times for the 4 different channels.
             for (int n = 0; n < 4; n++)
             {
@@ -76,7 +75,7 @@ public static class FontHelper
                 int currOffset = 0;
                 // Set the R, G, and B channels of the glyph to 255 each, as they just need to be white.
                 // The alpha channel is set to the value of the native glyph, producing the result we want.
-                for (int i = 0; i < glyph.width * glyph.rows; i++)
+                for (int i = 0; i < glyph.Width * glyph.Rows; i++)
                 {
                     data[offset++] = 255;
                     data[offset++] = 255;
@@ -85,19 +84,19 @@ public static class FontHelper
                 }
             }
             
-            texture.SetData(data, (int) offsetX, (int) offsetY, (int) glyph.width, (int) glyph.rows);
+            texture.SetData(data, (int) offsetX, (int) offsetY, (int) glyph.Width, (int) glyph.Rows);
 
             // Load each character into the character dictionary so it can be referenced later.
             Character chr = new Character()
             {
                 Position = new Point((int) offsetX, (int) offsetY),
-                Size = new Size((int) facade.GlyphBitmap.width, (int) facade.GlyphBitmap.rows),
-                Bearing = new Point(facade.GlyphBitmapLeft, facade.GlyphBitmapTop),
-                Advance = facade.GlyphMetricHorizontalAdvance
+                Size = new Size((int) glyph.Width, (int) glyph.Rows),
+                Bearing = new Point(face.Face->Glyph->BitmapLeft, face.Face->Glyph->BitmapTop),
+                Advance = face.Face->Glyph->Advance.X
             };
             characters.Add((char) c, chr);
 
-            offsetX += glyph.width;
+            offsetX += glyph.Width;
         }
 
         return characters;
