@@ -26,15 +26,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="openal32.dll">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-          <TargetPath>runtimes/win-x64/native/openal32.dll</TargetPath>
-          <Pack>true</Pack>
-          <PackagePath>runtimes/win-x64/native</PackagePath>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <EmbeddedResource Include="Cubic-Logo.png" />
       <EmbeddedResource Include="gamecontrollerdb.txt" />
       <EmbeddedResource Include="Roboto-Regular.ttf" />
@@ -44,6 +35,17 @@
         <ProjectReference Include="..\Cubic.Freetype\Cubic.Freetype.csproj" />
         <ProjectReference Include="..\Cubic.Graphics.Platforms.OpenGL33\Cubic.Graphics.Platforms.OpenGL33.csproj" />
         <ProjectReference Include="..\Cubic.Graphics\Cubic.Graphics.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Audio\openal32.dll" Link="/openal32.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <!--<TargetPath>/openal32.dll</TargetPath>-->
+        <Pack>true</Pack>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackagePath></PackagePath>
+      </Content>
     </ItemGroup>
 
 </Project>
