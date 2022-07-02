@@ -44,7 +44,7 @@ public static class FontHelper
         // characters
         for (uint c = asciiRangeStart; c < asciiRangeEnd; c++)
         {
-            FT_Load_Char(face.Face, c, LoadRender);
+            FT_Load_Char(face.Face, c, FTLoad.Render);
 
             // Calculate our character's offset based on the last glyph's size.
             // Here, we wrap the glyph to the next "line" of the texture if it overflows the texture's size.
