@@ -20,6 +20,7 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="Silk.NET.GLFW" Version="2.15.0" />
       <PackageReference Include="Silk.NET.OpenAL" Version="2.15.0" />
+      <PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.21.1.1" />
       <PackageReference Include="StbImageSharp" Version="2.27.11" />
       <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
       <PackageReference Include="StbVorbisSharp" Version="1.22.3" />
@@ -38,14 +39,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="Audio\openal32.dll" Link="/openal32.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        <!--<TargetPath>/openal32.dll</TargetPath>-->
-        <Pack>true</Pack>
-        <PackageCopyToOutput>true</PackageCopyToOutput>
-        <PackagePath></PackagePath>
-      </Content>
+      <Folder Include="..\..\..\..\..\..">
+        <Link></Link>
+      </Folder>
     </ItemGroup>
 
 </Project>
