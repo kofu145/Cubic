@@ -5,6 +5,23 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Authors>Ollie Robinson</Authors>
+        <Description>A fast &amp; easy cross-platform 2D &amp; 3D game engine for C#. </Description>
+        <Copyright>Isometric Software</Copyright>
+        <PackageProjectUrl>https://github.com/IsometricSoftware/Cubic</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/IsometricSoftware/Cubic/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/IsometricSoftware/Cubic</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Game engine;OpenGL;</PackageTags>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="freetype.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <TargetPath>runtimes/win-x64/native/libfreetype.dll</TargetPath>
+          <Pack>true</Pack>
+          <PackagePath>runtimes/win-x64/native</PackagePath>
+      </Content>
+    </ItemGroup>
 
 </Project>

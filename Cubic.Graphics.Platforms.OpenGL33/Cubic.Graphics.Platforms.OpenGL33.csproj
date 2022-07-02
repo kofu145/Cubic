@@ -5,6 +5,14 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Authors>Ollie Robinson</Authors>
+        <Description>A fast &amp; easy cross-platform 2D &amp; 3D game engine for C#. </Description>
+        <Copyright>Isometric Software</Copyright>
+        <PackageProjectUrl>https://github.com/IsometricSoftware/Cubic</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/IsometricSoftware/Cubic/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/IsometricSoftware/Cubic</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Game engine;OpenGL;</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

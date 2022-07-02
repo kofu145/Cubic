@@ -5,8 +5,6 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <PackageVersion>0.1.1</PackageVersion>
-        <Title>Cubic</Title>
         <Authors>Ollie Robinson</Authors>
         <Description>A fast &amp; easy cross-platform 2D &amp; 3D game engine for C#. </Description>
         <Copyright>Isometric Software</Copyright>
@@ -30,7 +28,9 @@
     <ItemGroup>
       <Content Include="openal32.dll">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-          <PackageCopyToOutput>True</PackageCopyToOutput>
+          <TargetPath>runtimes/win-x64/native/openal32.dll</TargetPath>
+          <Pack>true</Pack>
+          <PackagePath>runtimes/win-x64/native</PackagePath>
       </Content>
     </ItemGroup>
 
