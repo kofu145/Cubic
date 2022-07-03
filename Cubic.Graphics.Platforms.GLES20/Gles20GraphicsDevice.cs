@@ -29,7 +29,7 @@ public sealed class Gles20GraphicsDevice : GraphicsDevice
     }
 
     public override Texture CreateTexture(uint width, uint height, PixelFormat format, TextureSample sample = TextureSample.Linear,
-        bool mipmap = true, TextureUsage usage = TextureUsage.Texture, TextureWrap wrap = TextureWrap.Repeat)
+        bool mipmap = true, TextureUsage usage = TextureUsage.Texture, TextureWrap wrap = TextureWrap.Repeat, uint anisotropicLevel = 0)
     {
         throw new NotImplementedException();
     }

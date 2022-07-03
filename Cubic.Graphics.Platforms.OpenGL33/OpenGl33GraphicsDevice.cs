@@ -63,9 +63,9 @@ public sealed class OpenGl33GraphicsDevice : GraphicsDevice
         return new OpenGl33Buffer(type, size);
     }
 
-    public override Texture CreateTexture(uint width, uint height, PixelFormat format, TextureSample sample = TextureSample.Linear, bool mipmap = true, TextureUsage usage = TextureUsage.Texture, TextureWrap wrap = TextureWrap.Repeat)
+    public override Texture CreateTexture(uint width, uint height, PixelFormat format, TextureSample sample = TextureSample.Linear, bool mipmap = true, TextureUsage usage = TextureUsage.Texture, TextureWrap wrap = TextureWrap.Repeat, uint anisotropicLevel = 0)
     {
-        return new OpenGl33Texture(width, height, format, sample, mipmap, usage, wrap);
+        return new OpenGl33Texture(width, height, format, sample, mipmap, usage, wrap, anisotropicLevel);
     }
 
     public override Framebuffer CreateFramebuffer()

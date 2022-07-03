@@ -7,27 +7,28 @@ namespace Cubic.Graphics.Platforms.OpenGL33;
 public class OpenGl33Texture : Texture
 {
     public uint Handle;
-    public Silk.NET.OpenGL.PixelFormat Format;
+    private Silk.NET.OpenGL.PixelFormat _format;
     public TextureUsage TextureUsage;
-    public bool Mipmap;
+    private bool _mipmap;
     private TextureSample _sample;
     private TextureWrap _wrap;
-    public TextureTarget Target;
+    private TextureTarget _target;
+    private uint _anisotropicLevel;
 
-    internal unsafe OpenGl33Texture(uint width, uint height, PixelFormat format, TextureSample sample, bool mipmap, TextureUsage usage, TextureWrap wrap)
+    internal unsafe OpenGl33Texture(uint width, uint height, PixelFormat format, TextureSample sample, bool mipmap, TextureUsage usage, TextureWrap wrap, uint anisotropicLevel)
     {
-        Mipmap = mipmap;
+        _mipmap = mipmap;
         TextureUsage = usage;
         Handle = Gl.GenTexture();
-        Target = usage switch
+        _target = usage switch
         {
             TextureUsage.Texture => TextureTarget.Texture2D,
             TextureUsage.Framebuffer => TextureTarget.Texture2D,
             TextureUsage.Cubemap => TextureTarget.TextureCubeMap,
             _ => throw new ArgumentOutOfRangeException(nameof(usage), usage, null)
         };
-        Gl.BindTexture(Target, Handle);
-        Format = format switch
+        Gl.BindTexture(_target, Handle);
+        _format = format switch
         {
             PixelFormat.RGB => Silk.NET.OpenGL.PixelFormat.Rgb,
             PixelFormat.RGBA => Silk.NET.OpenGL.PixelFormat.Rgba,
@@ -41,15 +42,16 @@ public class OpenGl33Texture : Texture
             case TextureUsage.Cubemap:
                 for (int i = 0; i < 6; i++)
                     Gl.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, InternalFormat.Rgba, width, height, 0,
-                        Format, PixelType.UnsignedByte, null);
+                        _format, PixelType.UnsignedByte, null);
                 break;
             default:
-                Gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, width, height, 0, Format, PixelType.UnsignedByte,
+                Gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, width, height, 0, _format, PixelType.UnsignedByte,
                     null);
                 break;
         }
 
         _wrap = wrap;
+        _anisotropicLevel = anisotropicLevel;
 
         TextureWrapMode mode = wrap switch
         {
@@ -58,18 +60,18 @@ public class OpenGl33Texture : Texture
             _ => throw new ArgumentOutOfRangeException(nameof(wrap), wrap, null)
         };
         
-        Gl.TexParameter(Target, TextureParameterName.TextureWrapS, (int) mode);
-        Gl.TexParameter(Target, TextureParameterName.TextureWrapT, (int) mode);
+        Gl.TexParameter(_target, TextureParameterName.TextureWrapS, (int) mode);
+        Gl.TexParameter(_target, TextureParameterName.TextureWrapT, (int) mode);
         if (usage == TextureUsage.Framebuffer)
-            Gl.TexParameter(Target, GLEnum.TextureWrapR, (int) mode);
-        Gl.TexParameter(Target, GLEnum.TextureMinFilter,
+            Gl.TexParameter(_target, GLEnum.TextureWrapR, (int) mode);
+        Gl.TexParameter(_target, GLEnum.TextureMinFilter,
             sample == TextureSample.Linear
                 ?
                 mipmap ? (int) TextureMinFilter.LinearMipmapLinear : (int) TextureMinFilter.Linear
                 : mipmap
                     ? (int) TextureMinFilter.NearestMipmapNearest
                     : (int) TextureMinFilter.Nearest);
-        Gl.TexParameter(Target, GLEnum.TextureMagFilter,
+        Gl.TexParameter(_target, GLEnum.TextureMagFilter,
             sample == TextureSample.Linear ? (int) TextureMagFilter.Linear : (int) TextureMagFilter.Nearest);
     }
 
@@ -80,11 +82,11 @@ public class OpenGl33Texture : Texture
         {
             _sample = value;
             Gl.BindTexture(TextureTarget.Texture2D, Handle);
-            Gl.TexParameter(Target, GLEnum.TextureMinFilter,
+            Gl.TexParameter(_target, GLEnum.TextureMinFilter,
                 value == TextureSample.Linear
                     ?
-                    Mipmap ? (int) TextureMinFilter.LinearMipmapLinear : (int) TextureMinFilter.Linear
-                    : Mipmap
+                    _mipmap ? (int) TextureMinFilter.LinearMipmapLinear : (int) TextureMinFilter.Linear
+                    : _mipmap
                         ? (int) TextureMinFilter.NearestMipmapNearest
                         : (int) TextureMinFilter.Nearest);
             Gl.TexParameter(TextureTarget.Texture2D, GLEnum.TextureMagFilter,
@@ -110,10 +112,23 @@ public class OpenGl33Texture : Texture
                 _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
             };
             
-            Gl.TexParameter(Target, TextureParameterName.TextureWrapS, (int) mode);
-            Gl.TexParameter(Target, TextureParameterName.TextureWrapT, (int) mode);
+            Gl.TexParameter(_target, TextureParameterName.TextureWrapS, (int) mode);
+            Gl.TexParameter(_target, TextureParameterName.TextureWrapT, (int) mode);
             if (TextureUsage == TextureUsage.Framebuffer)
-                Gl.TexParameter(Target, GLEnum.TextureWrapR, (int) mode);
+                Gl.TexParameter(_target, GLEnum.TextureWrapR, (int) mode);
+        }
+    }
+
+    public override uint AnisotropicLevel
+    {
+        get => _anisotropicLevel;
+        set
+        {
+            _anisotropicLevel = value;
+            Gl.BindTexture(TextureTarget.Texture2D, Handle);
+            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxAnisotropy, value);
+            if (_mipmap)
+                Gl.GenerateMipmap(TextureTarget.Texture2D);
         }
     }
 
@@ -121,9 +136,10 @@ public class OpenGl33Texture : Texture
     {
         Gl.BindTexture(TextureTarget.Texture2D, Handle);
         fixed (void* dat = data)
-            Gl.TexSubImage2D(TextureTarget.Texture2D, 0, x, y, width, height, Format, PixelType.UnsignedByte, dat);
+            Gl.TexSubImage2D(TextureTarget.Texture2D, 0, x, y, width, height, _format, PixelType.UnsignedByte, dat);
         
-        if (Mipmap)
+        Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxAnisotropy, _anisotropicLevel);
+        if (_mipmap)
             Gl.GenerateMipmap(TextureTarget.Texture2D);
     }
 
@@ -142,18 +158,20 @@ public class OpenGl33Texture : Texture
         
         Gl.BindTexture(TextureTarget.TextureCubeMap, Handle);
         fixed (void* dat = data)
-            Gl.TexSubImage2D(target, 0, x, y, width, height, Format, PixelType.UnsignedByte, dat);
+            Gl.TexSubImage2D(target, 0, x, y, width, height, _format, PixelType.UnsignedByte, dat);
         
-        if (Mipmap)
+        Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxAnisotropy, _anisotropicLevel);
+        if (_mipmap)
             Gl.GenerateMipmap(TextureTarget.TextureCubeMap);
     }
 
     public override unsafe void Update(int x, int y, uint width, uint height, IntPtr data)
     {
         Gl.BindTexture(TextureTarget.Texture2D, Handle);
-        Gl.TexSubImage2D(TextureTarget.Texture2D, 0, x, y, width, height, Format, PixelType.UnsignedByte, data.ToPointer());
+        Gl.TexSubImage2D(TextureTarget.Texture2D, 0, x, y, width, height, _format, PixelType.UnsignedByte, data.ToPointer());
         
-        if (Mipmap)
+        Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxAnisotropy, _anisotropicLevel);
+        if (_mipmap)
             Gl.GenerateMipmap(TextureTarget.Texture2D);
     }
 
@@ -161,7 +179,7 @@ public class OpenGl33Texture : Texture
     {
         Gl.BindTexture(TextureTarget.Texture2D, Handle);
         Gl.GenerateMipmap(TextureTarget.Texture2D);
-        Mipmap = true;
+        _mipmap = true;
         Sample = _sample;
     }
 

@@ -44,9 +44,10 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="mipmap">Whether or not to generate mipmaps for this texture automatically. You can manually generate mipmaps by calling <see cref="Texture.GenerateMipmaps()"/></param>
     /// <param name="usage">The usage of this texture (Texture, Cubemap, etc)</param>
     /// <param name="wrap">The wrapping of this texture (Wrap, Clamp, etc)</param>
+    /// <param name="anisotropicLevel">The number of anisotropic texture levels should be generated for this texture, if mipmapping is used.</param>
     /// <returns>The created texture.</returns>
     public abstract Texture CreateTexture(uint width, uint height, PixelFormat format,
-        TextureSample sample = TextureSample.Linear, bool mipmap = true, TextureUsage usage = TextureUsage.Texture, TextureWrap wrap = TextureWrap.Repeat);
+        TextureSample sample = TextureSample.Linear, bool mipmap = true, TextureUsage usage = TextureUsage.Texture, TextureWrap wrap = TextureWrap.Repeat, uint anisotropicLevel = 0);
 
     /// <summary>
     /// Create a framebuffer that can have <see cref="Texture"/>s attached to it.
