@@ -1,22 +1,17 @@
 using System.Runtime.InteropServices;
-#if WINDOWS
-using Long = System.Int32;
-#elif LINUX
-using Long = System.Int64;
-#endif
 
 namespace Cubic.Freetype;
 
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct FT_Face
 {
-    public Long NumFaces;
-    public Long FaceIndex;
+    public CLong NumFaces;
+    public CLong FaceIndex;
 
-    public Long FaceFlags;
-    public Long StyleFlags;
+    public CLong FaceFlags;
+    public CLong StyleFlags;
 
-    public Long NumGlyphs;
+    public CLong NumGlyphs;
 
     public char* FamilyName;
     public char* StyleName;
