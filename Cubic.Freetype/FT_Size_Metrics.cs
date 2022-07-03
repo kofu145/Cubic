@@ -8,11 +8,11 @@ public struct FT_Size_Metrics
     public ushort XPPem;
     public ushort YPPem;
 
-    public long XScale;
-    public long YScale;
+    public int XScale;
+    public int YScale;
 
-    public long Ascender;
-    public long Descender;
-    public long Height;
-    public long MaxAdvance;
+    public int Ascender;
+    public int Descender;
+    public int Height;
+    public int MaxAdvance;
 }

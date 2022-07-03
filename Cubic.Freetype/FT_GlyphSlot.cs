@@ -12,8 +12,8 @@ public unsafe struct FT_GlyphSlot
     public FT_Generic Generic;
 
     public FT_Glyph_Metrics Metrics;
-    public long LinearHoriAdvance;
-    public long LinearVertAdvance;
+    public int LinearHoriAdvance;
+    public int LinearVertAdvance;
     public FT_Vector Advance;
 
     public FT_Glyph_Format Format;
@@ -28,10 +28,10 @@ public unsafe struct FT_GlyphSlot
     public IntPtr Subglyphs;
 
     public void* ControlData;
-    public long ControlLong;
+    public int ControlLength;
 
-    public long LSBDelta;
-    public long RSBDelta;
+    public int LSBDelta;
+    public int RSBDelta;
 
     public void* Other;
 

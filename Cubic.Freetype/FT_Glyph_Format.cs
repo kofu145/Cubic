@@ -1,6 +1,6 @@
 namespace Cubic.Freetype;
 
-public enum FT_Glyph_Format : ulong
+public enum FT_Glyph_Format : uint
 {
     None,
     Composite = ('c' << 24) | ('o' << 16) | ('m' << 8) | 'p',

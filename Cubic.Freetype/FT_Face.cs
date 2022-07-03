@@ -5,13 +5,13 @@ namespace Cubic.Freetype;
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct FT_Face
 {
-    public long NumFaces;
-    public long FaceIndex;
+    public int NumFaces;
+    public int FaceIndex;
 
-    public long FaceFlags;
-    public long StyleFlags;
+    public int FaceFlags;
+    public int StyleFlags;
 
-    public long NumGlyphs;
+    public int NumGlyphs;
 
     public char* FamilyName;
     public char* StyleName;

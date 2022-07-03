@@ -5,14 +5,14 @@ namespace Cubic.Freetype;
 [StructLayout(LayoutKind.Sequential)]
 public struct FT_Glyph_Metrics
 {
-    public long Width;
-    public long Height;
+    public int Width;
+    public int Height;
 
-    public long HoriBearingX;
-    public long HoriBearingY;
-    public long HoriAdvance;
+    public int HoriBearingX;
+    public int HoriBearingY;
+    public int HoriAdvance;
 
-    public long VertBearingX;
-    public long VertBearingY;
-    public long VertAdvance;
+    public int VertBearingX;
+    public int VertBearingY;
+    public int VertAdvance;
 }

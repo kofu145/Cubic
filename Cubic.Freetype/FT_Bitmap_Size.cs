@@ -8,8 +8,8 @@ public struct FT_Bitmap_Size
     public short Height;
     public short Width;
 
-    public long Size;
+    public int Size;
 
-    public long Xppem;
-    public long Yppem;
+    public int Xppem;
+    public int Yppem;
 }

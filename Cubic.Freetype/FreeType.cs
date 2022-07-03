@@ -13,10 +13,10 @@ public static unsafe class FreeType
     public static extern int FT_Done_FreeType(IntPtr library);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int FT_New_Face(IntPtr library, string path, long index, FT_Face* face);
+    public static extern int FT_New_Face(IntPtr library, string path, int index, FT_Face* face);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int FT_New_Memory_Face(IntPtr library, byte* file, long size, long index, FT_Face* face);
+    public static extern int FT_New_Memory_Face(IntPtr library, byte* file, int size, int index, FT_Face* face);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
     public static extern int FT_Done_Face(FT_Face* face);
