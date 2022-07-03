@@ -1,4 +1,9 @@
 using System.Runtime.InteropServices;
+#if WINDOWS
+using Long = System.Int32;
+#elif LINUX
+using Long = System.Int64;
+#endif
 
 namespace Cubic.Freetype;
 
@@ -8,11 +13,11 @@ public struct FT_Size_Metrics
     public ushort XPPem;
     public ushort YPPem;
 
-    public int XScale;
-    public int YScale;
+    public Long XScale;
+    public Long YScale;
 
-    public int Ascender;
-    public int Descender;
-    public int Height;
-    public int MaxAdvance;
+    public Long Ascender;
+    public Long Descender;
+    public Long Height;
+    public Long MaxAdvance;
 }

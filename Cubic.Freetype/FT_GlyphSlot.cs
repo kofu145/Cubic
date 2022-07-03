@@ -1,4 +1,9 @@
 using System.Runtime.InteropServices;
+#if WINDOWS
+using Long = System.Int32;
+#elif LINUX
+using Long = System.Int64;
+#endif
 
 namespace Cubic.Freetype;
 
@@ -12,8 +17,8 @@ public unsafe struct FT_GlyphSlot
     public FT_Generic Generic;
 
     public FT_Glyph_Metrics Metrics;
-    public int LinearHoriAdvance;
-    public int LinearVertAdvance;
+    public Long LinearHoriAdvance;
+    public Long LinearVertAdvance;
     public FT_Vector Advance;
 
     public FT_Glyph_Format Format;
@@ -28,10 +33,10 @@ public unsafe struct FT_GlyphSlot
     public IntPtr Subglyphs;
 
     public void* ControlData;
-    public int ControlLength;
+    public Long ControlLength;
 
-    public int LSBDelta;
-    public int RSBDelta;
+    public Long LSBDelta;
+    public Long RSBDelta;
 
     public void* Other;
 

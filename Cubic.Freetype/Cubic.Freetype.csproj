@@ -14,13 +14,10 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>Game engine;OpenGL;</PackageTags>
     </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <PlatformTarget>x64</PlatformTarget>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <PlatformTarget>x64</PlatformTarget>
+    
+    <PropertyGroup>
+        <DefineConstants Condition="'$(OS)' == 'Windows_NT'">WINDOWS</DefineConstants>
+        <DefineConstants Condition="'$(OS)' == 'UNIX'">LINUX</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

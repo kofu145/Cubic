@@ -1,5 +1,11 @@
 ﻿using System.Runtime.InteropServices;
 
+#if WINDOWS
+using Long = System.Int32;
+#elif LINUX
+using Long = System.Int64;
+#endif
+
 namespace Cubic.Freetype;
 
 public static unsafe class FreeType
@@ -13,10 +19,10 @@ public static unsafe class FreeType
     public static extern int FT_Done_FreeType(IntPtr library);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int FT_New_Face(IntPtr library, string path, int index, FT_Face* face);
+    public static extern int FT_New_Face(IntPtr library, string path, Long index, FT_Face* face);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int FT_New_Memory_Face(IntPtr library, byte* file, int size, int index, FT_Face* face);
+    public static extern int FT_New_Memory_Face(IntPtr library, byte* file, Long size, Long index, FT_Face* face);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
     public static extern int FT_Done_Face(FT_Face* face);
