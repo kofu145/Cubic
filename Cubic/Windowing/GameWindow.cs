@@ -200,7 +200,7 @@ public sealed unsafe class GameWindow : IDisposable
         GLFW.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, profile);
         GLFW.WindowHint(WindowHintInt.ContextVersionMajor, major);
         GLFW.WindowHint(WindowHintInt.ContextVersionMinor, minor);
-        //GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
+        GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
         GLFW.WindowHint(WindowHintInt.Samples, (int) _settings.MsaaSamples);
         GLFW.WindowHint(WindowHintClientApi.ClientApi, api);
 

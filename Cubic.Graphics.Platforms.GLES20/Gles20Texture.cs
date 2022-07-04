@@ -95,16 +95,24 @@ public class Gles20Texture : Texture
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
 
+        InternalFormat fmt = format switch
+        {
+            PixelFormat.RGB => Silk.NET.OpenGLES.InternalFormat.Rgb,
+            PixelFormat.RGBA => Silk.NET.OpenGLES.InternalFormat.Rgba,
+            PixelFormat.BRGA => throw new NotSupportedException("GLES 2.0 does not support BGRA textures."),
+            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+        };
+
         switch (usage)
         {
             
             case TextureUsage.Cubemap:
                 for (int i = 0; i < 6; i++)
-                    Gl.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, InternalFormat.Rgba, width, height, 0,
+                    Gl.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, fmt, width, height, 0,
                         _format, PixelType.UnsignedByte, null);
                 break;
             default:
-                Gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, width, height, 0, _format, PixelType.UnsignedByte,
+                Gl.TexImage2D(TextureTarget.Texture2D, 0, fmt, width, height, 0, _format, PixelType.UnsignedByte,
                     null);
                 break;
         }
