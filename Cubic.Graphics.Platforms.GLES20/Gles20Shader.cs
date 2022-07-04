@@ -61,7 +61,10 @@ public class Gles20Shader : Shader
     public override unsafe void SetUniform(string uniformName, Matrix4x4 matrix, bool transpose = true)
     {
         Gl.UseProgram(Handle);
-        Gl.UniformMatrix4(UniformLocations[uniformName], 1, transpose, (float*) &matrix);
+        Matrix4x4 tm = matrix;
+        if (transpose)
+            tm = Matrix4x4.Transpose(matrix);
+        Gl.UniformMatrix4(UniformLocations[uniformName], 1, false, (float*) &tm);
     }
 
     internal Gles20Shader(ShaderAttachment[] attachments)
