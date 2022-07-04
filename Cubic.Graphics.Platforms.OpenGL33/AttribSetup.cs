@@ -9,11 +9,14 @@ internal struct AttribSetup
 
     public int[] Sizes;
 
+    public int[] Locations;
+
     public VertexAttribPointerType[] Types;
 
-    public AttribSetup(uint totalSize, List<int> sizes, List<VertexAttribPointerType> types)
+    public AttribSetup(uint totalSize, List<int> locations, List<int> sizes, List<VertexAttribPointerType> types)
     {
         TotalSize = totalSize;
+        Locations = locations.ToArray();
         Sizes = sizes.ToArray();
         Types = types.ToArray();
     }

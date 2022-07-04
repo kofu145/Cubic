@@ -27,9 +27,9 @@ public class Model : Component
     public Material Material;
 
     public const string VertexShader = @"
-layout (location = 0) in vec3 aPosition;
-layout (location = 1) in vec2 aTexCoords;
-layout (location = 2) in vec3 aNormals;
+in vec3 aPosition;
+in vec2 aTexCoords;
+in vec3 aNormals;
 
 out vec2 frag_texCoords;
 out vec3 frag_normal;

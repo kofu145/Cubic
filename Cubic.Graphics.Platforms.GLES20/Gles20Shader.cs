@@ -10,8 +10,10 @@ namespace Cubic.Graphics.Platforms.GLES20;
 
 public class Gles20Shader : Shader
 {
-        public uint Handle;
+    public uint Handle;
     public Dictionary<string, int> UniformLocations;
+    public ShaderLayout[] Layout;
+    public uint Stride;
 
     public override void SetUniform(string uniformName, bool value)
     {
@@ -86,22 +88,7 @@ public class Gles20Shader : Shader
                     string[] splitLines = finalCode.Split('\n');
                     for (int l = 0; l < splitLines.Length; l++)
                     {
-                        if (splitLines[l].StartsWith("layout "))
-                        {
-                            splitLines[l] = splitLines[l].Remove(0, 7);
-                            for (int c = 0; c < splitLines[l].Length; c++)
-                            {
-                                if (splitLines[l][c] == ')')
-                                {
-                                    splitLines[l] = splitLines[l].Remove(0, c + 1);
-                                    splitLines[l] = splitLines[l].Trim();
-                                    break;
-                                }
-                            }
-
-                            l--;
-                        }
-                        else if (splitLines[l].StartsWith("in "))
+                        if (splitLines[l].StartsWith("in "))
                         {
                             splitLines[l] = splitLines[l].Remove(0, 3);
                             splitLines[l] = splitLines[l].Insert(0, "attribute ");
@@ -174,6 +161,58 @@ public class Gles20Shader : Shader
         }
 
         UniformLocations = uLocations;
+        
+        List<ShaderLayout> layouts = new List<ShaderLayout>();
+        Gl.GetProgram(Handle, GLEnum.ActiveAttributes, out int numAttributes);
+        uint stride = 0;
+        for (uint i = 0; i < numAttributes; i++)
+        {
+            string name = Gl.GetActiveAttrib(Handle, i, out int size, out AttributeType type);
+            switch (type)
+            {
+                case AttributeType.Int:
+                    size *= 1;
+                    break;
+                case AttributeType.UnsignedInt:
+                    size *= 1;
+                    break;
+                case AttributeType.Float:
+                    size *= 1;
+                    break;
+                case AttributeType.Double:
+                    size *= 1;
+                    break;
+                case AttributeType.FloatVec2:
+                    size *= 2;
+                    break;
+                case AttributeType.FloatVec3:
+                    size *= 3;
+                    break;
+                case AttributeType.FloatVec4:
+                    size *= 4;
+                    break;
+                case AttributeType.IntVec2:
+                    size *= 2;
+                    break;
+                case AttributeType.IntVec3:
+                    size *= 3;
+                    break;
+                case AttributeType.IntVec4:
+                    size *= 4;
+                    break;
+                case AttributeType.Bool:
+                    size *= 1;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            stride += (uint) size * 4;
+            layouts.Add(new ShaderLayout(name, size, AttribType.Float));
+        }
+
+        Stride = stride;
+        Layout = layouts.ToArray();
     }
 
     public override void Dispose()

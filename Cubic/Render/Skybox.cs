@@ -54,7 +54,7 @@ public class Skybox : IDisposable
     };
 
     public const string VertexShader = @"
-layout (location = 0) in vec3 aPosition;
+in vec3 aPosition;
 
 out vec3 frag_texCoords;
 

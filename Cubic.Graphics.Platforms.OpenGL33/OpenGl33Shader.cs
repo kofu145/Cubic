@@ -11,6 +11,8 @@ public class OpenGl33Shader : Shader
 {
     public uint Handle;
     public Dictionary<string, int> UniformLocations;
+    public ShaderLayout[] Layout;
+    public uint Stride;
 
     public override void SetUniform(string uniformName, bool value)
     {
@@ -108,6 +110,58 @@ public class OpenGl33Shader : Shader
         }
 
         UniformLocations = uLocations;
+
+        List<ShaderLayout> layouts = new List<ShaderLayout>();
+        Gl.GetProgram(Handle, GLEnum.ActiveAttributes, out int numAttributes);
+        uint stride = 0;
+        for (uint i = 0; i < numAttributes; i++)
+        {
+            string name = Gl.GetActiveAttrib(Handle, i, out int size, out AttributeType type);
+            switch (type)
+            {
+                case AttributeType.Int:
+                    size *= 1;
+                    break;
+                case AttributeType.UnsignedInt:
+                    size *= 1;
+                    break;
+                case AttributeType.Float:
+                    size *= 1;
+                    break;
+                case AttributeType.Double:
+                    size *= 1;
+                    break;
+                case AttributeType.FloatVec2:
+                    size *= 2;
+                    break;
+                case AttributeType.FloatVec3:
+                    size *= 3;
+                    break;
+                case AttributeType.FloatVec4:
+                    size *= 4;
+                    break;
+                case AttributeType.IntVec2:
+                    size *= 2;
+                    break;
+                case AttributeType.IntVec3:
+                    size *= 3;
+                    break;
+                case AttributeType.IntVec4:
+                    size *= 4;
+                    break;
+                case AttributeType.Bool:
+                    size *= 1;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            stride += (uint) size * 4;
+            layouts.Add(new ShaderLayout(name, size, AttribType.Float));
+        }
+
+        Stride = stride;
+        Layout = layouts.ToArray();
     }
 
     public override void Dispose()

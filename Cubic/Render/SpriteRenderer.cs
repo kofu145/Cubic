@@ -33,12 +33,12 @@ public class SpriteRenderer : IDisposable
     #region Shaders
 
     public const string VertexShader = @"
-layout (location = 0) in vec2 aPosition;
-layout (location = 1) in vec2 aTexCoords;
-layout (location = 2) in vec4 aTint;
-layout (location = 3) in float aRotation;
-layout (location = 4) in vec2 aOrigin;
-layout (location = 5) in vec2 aScale;
+in vec2 aPosition;
+in vec2 aTexCoords;
+in vec4 aTint;
+in float aRotation;
+in vec2 aOrigin;
+in vec2 aScale;
 
 out vec2 frag_texCoords;
 out vec4 frag_tint;

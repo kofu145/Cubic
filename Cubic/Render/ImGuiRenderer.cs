@@ -87,9 +87,9 @@ public class ImGuiRenderer : IDisposable
         RecreateFontDeviceTexture();
 
         const string vertexSource = @"
-layout (location = 0) in vec2 aPosition;
-layout (location = 1) in vec2 aTexCoords;
-layout (location = 2) in vec4 aColor;
+in vec2 aPosition;
+in vec2 aTexCoords;
+in vec4 aColor;
 
 out vec4 frag_color;
 out vec2 frag_texCoords;
@@ -121,9 +121,9 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         _stride = (uint) Unsafe.SizeOf<ImDrawVert>();
         _layouts = new[]
         {
-            new ShaderLayout(2, AttribType.Float),
-            new ShaderLayout(2, AttribType.Float),
-            new ShaderLayout(4, AttribType.Byte, true)
+            new ShaderLayout("aPosition", 2, AttribType.Float),
+            new ShaderLayout("aTexCoords", 2, AttribType.Float),
+            new ShaderLayout("aColor", 4, AttribType.Byte, true)
         };
     }
 
