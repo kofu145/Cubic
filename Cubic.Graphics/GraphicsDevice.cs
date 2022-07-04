@@ -27,6 +27,11 @@ public abstract class GraphicsDevice : IDisposable
     public abstract Rectangle Scissor { get; set; }
     
     /// <summary>
+    /// Get the current graphics API being used
+    /// </summary>
+    public abstract GraphicsApi CurrentApi { get; }
+    
+    /// <summary>
     /// Create a graphics buffer with the given <see cref="BufferType"/> and size.
     /// </summary>
     /// <param name="type">The buffer's type (vertex buffer, index buffer, etc.)</param>

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Cubic.Graphics;
+using Cubic.Graphics.Platforms.GLES20;
 using Cubic.Graphics.Platforms.OpenGL33;
 using ImGuiNET;
 using Silk.NET.OpenGL;
@@ -133,9 +134,19 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
 
         _fontTexture = new Texture2D(width, height, false);
         _fontTexture.SetData(pixels, 0, 0, width, height);
-        
-        io.Fonts.SetTexID((IntPtr) ((OpenGl33Texture) _fontTexture.Tex).Handle);
-        
+
+        switch (CubicGraphics.GraphicsDevice.CurrentApi)
+        {
+            case GraphicsApi.OpenGL33:
+                io.Fonts.SetTexID((IntPtr) ((OpenGl33Texture) _fontTexture.Tex).Handle);
+                break;
+            case GraphicsApi.GLES20:
+                io.Fonts.SetTexID((IntPtr) ((Gles20Texture) _fontTexture.Tex).Handle);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
         io.Fonts.ClearTexData();
     }
 
@@ -341,6 +352,14 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
 
     public IntPtr TextureToImGui(Texture texture)
     {
-        return (IntPtr) ((OpenGl33Texture) texture.Tex).Handle;
+        switch (CubicGraphics.GraphicsDevice.CurrentApi)
+        {
+            case GraphicsApi.OpenGL33:
+                return (IntPtr) ((OpenGl33Texture) texture.Tex).Handle;
+            case GraphicsApi.GLES20:
+                return (IntPtr) ((Gles20Texture) texture.Tex).Handle;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }

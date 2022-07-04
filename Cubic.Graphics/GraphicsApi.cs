@@ -12,4 +12,6 @@ public enum GraphicsApi
     /// OpenGL 3.3
     /// </summary>
     OpenGL33,
+    
+    GLES20
 }

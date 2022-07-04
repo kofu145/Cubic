@@ -170,14 +170,39 @@ public sealed unsafe class GameWindow : IDisposable
         
         if (!GLFW.Init())
             throw new CubicException("GLFW could not initialise.");
-        
+
+        OpenGlProfile profile;
+        int major, minor;
+        ClientApi api;
+        switch (_settings.GraphicsApi)
+        {
+            case GraphicsApi.Default:
+                throw new CubicException("Currently cubic cannot pick a default API - please state an API to use.");
+                break;
+            case GraphicsApi.OpenGL33:
+                profile = OpenGlProfile.Core;
+                major = 3;
+                minor = 3;
+                api = ClientApi.OpenGL;
+                break;
+            case GraphicsApi.GLES20:
+                profile = OpenGlProfile.Any;
+                major = 2;
+                minor = 0;
+                api = ClientApi.OpenGLES;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
         GLFW.WindowHint(WindowHintBool.Visible, false);
         GLFW.WindowHint(WindowHintBool.Resizable, _settings.Resizable);
-        GLFW.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
-        GLFW.WindowHint(WindowHintInt.ContextVersionMajor, 3);
-        GLFW.WindowHint(WindowHintInt.ContextVersionMinor, 3);
-        GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
+        GLFW.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, profile);
+        GLFW.WindowHint(WindowHintInt.ContextVersionMajor, major);
+        GLFW.WindowHint(WindowHintInt.ContextVersionMinor, minor);
+        //GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
         GLFW.WindowHint(WindowHintInt.Samples, (int) _settings.MsaaSamples);
+        GLFW.WindowHint(WindowHintClientApi.ClientApi, api);
 
         GMonitor* monitor = GLFW.GetPrimaryMonitor();
         VideoMode* mode = GLFW.GetVideoMode(monitor);

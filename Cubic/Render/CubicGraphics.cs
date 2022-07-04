@@ -2,9 +2,11 @@ using System;
 using System.Drawing;
 using System.Numerics;
 using Cubic.Graphics;
+using Cubic.Graphics.Platforms.GLES20;
 using Cubic.Graphics.Platforms.OpenGL33;
 using Cubic.Utilities;
 using Cubic.Windowing;
+using Silk.NET.Core.Contexts;
 using Silk.NET.GLFW;
 
 namespace Cubic.Render;
@@ -65,7 +67,21 @@ public class CubicGraphics : IDisposable
 
         window.Resize += WindowResized;
 
-        GraphicsDevice = new OpenGl33GraphicsDevice(new GlfwContext(GameWindow.GLFW, window.Handle));
+        IGLContext context = new GlfwContext(GameWindow.GLFW, window.Handle);
+
+        switch (settings.GraphicsApi)
+        {
+            case GraphicsApi.Default:
+                break;
+            case GraphicsApi.OpenGL33:
+                GraphicsDevice = new OpenGl33GraphicsDevice(context);
+                break;
+            case GraphicsApi.GLES20:
+                GraphicsDevice = new Gles20GraphicsDevice(context);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
 
         VSync = settings.VSync;
 

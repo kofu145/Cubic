@@ -58,7 +58,7 @@ void main()
 
     gl_Position = vec4(vertexPos, 0.0, 1.0) * uProjectionView;
     vec2 texCoords = aTexCoords;
-    texCoords.y *= -1;
+    texCoords.y *= -1.0;
     frag_texCoords = texCoords;
     frag_tint = aTint;
 }";

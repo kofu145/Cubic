@@ -58,6 +58,8 @@ public sealed class OpenGl33GraphicsDevice : GraphicsDevice
         }
     }
 
+    public override GraphicsApi CurrentApi => GraphicsApi.OpenGL33;
+
     public override Buffer CreateBuffer(BufferType type, uint size)
     {
         return new OpenGl33Buffer(type, size);

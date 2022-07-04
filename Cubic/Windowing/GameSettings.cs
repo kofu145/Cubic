@@ -99,7 +99,7 @@ public struct GameSettings
         TargetFps = 60;
         Location = new Point(-1, -1);
         StartVisible = true;
-        GraphicsApi = GraphicsApi.Default;
+        GraphicsApi = GraphicsApi.OpenGL33;
         AudioChannels = 32;
         Icon = default;
         MsaaSamples = 0;
