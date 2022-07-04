@@ -105,12 +105,12 @@ void main()
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
         device.Options.CullFace = CullFace.Front;
         device.Options.DepthMask = false;
-        device.SetShader(_shader.Program);
+        device.SetShader(_shader.InternalProgram);
         _shader.Set("uProjection", camera.ProjectionMatrix);
         // Convert the camera's 4x4 view matrix to a 3x3 rotation matrix - we only need rotation, not translation.
         _shader.Set("uView", camera.ViewMatrix.To3x3Matrix());
         
-        device.SetTexture(0, _cubeMap.Tex);
+        device.SetTexture(0, _cubeMap.InternalTexture);
         device.SetVertexBuffer(_vertexBuffer);
         device.SetIndexBuffer(_indexBuffer);
         device.Draw((uint) _indices.Length);

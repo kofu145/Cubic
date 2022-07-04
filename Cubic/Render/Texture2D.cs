@@ -24,7 +24,7 @@ public class Texture2D : Texture
     {
         ImageResult result = ImageResult.FromMemory(File.ReadAllBytes(path));
             
-        Tex = CreateTexture(result.Width, result.Height, result.Data,
+        InternalTexture = CreateTexture(result.Width, result.Height, result.Data,
             result.Comp == ColorComponents.RedGreenBlueAlpha ? PixelFormat.RGBA : PixelFormat.RGB);
         Size = new Size(result.Width, result.Height);
         Path = path;
@@ -32,30 +32,30 @@ public class Texture2D : Texture
 
     public Texture2D(int width, int height, byte[] data, bool autoDispose = true) : base(autoDispose)
     {
-        Tex = CreateTexture(width, height, data);
+        InternalTexture = CreateTexture(width, height, data);
         Size = new Size(width, height);
     }
 
     public Texture2D(int width, int height, bool autoDispose = true) : base(autoDispose)
     {
-        Tex = CreateTexture(width, height, null);
+        InternalTexture = CreateTexture(width, height, null);
         Size = new Size(width, height);
     }
 
     public Texture2D(Bitmap bitmap, bool autoDispose = true) : base(autoDispose)
     {
-        Tex = CreateTexture(bitmap.Size.Width, bitmap.Size.Height, bitmap.Data);
+        InternalTexture = CreateTexture(bitmap.Size.Width, bitmap.Size.Height, bitmap.Data);
         Size = bitmap.Size;
     }
 
     public unsafe void SetData(IntPtr data, int x, int y, int width, int height)
     {
-        Tex.Update(x, y, (uint) width, (uint) height, data);
+        InternalTexture.Update(x, y, (uint) width, (uint) height, data);
     }
 
     public unsafe void SetData(byte[] data, int x, int y, int width, int height)
     {
-        Tex.Update(x, y, (uint) width, (uint) height, data);
+        InternalTexture.Update(x, y, (uint) width, (uint) height, data);
     }
 
     private static unsafe Cubic.Graphics.Texture CreateTexture(int width, int height, byte[] data, PixelFormat format = PixelFormat.RGBA)

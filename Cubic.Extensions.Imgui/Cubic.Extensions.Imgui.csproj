@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Cubic.Graphics.Platforms.GLES20\Cubic.Graphics.Platforms.GLES20.csproj" />
+      <ProjectReference Include="..\Cubic.Graphics.Platforms.OpenGL33\Cubic.Graphics.Platforms.OpenGL33.csproj" />
+      <ProjectReference Include="..\Cubic.Graphics\Cubic.Graphics.csproj" />
+      <ProjectReference Include="..\Cubic\Cubic.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ImGui.NET" Version="1.87.3" />
+    </ItemGroup>
+
+</Project>

@@ -164,10 +164,10 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
 
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
         
-        device.SetTexture(0, Material.Albedo.Tex);
-        device.SetTexture(1, Material.Specular.Tex);
+        device.SetTexture(0, Material.Albedo.InternalTexture);
+        device.SetTexture(1, Material.Specular.InternalTexture);
         
-        device.SetShader(_shader.Program);
+        device.SetShader(_shader.InternalProgram);
         
         device.SetVertexBuffer(_vertexBuffer);
         device.SetIndexBuffer(_indexBuffer);

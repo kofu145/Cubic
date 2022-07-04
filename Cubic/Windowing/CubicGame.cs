@@ -9,6 +9,7 @@ namespace Cubic.Windowing;
 public class CubicGame : IDisposable
 {
     public event OnInitialize GameInitialize;
+    public event OnBeforeUpdate GameBeforeUpdate;
     public event OnUpdate GameUpdate;
     public event OnDraw GameDraw;
     
@@ -16,14 +17,10 @@ public class CubicGame : IDisposable
 
     private static CubicGame _instance;
 
-    private ImGuiRenderer _imGuiRenderer;
-
-    public ImGuiRenderer ImGui => _imGuiRenderer;
-
     public readonly GameWindow Window;
     internal static CubicGraphics GraphicsInternal;
 
-    protected CubicGraphics Graphics => GraphicsInternal;
+    public CubicGraphics Graphics => GraphicsInternal;
     protected Scene CurrentScene => SceneManager.Active;
     public AudioDevice AudioDevice { get; private set; }
 
@@ -67,8 +64,6 @@ public class CubicGame : IDisposable
 
         AudioDevice = new AudioDevice(_settings.AudioChannels);
 
-        _imGuiRenderer = new ImGuiRenderer(GraphicsInternal);
-        
         SetValues();
 
         Window.WindowMode = _settings.WindowMode;
@@ -109,8 +104,8 @@ public class CubicGame : IDisposable
 
     protected virtual void Update()
     {
+        GameBeforeUpdate?.Invoke(this, GraphicsInternal);
         UI.Update();
-        _imGuiRenderer.Update(Time.DeltaTime);
         SceneManager.Update(this);
         GameUpdate?.Invoke(this, GraphicsInternal);
     }
@@ -119,7 +114,6 @@ public class CubicGame : IDisposable
     {
         SceneManager.Draw();
         UI.Draw(GraphicsInternal);
-        _imGuiRenderer.Render();
         GameDraw?.Invoke(this, GraphicsInternal);
     }
 
@@ -144,6 +138,6 @@ public class CubicGame : IDisposable
 
     public delegate void OnInitialize(CubicGame game, CubicGraphics graphics);
     public delegate void OnUpdate(CubicGame game, CubicGraphics graphics);
-
+    public delegate void OnBeforeUpdate(CubicGame game, CubicGraphics graphics);
     public delegate void OnDraw(CubicGame game, CubicGraphics graphics);
 }

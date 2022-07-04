@@ -4,7 +4,7 @@ using Cubic.Entities;
 using Cubic.Render;
 using Cubic.Windowing;
 
-namespace Cubic.Physics;
+namespace Cubic.Extensions.Physics;
 
 public static class Physics
 {

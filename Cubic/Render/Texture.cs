@@ -9,7 +9,7 @@ namespace Cubic.Render;
 
 public abstract class Texture : IDisposable
 {
-    internal Cubic.Graphics.Texture Tex;
+    public Cubic.Graphics.Texture InternalTexture;
     
     [JsonIgnore]
     public Size Size { get; protected set; }
@@ -22,7 +22,7 @@ public abstract class Texture : IDisposable
 
     public virtual void Dispose()
     {
-        Tex.Dispose();
+        InternalTexture.Dispose();
 #if DEBUG
         Console.WriteLine("Texture disposed");
 #endif

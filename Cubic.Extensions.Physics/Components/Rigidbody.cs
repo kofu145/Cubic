@@ -1,7 +1,7 @@
 using BulletSharp;
 using Cubic.Entities.Components;
 
-namespace Cubic.Physics.Components;
+namespace Cubic.Extensions.Physics.Components;
 
 public class Rigidbody : Component
 {

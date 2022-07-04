@@ -75,10 +75,10 @@ public class InstancedModel : Component
 
             GraphicsDevice device = CubicGraphics.GraphicsDevice;
             
-            device.SetTexture(0, modelGroup.Material.Albedo.Tex);
-            device.SetTexture(1, modelGroup.Material.Specular.Tex);
+            device.SetTexture(0, modelGroup.Material.Albedo.InternalTexture);
+            device.SetTexture(1, modelGroup.Material.Specular.InternalTexture);
             
-            device.SetShader(_shader.Program);
+            device.SetShader(_shader.InternalProgram);
             
             device.SetVertexBuffer(modelGroup.VertexBuffer);
             device.SetIndexBuffer(modelGroup.IndexBuffer);

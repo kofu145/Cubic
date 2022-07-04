@@ -6,11 +6,14 @@ using System.Runtime.CompilerServices;
 using Cubic.Graphics;
 using Cubic.Graphics.Platforms.GLES20;
 using Cubic.Graphics.Platforms.OpenGL33;
+using Cubic.Render;
+using Cubic.Windowing;
 using ImGuiNET;
-using Silk.NET.OpenGL;
 using Buffer = Cubic.Graphics.Buffer;
+using Shader = Cubic.Render.Shader;
+using Texture = Cubic.Render.Texture;
 
-namespace Cubic.Render;
+namespace Cubic.Extensions.Imgui;
 
 public class ImGuiRenderer : IDisposable
 {
@@ -40,13 +43,16 @@ public class ImGuiRenderer : IDisposable
     private uint _stride;
     private ShaderLayout[] _layouts;
 
-    internal ImGuiRenderer(CubicGraphics graphics)
+    public ImGuiRenderer(CubicGame game)
     {
+        game.GameBeforeUpdate += Update;
+        game.GameDraw += Render;
+        
         Scale = Vector2.One;
         _fonts = new Dictionary<string, ImFontPtr>();
 
-        _windowWidth = graphics.Viewport.Width;
-        _windowHeight = graphics.Viewport.Height;
+        _windowWidth = game.Graphics.Viewport.Width;
+        _windowHeight = game.Graphics.Viewport.Height;
             
         CubicGraphics.GraphicsDevice.ViewportResized += WindowOnResize;
         Input.TextInput += PressChar;
@@ -75,7 +81,7 @@ public class ImGuiRenderer : IDisposable
         _windowHeight = viewport.Height;
     }
 
-    private unsafe void CreateDeviceResources()
+    private void CreateDeviceResources()
     {
         _vboSize = 10000;
         _eboSize = 2000;
@@ -138,10 +144,10 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         switch (CubicGraphics.GraphicsDevice.CurrentApi)
         {
             case GraphicsApi.OpenGL33:
-                io.Fonts.SetTexID((IntPtr) ((OpenGl33Texture) _fontTexture.Tex).Handle);
+                io.Fonts.SetTexID((IntPtr) ((OpenGl33Texture) _fontTexture.InternalTexture).Handle);
                 break;
             case GraphicsApi.GLES20:
-                io.Fonts.SetTexID((IntPtr) ((Gles20Texture) _fontTexture.Tex).Handle);
+                io.Fonts.SetTexID((IntPtr) ((Gles20Texture) _fontTexture.InternalTexture).Handle);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -150,7 +156,7 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         io.Fonts.ClearTexData();
     }
 
-    internal void Render()
+    private void Render(CubicGame game, CubicGraphics graphics)
     {
         if (_frameBegun)
         {
@@ -160,12 +166,12 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         }
     }
 
-    internal void Update(float deltaSeconds)
+    private void Update(CubicGame game, CubicGraphics graphics)
     {
         if (_frameBegun)
             ImGui.Render();
 
-        SetPerFrameImGuiData(deltaSeconds);
+        SetPerFrameImGuiData(Time.DeltaTime);
         UpdateImGuiInput();
 
         _frameBegun = true;
@@ -239,7 +245,7 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         io.KeyMap[(int)ImGuiKey.Z] = (int)Keys.Z;
     }
 
-    private unsafe void RenderImDrawData(ImDrawDataPtr drawData)
+    private void RenderImDrawData(ImDrawDataPtr drawData)
     {
         uint vertexOffsetInVertices = 0;
         uint indexOffsetInElements = 0;
@@ -301,7 +307,7 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
                     throw new NotImplementedException();
                 
                 device.SetTexture(0, pcmd.TextureId);
-                device.SetShader(_shader.Program);
+                device.SetShader(_shader.InternalProgram);
 
                 Vector2 clipOff = drawData.DisplayPos;
                 Vector4 clipRect = pcmd.ClipRect;
@@ -355,9 +361,9 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         switch (CubicGraphics.GraphicsDevice.CurrentApi)
         {
             case GraphicsApi.OpenGL33:
-                return (IntPtr) ((OpenGl33Texture) texture.Tex).Handle;
+                return (IntPtr) ((OpenGl33Texture) texture.InternalTexture).Handle;
             case GraphicsApi.GLES20:
-                return (IntPtr) ((Gles20Texture) texture.Tex).Handle;
+                return (IntPtr) ((Gles20Texture) texture.InternalTexture).Handle;
             default:
                 throw new ArgumentOutOfRangeException();
         }

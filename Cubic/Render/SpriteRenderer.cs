@@ -125,7 +125,7 @@ void main()
         _indexBuffer = _graphics.CreateBuffer(BufferType.IndexBuffer, MaxSprites * IndexSizeInBytes);
 
         _shader = new Shader(VertexShader, FragmentShader);
-        _graphics.SetShader(_shader.Program);
+        _graphics.SetShader(_shader.InternalProgram);
 
         _projectionMatrix = Matrix4x4.CreateOrthographicOffCenter(0, _graphics.Viewport.Width,
             _graphics.Viewport.Height, 0, -1f, 1f);
@@ -386,9 +386,9 @@ void main()
         _graphics.Options.DepthTest = DepthTest.Disable;
         _graphics.Options.CullDirection = CullDirection.CounterClockwise;
         
-        _graphics.SetShader(_shaderToUse.Program);
-        _graphics.SetTexture(0, _currentTexture.Tex);
-        _currentTexture.Tex.Sample = _sample;
+        _graphics.SetShader(_shaderToUse.InternalProgram);
+        _graphics.SetTexture(0, _currentTexture.InternalTexture);
+        _currentTexture.InternalTexture.Sample = _sample;
 
         _vertexBuffer.Update(0, _spriteVertices);
         _indexBuffer.Update(0, _spriteIndices);
