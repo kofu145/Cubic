@@ -536,7 +536,16 @@ public partial class Sound
 
                         if (_samples[_channels[c].SampleId].SixteenBit)
                         {
-                            newSample = (short) (((_samples[_channels[c].SampleId].Data[(int) (_channels[c].SamplePos - _channels[c].SamplePos % 2) + a * (_samples[_channels[c].SampleId].Stereo ? 1 : 0) * _samples[_channels[c].SampleId].Length]) | _samples[_channels[c].SampleId].Data[(int) (_channels[c].SamplePos - _channels[c].SamplePos % 2) + 1 + a] << 8) - (_samples[_channels[c].SampleId].Signed ? 0 : short.MaxValue));
+                            newSample = (short) ((_samples[_channels[c].SampleId].Data[(int) (_channels[c].SamplePos - _channels[c].SamplePos % 2) + a * (_samples[_channels[c].SampleId].Stereo ? 1 : 0) * _samples[_channels[c].SampleId].Length * 2] | (_samples[_channels[c].SampleId].Data[(int) (_channels[c].SamplePos - _channels[c].SamplePos % 2) + 1 + a * (_samples[_channels[c].SampleId].Stereo ? 1 : 0) * _samples[_channels[c].SampleId].Length * 2] << 8)) - (_samples[_channels[c].SampleId].Signed ? 0 : short.MaxValue));
+                            if (_interpolation)
+                            {
+                                int nextPos = _channels[c].Ratio < 1 ? (int) ((_channels[c].SamplePos - _channels[c].SamplePos % 2) + a * (_samples[_channels[c].SampleId].Stereo ? 1 : 0) * _samples[_channels[c].SampleId].Length * 2 + 2) : (int) ((_channels[c].SamplePos - _channels[c].SamplePos % 2) + a * (_samples[_channels[c].SampleId].Stereo ? 1 : 0) * _samples[_channels[c].SampleId].Length * 2 + _channels[c].Ratio * 2);
+                                if (nextPos < _samples[_channels[c].SampleId].Data.Length)
+                                {
+                                    short nextSample = (short) ((_samples[_channels[c].SampleId].Data[nextPos] | _samples[_channels[c].SampleId].Data[nextPos + 1] << 8) - (_samples[_channels[c].SampleId].Signed ? 0 : short.MaxValue));
+                                    newSample = (short) CubicMath.Lerp(newSample, nextSample, (_channels[c].SamplePos / 2 - (int) _channels[c].SamplePos / 2) / 1);
+                                }
+                            }
                         }
                         else
                         {

@@ -43,7 +43,7 @@ public class ImGuiRenderer : IDisposable
     private uint _stride;
     private ShaderLayout[] _layouts;
 
-    public ImGuiRenderer(CubicGame game)
+    public ImGuiRenderer(CubicGame game, params ImGuiFont[] fonts)
     {
         game.GameBeforeUpdate += Update;
         game.GameDraw += Render;
@@ -66,11 +66,14 @@ public class ImGuiRenderer : IDisposable
         io.Fonts.AddFontDefault();
         io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
 
+        foreach (ImGuiFont font in fonts)
+            _fonts.Add(font.Name, ImGui.GetIO().Fonts.AddFontFromFileTTF(font.Path, font.Size));
+        
         CreateDeviceResources();
         SetKeyMappings();
 
         SetPerFrameImGuiData(1f / 60f);
-        
+
         ImGui.NewFrame();
         _frameBegun = true;
     }
@@ -336,14 +339,6 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         _fontTexture.Dispose();
         _shader.Dispose();
         GC.SuppressFinalize(this);
-    }
-
-    public void AddFont(string name, string path, int size)
-    {
-        if (_fonts.ContainsKey(name))
-            return;
-        _fonts.Add(name, ImGui.GetIO().Fonts.AddFontFromFileTTF(path, size));
-        RecreateFontDeviceTexture();
     }
 
     public void SetFont(string name)
