@@ -66,4 +66,9 @@ public static class Extensions
             0,          0,          0,          1
         );
     }
+
+    public static float NextFloat(this Random random, float min, float max)
+    {
+        return random.NextSingle() * (max - min) + min;
+    }
 }
