@@ -141,39 +141,17 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
     protected internal override unsafe void Draw()
     {
         base.Draw();
-        
-        _shader.Set("uProjection", Camera.Main.ProjectionMatrix);
-        _shader.Set("uView", Camera.Main.ViewMatrix);
-        _shader.Set("uModel",  Transform.TransformMatrix);
-        
-        _shader.Set("uCameraPos", Camera.Main.Transform.Position);
-        _shader.Set("uMaterial.albedo", 0);
-        _shader.Set("uMaterial.specular", 1);
-        _shader.Set("uMaterial.color", Material.Color);
-        _shader.Set("uMaterial.shininess", Material.Shininess);
-        DirectionalLight sun = SceneManager.Active.World.Sun;
-        Vector3 sunColor = sun.Color.Normalize().ToVector3();
-        float sunDegX = CubicMath.ToRadians(sun.Direction.X);
-        float sunDegY = CubicMath.ToRadians(-sun.Direction.Y);
-        _shader.Set("uSun.direction",
-            new Vector3(MathF.Cos(sunDegX) * MathF.Cos(sunDegY), MathF.Cos(sunDegX) * MathF.Sin(sunDegY),
-                MathF.Sin(sunDegX)));
-        _shader.Set("uSun.ambient", sunColor * sun.AmbientMultiplier);
-        _shader.Set("uSun.diffuse", sunColor * sun.DiffuseMultiplier);
-        _shader.Set("uSun.specular", sunColor * sun.SpecularMultiplier);
 
-        GraphicsDevice device = CubicGraphics.GraphicsDevice;
-        
-        device.SetTexture(0, Material.Albedo.InternalTexture);
-        device.SetTexture(1, Material.Specular.InternalTexture);
-        
-        device.SetShader(_shader.InternalProgram);
-        
-        device.SetVertexBuffer(_vertexBuffer);
-        device.SetIndexBuffer(_indexBuffer);
-
-        device.Draw((uint) Indices.Length);
-        Metrics.DrawCallsInternal++;
+        if (Material.Color.A > 0)
+        {
+            SceneManager.Active.Renderer.RenderTranslucent(_vertexBuffer, _indexBuffer, Indices.Length,
+                Transform.TransformMatrix, Material, _shader);
+        }
+        else
+        {
+            SceneManager.Active.Renderer.RenderOpaque(_vertexBuffer, _indexBuffer, Indices.Length,
+                Transform.TransformMatrix, Material, _shader);
+        }
     }
 
     protected internal override void Unload()

@@ -6,6 +6,7 @@ using Cubic.Entities;
 using Cubic.Entities.Components;
 using Cubic.GUI;
 using Cubic.Render;
+using Cubic.Render.Renderers;
 using Cubic.Utilities;
 using Cubic.Windowing;
 
@@ -18,6 +19,8 @@ public abstract class Scene : IDisposable
     internal readonly List<IDisposable> CreatedResources;
 
     private bool _updating;
+
+    public readonly Renderer Renderer;
 
     protected internal CubicGame Game { get; internal set; }
     protected CubicGraphics Graphics => CubicGame.GraphicsInternal;
@@ -46,6 +49,7 @@ public abstract class Scene : IDisposable
         _activeScreens = new List<Screen>();
         _screensToAdd = new Queue<Screen>();
         _uniqueId = 0;
+        Renderer = new ForwardRenderer();
     }
 
     protected internal virtual void Initialize() { }
@@ -110,8 +114,13 @@ public abstract class Scene : IDisposable
         Graphics.SpriteRenderer.Begin(Camera2D.Main.TransformMatrix, World.SampleType);
         
         // Order the entities by their distance to the camera to support transparent sorting.
-        foreach (KeyValuePair<string, Entity> entity in _entities.OrderBy(pair => -Vector3.Distance(pair.Value.Transform.Position, Camera.Main.Transform.Position)))
-            entity.Value.Draw();
+        //foreach (KeyValuePair<string, Entity> entity in _entities.OrderBy(pair => -Vector3.Distance(pair.Value.Transform.Position, Camera.Main.Transform.Position)))
+        //    entity.Value.Draw();
+        
+        Renderer.PrepareForRender();
+        foreach ((_, Entity entity) in _entities)
+            entity.Draw();
+        Renderer.PerformRenderPasses(Camera.Main, this);
         Graphics.SpriteRenderer.End();
         
         foreach (Screen screen in _activeScreens)
