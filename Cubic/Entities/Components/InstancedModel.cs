@@ -52,6 +52,7 @@ public class InstancedModel : Component
         
         // I AM AWARE THIS IS NOT INSTANCING!!!!
         // THIS IS MERELY TO GET A TEST WORKING
+        // todo: This has not been fixed for several months. Please actually be bothered to fix it SOON PLEASE THANKS
 
         foreach (ModelGroup modelGroup in _instances)
         {

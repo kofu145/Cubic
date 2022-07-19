@@ -78,6 +78,11 @@ public abstract class UIElement
     public bool Focused;
 
     /// <summary>
+    /// If false, the element will not respond to input.
+    /// </summary>
+    public bool Enabled;
+
+    /// <summary>
     /// Custom data storage for this element. Useful for buttons which have been added programmatically.
     /// Store anything here you like, as it can be retrieved later.
     /// </summary>
@@ -100,6 +105,7 @@ public abstract class UIElement
         Theme = UI.Theme;
         AllowHover = true;
         _fireHoverOnce = true;
+        Enabled = true;
     }
 
     protected internal virtual void Update(ref bool mouseCaptured)
@@ -109,6 +115,9 @@ public abstract class UIElement
 
         Hovering = false;
         Pressed = false;
+
+        if (!Enabled)
+            return;
         
         if (AllowHover && !mouseCaptured && rect.Contains(Input.MousePosition.ToPoint()))
         {

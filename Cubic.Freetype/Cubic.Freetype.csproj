@@ -23,9 +23,6 @@
     <ItemGroup>
       <Content Include="libfreetype.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-          <TargetPath>runtimes/win-x64/native/libfreetype.dll</TargetPath>
-          <Pack>true</Pack>
-          <PackagePath>runtimes/win-x64/native</PackagePath>
       </Content>
     </ItemGroup>
 

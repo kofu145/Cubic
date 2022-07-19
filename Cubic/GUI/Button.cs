@@ -64,5 +64,11 @@ public class Button : UIElement
             new Vector2(rect.X + rect.Width / 2 + (int) (TextOffset.X * scale),
                 rect.Y + rect.Height / 2 + (int) (TextOffset.Y * scale)), textColor, 0,
             new Vector2(origin.Width / 2, origin.Height / 2), Vector2.One);
+
+        if (!Enabled)
+        {
+            graphics.SpriteRenderer.DrawRectangle(rect.Location.ToVector2(), rect.Size.ToVector2(),
+                Color.FromArgb(72, Color.Black), 0, Vector2.Zero);
+        }
     }
 }
