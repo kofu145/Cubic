@@ -91,7 +91,7 @@ public class CubicGraphics : IDisposable
 
         GraphicsDevice.Options.DepthTest = DepthTest.LessEqual;
         GraphicsDevice.Options.EnableScissor = true;
-        GraphicsDevice.Options.CullDirection = CullDirection.CounterClockwise;
+        GraphicsDevice.Options.CullDirection = CullDirection.Clockwise;
         GraphicsDevice.Options.CullFace = CullFace.Back;
     }
     

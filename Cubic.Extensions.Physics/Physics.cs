@@ -36,7 +36,7 @@ public static class Physics
     public static RigidBody CreateBody(Transform transform, float mass, CollisionShape shape)
     {
         Vector3 inertia = shape.CalculateLocalInertia(mass);
-        using DefaultMotionState state = new DefaultMotionState(transform.TransformMatrix);
+        DefaultMotionState state = new DefaultMotionState(transform.TransformMatrix);
         using RigidBodyConstructionInfo inf = new RigidBodyConstructionInfo(mass, state, shape, inertia);
         RigidBody body = new RigidBody(inf);
         World.AddRigidBody(body);

@@ -90,12 +90,7 @@ public static partial class UI
     {
         if (ReferenceResolution == Size.Empty)
             return 1;
-        float refSize = _framebufferSize.Width > _framebufferSize.Height
-            ? _framebufferSize.Height
-            : _framebufferSize.Width;
-        return refSize / (_framebufferSize.Width > _framebufferSize.Height
-            ? ReferenceResolution.Height
-            : ReferenceResolution.Width);
+        return _framebufferSize.Height / (float) ReferenceResolution.Height;
     }
 
     internal static void CalculatePos(Anchor anchor, ref Rectangle rect, bool ignoreReference, Vector2 offset, Rectangle? vp = null)

@@ -44,7 +44,7 @@ public class Texture2D : Texture
 
     public Texture2D(Bitmap bitmap, bool autoDispose = true) : base(autoDispose)
     {
-        InternalTexture = CreateTexture(bitmap.Size.Width, bitmap.Size.Height, bitmap.Data);
+        InternalTexture = CreateTexture(bitmap.Size.Width, bitmap.Size.Height, bitmap.Data, (PixelFormat) bitmap.ColorSpace - 1);
         Size = bitmap.Size;
     }
 
