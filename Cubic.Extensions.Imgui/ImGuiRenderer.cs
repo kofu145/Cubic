@@ -296,6 +296,7 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         DepthTest lastTest = device.Options.DepthTest;
         device.Options.CullFace = CullFace.None;
         device.Options.DepthTest = DepthTest.Disable;
+        Rectangle scissor = device.Scissor;
 
         int vtxOffset = 0;
         int idxOffset = 0;
@@ -330,6 +331,7 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
 
         device.Options.DepthTest = lastTest;
         device.Options.CullFace = lastCull;
+        device.Scissor = scissor;
     }
     
     public void Dispose()
