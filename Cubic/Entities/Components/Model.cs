@@ -100,9 +100,18 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
     return (ambient + diffuse + specular);
 }";
 
+    public static readonly ShaderLayout[] Layout;
+    public const uint Stride = 32;
+
     static Model()
     {
         _shaderDisposed = true;
+        Layout = new[]
+        {
+            new ShaderLayout("aPosition", 3, AttribType.Float),
+            new ShaderLayout("aTexCoords", 2, AttribType.Float),
+            new ShaderLayout("aNormals", 3, AttribType.Float)
+        };
     }
 
     public Model(VertexPositionTextureNormal[] vertices, uint[] indices)
@@ -145,12 +154,12 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
         if (Material.Color.A > 0)
         {
             SceneManager.Active.Renderer.RenderTranslucent(_vertexBuffer, _indexBuffer, Indices.Length,
-                Transform.TransformMatrix, Material, _shader);
+                Transform.TransformMatrix, Material, _shader, Stride, Layout);
         }
         else
         {
             SceneManager.Active.Renderer.RenderOpaque(_vertexBuffer, _indexBuffer, Indices.Length,
-                Transform.TransformMatrix, Material, _shader);
+                Transform.TransformMatrix, Material, _shader, Stride, Layout);
         }
     }
 

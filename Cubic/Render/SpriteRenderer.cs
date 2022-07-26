@@ -106,6 +106,8 @@ void main()
     private TextureSample _sample;
     private bool _useTextureState;
 
+    private ShaderLayout[] _layout;
+    
     public Size FramebufferSize { get; private set; }
 
     internal unsafe SpriteRenderer(GraphicsDevice graphics)
@@ -135,6 +137,16 @@ void main()
         _graphics.ViewportResized += GraphicsOnViewportResized;
 
         _useTextureState = false;
+
+        _layout = new[]
+        {
+            new ShaderLayout("aPosition", 2, AttribType.Float),
+            new ShaderLayout("aTexCoords", 2, AttribType.Float),
+            new ShaderLayout("aTint", 4, AttribType.Float),
+            new ShaderLayout("aRotation", 1, AttribType.Float),
+            new ShaderLayout("aOrigin", 2, AttribType.Float),
+            new ShaderLayout("aScale", 2, AttribType.Float)
+        };
     }
 
     private void GraphicsOnViewportResized(Rectangle rectangle)
@@ -393,7 +405,7 @@ void main()
         _vertexBuffer.Update(0, _spriteVertices);
         _indexBuffer.Update(0, _spriteIndices);
         
-        _graphics.SetVertexBuffer(_vertexBuffer);
+        _graphics.SetVertexBuffer(_vertexBuffer, SpriteVertex.SizeInBytes, _layout);
         _graphics.SetIndexBuffer(_indexBuffer);
         
         _graphics.Draw(_currentSpriteIndex * NumIndices);

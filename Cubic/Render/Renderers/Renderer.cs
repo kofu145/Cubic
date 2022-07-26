@@ -8,11 +8,10 @@ namespace Cubic.Render.Renderers;
 public abstract class Renderer
 {
     public abstract void RenderOpaque(Buffer vertexBuffer, Buffer indexBuffer, int numIndices, Matrix4x4 transform,
-        Material material,
-        Shader shader);
+        Material material, Shader shader, uint stride, ShaderLayout[] layout);
     
     public abstract void RenderTranslucent(Buffer vertexBuffer, Buffer indexBuffer, int numIndices, Matrix4x4 transform,
-        Material material, Shader shader);
+        Material material, Shader shader, uint stride, ShaderLayout[] layout);
     
     internal abstract void PrepareForRender();
     

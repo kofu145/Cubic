@@ -23,16 +23,15 @@ public class ForwardRenderer : Renderer
     }
 
     public override void RenderOpaque(Buffer vertexBuffer, Buffer indexBuffer, int numIndices, Matrix4x4 transform,
-        Material material,
-        Shader shader)
+        Material material, Shader shader, uint stride, ShaderLayout[] layout)
     {
-        _opaques.Add(new Renderable(vertexBuffer, indexBuffer, numIndices, transform, material, shader));
+        _opaques.Add(new Renderable(vertexBuffer, indexBuffer, numIndices, transform, material, shader, stride, layout));
     }
 
     public override void RenderTranslucent(Buffer vertexBuffer, Buffer indexBuffer, int numIndices, Matrix4x4 transform,
-        Material material, Shader shader)
+        Material material, Shader shader, uint stride, ShaderLayout[] layout)
     {
-        _translucents.Add(new Renderable(vertexBuffer, indexBuffer, numIndices, transform, material, shader));
+        _translucents.Add(new Renderable(vertexBuffer, indexBuffer, numIndices, transform, material, shader, stride, layout));
     }
 
     internal override void PrepareForRender()
@@ -85,7 +84,7 @@ public class ForwardRenderer : Renderer
         
         device.SetShader(renderable.Shader.InternalProgram);
         
-        device.SetVertexBuffer(renderable.VertexBuffer);
+        device.SetVertexBuffer(renderable.VertexBuffer, renderable.Stride, renderable.Layout);
         device.SetIndexBuffer(renderable.IndexBuffer);
 
         device.Draw((uint) renderable.NumIndices);
@@ -94,14 +93,16 @@ public class ForwardRenderer : Renderer
 
     private struct Renderable
     {
-        public Buffer VertexBuffer;
-        public Buffer IndexBuffer;
-        public int NumIndices;
-        public Matrix4x4 Transform;
-        public Material Material;
-        public Shader Shader;
+        public readonly Buffer VertexBuffer;
+        public readonly Buffer IndexBuffer;
+        public readonly int NumIndices;
+        public readonly Matrix4x4 Transform;
+        public readonly Material Material;
+        public readonly Shader Shader;
+        public readonly uint Stride;
+        public readonly ShaderLayout[] Layout;
 
-        public Renderable(Buffer vertexBuffer, Buffer indexBuffer, int numIndices, Matrix4x4 transform, Material material, Shader shader)
+        public Renderable(Buffer vertexBuffer, Buffer indexBuffer, int numIndices, Matrix4x4 transform, Material material, Shader shader, uint stride, ShaderLayout[] layout)
         {
             VertexBuffer = vertexBuffer;
             IndexBuffer = indexBuffer;
@@ -109,6 +110,8 @@ public class ForwardRenderer : Renderer
             Transform = transform;
             Material = material;
             Shader = shader;
+            Stride = stride;
+            Layout = layout;
         }
     }
 }

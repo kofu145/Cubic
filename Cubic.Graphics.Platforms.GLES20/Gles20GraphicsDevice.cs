@@ -100,13 +100,6 @@ public sealed class Gles20GraphicsDevice : GraphicsDevice
         _stride = ((Gles20Shader) shader).Stride;
     }
 
-    public override void SetVertexBuffer(Buffer vertexBuffer)
-    {
-        Gles20Buffer buf = (Gles20Buffer) vertexBuffer;
-        Gl.BindBuffer(buf.Target, buf.Handle);
-        SetupAttribs(_stride, _layout);
-    }
-
     public override void SetVertexBuffer(Buffer vertexBuffer, uint stride, params ShaderLayout[] layout)
     {
         Gles20Buffer buf = (Gles20Buffer) vertexBuffer;

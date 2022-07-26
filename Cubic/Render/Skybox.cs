@@ -84,6 +84,8 @@ void main()
     private Shader _shader;
     private CubeMap _cubeMap;
 
+    private ShaderLayout[] _layout;
+
     public unsafe Skybox(CubeMap cubeMap)
     {
         _cubeMap = cubeMap;
@@ -98,6 +100,11 @@ void main()
         _indexBuffer.Update(0, _indices);
 
         _shader = new Shader(VertexShader, FragmentShader);
+
+        _layout = new[]
+        {
+            new ShaderLayout("aPosition", 3, AttribType.Float)
+        };
     }
 
     internal void Draw(Camera camera)
@@ -111,7 +118,7 @@ void main()
         _shader.Set("uView", camera.ViewMatrix.To3x3Matrix());
         
         device.SetTexture(0, _cubeMap.InternalTexture);
-        device.SetVertexBuffer(_vertexBuffer);
+        device.SetVertexBuffer(_vertexBuffer, 12, _layout);
         device.SetIndexBuffer(_indexBuffer);
         device.Draw((uint) _indices.Length);
 

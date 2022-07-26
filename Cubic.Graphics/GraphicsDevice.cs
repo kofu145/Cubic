@@ -92,12 +92,12 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="program">The shader to set.</param>
     public abstract void SetShader(Shader program);
 
-    /// <summary>
+    /*/// <summary>
     /// Set the vertex buffer that will be used on next draw. This overload will automatically determine the best layout
     /// to use for the given buffer type and shader. This will work correctly 90% of the time.
     /// </summary>
     /// <param name="vertexBuffer">The vertex buffer.</param>
-    public abstract void SetVertexBuffer(Buffer vertexBuffer);
+    public abstract void SetVertexBuffer(Buffer vertexBuffer);*/
 
     /// <summary>
     /// Set the vertex buffer that will be used on next draw. Use this overload if you need to manually define the layout

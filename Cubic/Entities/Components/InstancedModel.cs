@@ -59,7 +59,7 @@ public class InstancedModel : Component
             foreach (Matrix4x4 mat in modelGroup.ModelMatrices)
             {
                 SceneManager.Active.Renderer.RenderOpaque(modelGroup.VertexBuffer, modelGroup.IndexBuffer,
-                    modelGroup.IndicesLength, mat * Transform.TransformMatrix, modelGroup.Material, _shader);
+                    modelGroup.IndicesLength, mat * Transform.TransformMatrix, modelGroup.Material, _shader, Model.Stride, Model.Layout);
             }
         }
     }
