@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Text.Json.Serialization;
+using Cubic.Debugging;
 using Cubic.Scenes;
 using Silk.NET.OpenGL;
 using static Cubic.Render.CubicGraphics;
@@ -24,7 +25,7 @@ public abstract class Texture : IDisposable
     {
         InternalTexture.Dispose();
 #if DEBUG
-        Console.WriteLine("Texture disposed");
+        CubicDebug.WriteLine("Texture disposed");
 #endif
     }
 }

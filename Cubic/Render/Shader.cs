@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Numerics;
+using Cubic.Debugging;
 using Cubic.Graphics;
 
 namespace Cubic.Render;
@@ -61,7 +62,7 @@ public class Shader : IDisposable
         InternalProgram.Dispose();
 
 #if DEBUG
-        Console.WriteLine("Shader disposed");
+        CubicDebug.WriteLine("Shader disposed");
 #endif
     }
 }

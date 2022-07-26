@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Cubic.Debugging;
 using Cubic.Utilities;
 
 namespace Cubic.Audio;
@@ -370,7 +371,7 @@ public struct Track
                                     PitchNote pn = new PitchNote(chn[c].Key, chn[c].Octave, 64);
                                     chn[c].Period = (float) ((pn.InverseKey * pn.InverseOctave) *
                                                     (3546895f / (pn.InverseKey * pn.InverseOctave)));
-                                    Console.WriteLine(chn[c].Period * PitchNote.Tuning);
+                                    CubicDebug.WriteLine(chn[c].Period * PitchNote.Tuning);
                                 }
 
                                 break;

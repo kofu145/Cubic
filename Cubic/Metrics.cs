@@ -50,6 +50,6 @@ public static class Metrics
     public static string GetString()
     {
         return
-            $"METRICS:\nFPS: {Fps}\nFrames: {TotalFrames}\nSprites: {SpritesDrawn}\nDraw calls: {DrawCalls}";
+            $"FPS: {Fps}\nFrames: {TotalFrames}\nSprites: {SpritesDrawn}\nDraw calls: {DrawCalls}";
     }
 }

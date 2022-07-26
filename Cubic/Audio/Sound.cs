@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Cubic.Debugging;
 using Cubic.Scenes;
 using StbVorbisSharp;
 
@@ -301,7 +302,7 @@ public partial class Sound : IDisposable
         _device.BufferFinished -= DeviceOnBufferFinished;
         
 #if DEBUG
-        Console.WriteLine("Sound disposed.");
+        CubicDebug.WriteLine("Sound disposed.");
 #endif
     }
 }

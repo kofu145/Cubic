@@ -57,9 +57,12 @@ public abstract class Scene : IDisposable
     protected internal virtual void Update()
     {
         _updating = true;
-        foreach (KeyValuePair<string, Entity> entity in _entities)
-            entity.Value.Update();
-        
+        foreach ((_, Entity entity) in _entities)
+        {
+            if (entity.Enabled)
+                entity.Update();
+        }
+
         foreach (Screen screen in _activeScreens)
             screen.Update();
         _updating = false;
@@ -119,7 +122,11 @@ public abstract class Scene : IDisposable
         
         Renderer.PrepareForRender();
         foreach ((_, Entity entity) in _entities)
-            entity.Draw();
+        {
+            if (entity.Enabled)
+                entity.Draw();
+        }
+
         Renderer.PerformRenderPasses(Camera.Main, this);
         Graphics.SpriteRenderer.End();
         

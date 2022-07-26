@@ -13,6 +13,8 @@ public class Entity : IDisposable
     public string Name { get; internal set; }
 
     public string Tag;
+
+    public bool Enabled;
     
     internal CubicGame Game;
     private bool _initialized;
@@ -31,6 +33,7 @@ public class Entity : IDisposable
         Transform = transform;
         Components = new Component[5];
         _componentStates = new List<ComponentState>();
+        Enabled = true;
     }
 
     public Entity(SerializableEntity sEntity)
@@ -38,6 +41,7 @@ public class Entity : IDisposable
         Transform = sEntity.Transform;
         Components = sEntity.Components.ToArray();
         _componentStates = new List<ComponentState>();
+        Enabled = true;
     }
 
     /// <summary>
