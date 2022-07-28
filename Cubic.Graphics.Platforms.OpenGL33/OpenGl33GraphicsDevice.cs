@@ -60,6 +60,7 @@ public sealed class OpenGl33GraphicsDevice : GraphicsDevice
     }
 
     public override GraphicsApi CurrentApi => GraphicsApi.OpenGL33;
+    public override bool IsDisposed { get; protected set; }
 
     public override Buffer CreateBuffer(BufferType type, uint size)
     {
@@ -191,6 +192,8 @@ public sealed class OpenGl33GraphicsDevice : GraphicsDevice
 
     public override void Dispose()
     {
+        if (IsDisposed) return;
+        IsDisposed = true;
         Gl.DeleteVertexArray(_vao);
     }
 

@@ -10,7 +10,8 @@ public class Gles20Buffer : Buffer
     public readonly uint Handle;
     public readonly BufferTargetARB Target;
     public Type Type;
-    
+
+    public override bool IsDisposed { get; protected set; }
     public override uint Size { get; protected set; }
 
     internal unsafe Gles20Buffer(BufferType type, uint size)
@@ -51,6 +52,8 @@ public class Gles20Buffer : Buffer
 
     public override void Dispose()
     {
+        if (IsDisposed) return;
+        IsDisposed = true;
         Gl.DeleteBuffer(Handle);
     }
 }

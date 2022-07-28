@@ -4,6 +4,8 @@ namespace Cubic.Graphics;
 
 public abstract class Texture : IDisposable
 {
+    public abstract bool IsDisposed { get; protected set; }
+    
     public abstract TextureSample Sample { get; set; }
     
     public abstract TextureUsage Usage { get; set; }

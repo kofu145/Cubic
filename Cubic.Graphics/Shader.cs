@@ -6,6 +6,8 @@ namespace Cubic.Graphics;
 
 public abstract class Shader : IDisposable
 {
+    public abstract bool IsDisposed { get; protected set; }
+    
     public abstract void SetUniform(string uniformName, bool value);
 
     public abstract void SetUniform(string uniformName, int value);

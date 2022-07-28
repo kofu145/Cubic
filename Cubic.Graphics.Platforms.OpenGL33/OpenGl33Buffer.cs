@@ -25,6 +25,7 @@ public class OpenGl33Buffer : Buffer
         Size = size;
     }
 
+    public override bool IsDisposed { get; protected set; }
     public override uint Size { get; protected set; }
 
     public override unsafe void Update<T>(int offset, T[] data)
@@ -51,6 +52,8 @@ public class OpenGl33Buffer : Buffer
 
     public override void Dispose()
     {
+        if (IsDisposed) return;
+        IsDisposed = true;
         Gl.DeleteBuffer(Handle);
     }
 }

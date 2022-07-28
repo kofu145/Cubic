@@ -31,6 +31,8 @@ public abstract class GraphicsDevice : IDisposable
     /// </summary>
     public abstract GraphicsApi CurrentApi { get; }
     
+    public abstract bool IsDisposed { get; protected set; }
+    
     /// <summary>
     /// Create a graphics buffer with the given <see cref="BufferType"/> and size.
     /// </summary>

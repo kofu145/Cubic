@@ -58,8 +58,18 @@ public class InstancedModel : Component
         {
             foreach (Matrix4x4 mat in modelGroup.ModelMatrices)
             {
-                SceneManager.Active.Renderer.RenderOpaque(modelGroup.VertexBuffer, modelGroup.IndexBuffer,
-                    modelGroup.IndicesLength, mat * Transform.TransformMatrix, modelGroup.Material, _shader, Model.Stride, Model.Layout);
+                if (modelGroup.Material.Translucent)
+                {
+                    SceneManager.Active.Renderer.RenderTranslucent(modelGroup.VertexBuffer, modelGroup.IndexBuffer,
+                        modelGroup.IndicesLength, mat * Transform.TransformMatrix, modelGroup.Material, _shader,
+                        Model.Stride, Model.Layout);
+                }
+                else
+                {
+                    SceneManager.Active.Renderer.RenderOpaque(modelGroup.VertexBuffer, modelGroup.IndexBuffer,
+                        modelGroup.IndicesLength, mat * Transform.TransformMatrix, modelGroup.Material, _shader,
+                        Model.Stride, Model.Layout);
+                }
             }
         }
     }
@@ -92,5 +102,10 @@ public struct ModelGroup
     public void RemoveMatrix(int index)
     {
         ModelMatrices.RemoveAt(index);
+    }
+
+    public void ClearAllMatrices()
+    {
+        ModelMatrices.Clear();
     }
 }

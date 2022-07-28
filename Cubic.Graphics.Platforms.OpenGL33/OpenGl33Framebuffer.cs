@@ -7,7 +7,9 @@ namespace Cubic.Graphics.Platforms.OpenGL33;
 public class OpenGl33Framebuffer : Framebuffer
 {
     public uint Handle;
-    
+
+    public override bool IsDisposed { get; protected set; }
+
     public override void AttachTexture(Texture texture, int colorAttachment = 0)
     {
         OpenGl33Texture tex = (OpenGl33Texture) texture;
@@ -33,6 +35,8 @@ public class OpenGl33Framebuffer : Framebuffer
 
     public override void Dispose()
     {
+        if (IsDisposed) return;
+        IsDisposed = true;
         Gl.DeleteFramebuffer(Handle);
     }
 }

@@ -74,18 +74,18 @@ uniform DirectionalLight uSun;
 uniform Material uMaterial;
 uniform vec3 uCameraPos;
 
-vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir);
+vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir);
 
 void main()
 {
     vec3 norm = normalize(frag_normal);
     vec3 viewDir = normalize(uCameraPos - frag_position);
     
-    vec3 result = CalculateDirectional(uSun, norm, viewDir);
-    out_color = vec4(result, 1.0) * uMaterial.color;
+    vec4 result = CalculateDirectional(uSun, norm, viewDir);
+    out_color = result * uMaterial.color;
 }
 
-vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
+vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction);
     
@@ -94,10 +94,12 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
 
-    vec3 ambient = light.ambient * vec3(texture(uMaterial.albedo, frag_texCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(uMaterial.albedo, frag_texCoords));
+    vec4 alRes = texture(uMaterial.albedo, frag_texCoords);
+
+    vec3 ambient = light.ambient * vec3(alRes);
+    vec3 diffuse = light.diffuse * diff * vec3(alRes);
     vec3 specular = light.specular * spec * vec3(texture(uMaterial.specular, frag_texCoords));
-    return (ambient + diffuse + specular);
+    return vec4(ambient + diffuse + specular, alRes.a);
 }";
 
     public static readonly ShaderLayout[] Layout;
@@ -151,7 +153,7 @@ vec3 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
     {
         base.Draw();
 
-        if (Material.Color.A > 0)
+        if (Material.Translucent)
         {
             SceneManager.Active.Renderer.RenderTranslucent(_vertexBuffer, _indexBuffer, Indices.Length,
                 Transform.TransformMatrix, Material, _shader, Stride, Layout);

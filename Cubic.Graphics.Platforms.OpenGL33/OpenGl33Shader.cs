@@ -14,6 +14,8 @@ public class OpenGl33Shader : Shader
     public ShaderLayout[] Layout;
     public uint Stride;
 
+    public override bool IsDisposed { get; protected set; }
+
     public override void SetUniform(string uniformName, bool value)
     {
         Gl.UseProgram(Handle);
@@ -166,6 +168,8 @@ public class OpenGl33Shader : Shader
 
     public override void Dispose()
     {
+        if (IsDisposed) return;
+        IsDisposed = true;
         Gl.DeleteShader(Handle);
     }
 }

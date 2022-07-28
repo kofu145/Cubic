@@ -7,7 +7,9 @@ namespace Cubic.Graphics.Platforms.GLES20;
 public class Gles20Framebuffer : Framebuffer
 {
     public uint Handle;
-    
+
+    public override bool IsDisposed { get; protected set; }
+
     public override void AttachTexture(Texture texture, int colorAttachment = 0)
     {
         Gles20Texture tex = (Gles20Texture) texture;
@@ -33,6 +35,8 @@ public class Gles20Framebuffer : Framebuffer
 
     public override void Dispose()
     {
+        if (IsDisposed) return;
+        IsDisposed = true;
         Gl.DeleteFramebuffer(Handle);
     }
 }

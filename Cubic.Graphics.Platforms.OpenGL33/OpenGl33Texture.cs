@@ -75,6 +75,8 @@ public class OpenGl33Texture : Texture
             sample == TextureSample.Linear ? (int) TextureMagFilter.Linear : (int) TextureMagFilter.Nearest);
     }
 
+    public override bool IsDisposed { get; protected set; }
+
     public override TextureSample Sample
     {
         get => _sample;
@@ -186,6 +188,8 @@ public class OpenGl33Texture : Texture
 
     public override void Dispose()
     {
+        if (IsDisposed) return;
+        IsDisposed = true;
         Gl.DeleteTexture(Handle);
     }
 }

@@ -53,6 +53,7 @@ public sealed class Gles20GraphicsDevice : GraphicsDevice
     }
 
     public override GraphicsApi CurrentApi => GraphicsApi.GLES20;
+    public override bool IsDisposed { get; protected set; }
 
     public override Buffer CreateBuffer(BufferType type, uint size)
     {
@@ -154,6 +155,8 @@ public sealed class Gles20GraphicsDevice : GraphicsDevice
 
     public override void Dispose()
     {
+        if (IsDisposed) return;
+        IsDisposed = true;
     }
 
     private unsafe void SetupAttribs(uint stride, ShaderLayout[] layouts)

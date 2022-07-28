@@ -15,7 +15,9 @@ public class Gles20Texture : Texture
     private TextureWrap _wrap;
     private TextureTarget _target;
     private uint _anisotropicLevel;
-    
+
+    public override bool IsDisposed { get; protected set; }
+
     public override TextureSample Sample
     {
         get => _sample;
@@ -195,6 +197,8 @@ public class Gles20Texture : Texture
 
     public override void Dispose()
     {
+        if (IsDisposed) return;
+        IsDisposed = true;
         Gl.DeleteTexture(Handle);
     }
 }
