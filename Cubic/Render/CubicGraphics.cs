@@ -18,6 +18,8 @@ public class CubicGraphics : IDisposable
     public readonly SpriteRenderer SpriteRenderer;
 
     public static GraphicsDevice GraphicsDevice { get; private set; }
+    
+    public RenderTarget CurrentRenderTarget { get; private set; }
 
     public bool VSync
     {
@@ -43,12 +45,14 @@ public class CubicGraphics : IDisposable
             GraphicsDevice.SetFramebuffer(null);
             Viewport = new Rectangle(0, 0, _window.Size.Width, _window.Size.Height);
             Scissor = Viewport;
+            CurrentRenderTarget = null;
             return;
         }
 
         GraphicsDevice.SetFramebuffer(target.Framebuffer);
         Viewport = new Rectangle(0, 0, target.Size.Width, target.Size.Height);
         Scissor = Viewport;
+        CurrentRenderTarget = target;
     }
 
     public void Clear(Vector4 clearColor)

@@ -114,13 +114,13 @@ public sealed class OpenGl33GraphicsDevice : GraphicsDevice
     public override void Clear(Color color)
     {
         Gl.ClearColor(color);
-        Gl.Clear((uint) ClearBufferMask.ColorBufferBit | (uint) ClearBufferMask.DepthBufferBit);
+        Gl.Clear((uint) ClearBufferMask.ColorBufferBit | (uint) ClearBufferMask.DepthBufferBit | (uint) ClearBufferMask.StencilBufferBit);
     }
 
     public override void Clear(Vector4 color)
     {
         Gl.ClearColor(color.X, color.Y, color.Z, color.W);
-        Gl.Clear((uint) ClearBufferMask.ColorBufferBit | (uint) ClearBufferMask.DepthBufferBit);
+        Gl.Clear((uint) ClearBufferMask.ColorBufferBit | (uint) ClearBufferMask.DepthBufferBit | (uint) ClearBufferMask.StencilBufferBit);
     }
 
     public override void SetShader(Shader shader)

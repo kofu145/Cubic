@@ -4,5 +4,6 @@ public enum PixelFormat
 {
     RGB,
     RGBA,
-    BRGA
+    BRGA,
+    DepthStencil
 }

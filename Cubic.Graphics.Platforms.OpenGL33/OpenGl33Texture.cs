@@ -19,6 +19,7 @@ public class OpenGl33Texture : Texture
     {
         _mipmap = mipmap;
         TextureUsage = usage;
+        Format = format;
         Handle = Gl.GenTexture();
         _target = usage switch
         {
@@ -33,6 +34,7 @@ public class OpenGl33Texture : Texture
             PixelFormat.RGB => Silk.NET.OpenGL.PixelFormat.Rgb,
             PixelFormat.RGBA => Silk.NET.OpenGL.PixelFormat.Rgba,
             PixelFormat.BRGA => Silk.NET.OpenGL.PixelFormat.Bgra,
+            PixelFormat.DepthStencil => Silk.NET.OpenGL.PixelFormat.DepthStencil,
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
 
@@ -45,13 +47,24 @@ public class OpenGl33Texture : Texture
                         _format, PixelType.UnsignedByte, null);
                 break;
             default:
-                Gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, width, height, 0, _format, PixelType.UnsignedByte,
+                InternalFormat iFormat = InternalFormat.Rgba;
+                PixelType pType = PixelType.UnsignedByte;
+                if (format == PixelFormat.DepthStencil)
+                {
+                    iFormat = InternalFormat.Depth24Stencil8;
+                    pType = (PixelType) GLEnum.UnsignedInt248;
+                }
+                
+                Gl.TexImage2D(TextureTarget.Texture2D, 0, iFormat, width, height, 0, _format, pType,
                     null);
                 break;
         }
 
         _wrap = wrap;
         _anisotropicLevel = anisotropicLevel;
+
+        if (usage == TextureUsage.Framebuffer)
+            return;
 
         TextureWrapMode mode = wrap switch
         {
@@ -62,7 +75,7 @@ public class OpenGl33Texture : Texture
         
         Gl.TexParameter(_target, TextureParameterName.TextureWrapS, (int) mode);
         Gl.TexParameter(_target, TextureParameterName.TextureWrapT, (int) mode);
-        if (usage == TextureUsage.Framebuffer)
+        if (usage == TextureUsage.Cubemap)
             Gl.TexParameter(_target, GLEnum.TextureWrapR, (int) mode);
         Gl.TexParameter(_target, GLEnum.TextureMinFilter,
             sample == TextureSample.Linear
@@ -121,6 +134,8 @@ public class OpenGl33Texture : Texture
                 Gl.TexParameter(_target, GLEnum.TextureWrapR, (int) mode);
         }
     }
+
+    public override PixelFormat Format { get; }
 
     public override uint AnisotropicLevel
     {

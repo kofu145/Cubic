@@ -63,6 +63,8 @@ public class Gles20Texture : Texture
         }
     }
 
+    public override PixelFormat Format { get; }
+
     public override uint AnisotropicLevel
     {
         get => _anisotropicLevel;
@@ -80,6 +82,7 @@ public class Gles20Texture : Texture
     {
         _mipmap = mipmap;
         TextureUsage = usage;
+        Format = format;
         Handle = Gl.GenTexture();
         _target = usage switch
         {
@@ -94,14 +97,7 @@ public class Gles20Texture : Texture
             PixelFormat.RGB => Silk.NET.OpenGLES.PixelFormat.Rgb,
             PixelFormat.RGBA => Silk.NET.OpenGLES.PixelFormat.Rgba,
             PixelFormat.BRGA => Silk.NET.OpenGLES.PixelFormat.Bgra,
-            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
-        };
-
-        InternalFormat fmt = format switch
-        {
-            PixelFormat.RGB => Silk.NET.OpenGLES.InternalFormat.Rgb,
-            PixelFormat.RGBA => Silk.NET.OpenGLES.InternalFormat.Rgba,
-            PixelFormat.BRGA => throw new NotSupportedException("GLES 2.0 does not support BGRA textures."),
+            PixelFormat.DepthStencil => Silk.NET.OpenGLES.PixelFormat.DepthStencil,
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
 
@@ -110,11 +106,19 @@ public class Gles20Texture : Texture
             
             case TextureUsage.Cubemap:
                 for (int i = 0; i < 6; i++)
-                    Gl.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, fmt, width, height, 0,
+                    Gl.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, InternalFormat.Rgba, width, height, 0,
                         _format, PixelType.UnsignedByte, null);
                 break;
             default:
-                Gl.TexImage2D(TextureTarget.Texture2D, 0, fmt, width, height, 0, _format, PixelType.UnsignedByte,
+                InternalFormat iFormat = InternalFormat.Rgba;
+                PixelType pType = PixelType.UnsignedByte;
+                if (format == PixelFormat.DepthStencil)
+                {
+                    iFormat = InternalFormat.Depth24Stencil8;
+                    pType = (PixelType) GLEnum.UnsignedInt248;
+                }
+                
+                Gl.TexImage2D(TextureTarget.Texture2D, 0, iFormat, width, height, 0, _format, pType,
                     null);
                 break;
         }

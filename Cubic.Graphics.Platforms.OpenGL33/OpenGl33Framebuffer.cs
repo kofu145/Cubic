@@ -19,13 +19,26 @@ public class OpenGl33Framebuffer : Framebuffer
                 throw new GraphicsException("Regular Textures cannot be used as a framebuffer attachment.");
             case TextureUsage.Framebuffer:
                 Gl.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
-                Gl.FramebufferTexture2D(FramebufferTarget.Framebuffer,
-                    (FramebufferAttachment) (int) FramebufferAttachment.ColorAttachment0 + colorAttachment,
-                    TextureTarget.Texture2D, tex.Handle, 0);
+                switch (tex.Format)
+                {
+                    case PixelFormat.DepthStencil:
+                        Gl.FramebufferTexture2D(FramebufferTarget.Framebuffer,
+                            FramebufferAttachment.DepthStencilAttachment, TextureTarget.Texture2D, tex.Handle, 0);
+                        break;
+                    default:
+                        Gl.FramebufferTexture2D(FramebufferTarget.Framebuffer,
+                            (FramebufferAttachment) (int) FramebufferAttachment.ColorAttachment0 + colorAttachment,
+                            TextureTarget.Texture2D, tex.Handle, 0);
+                        break;
+                }
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
+
+        GLEnum status = Gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+        if (status != GLEnum.FramebufferComplete)
+            throw new Exception($"Framebuffer status: {status}");
     }
     
     internal OpenGl33Framebuffer(uint handle)
