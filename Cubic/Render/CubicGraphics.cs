@@ -57,12 +57,12 @@ public class CubicGraphics : IDisposable
 
     public void Clear(Vector4 clearColor)
     {
-        GraphicsDevice.Clear(clearColor);
+        GraphicsDevice.Clear(clearColor, ClearFlags.Color | ClearFlags.Depth | ClearFlags.Stencil);
     }
 
     public void Clear(Color clearColor)
     {
-        GraphicsDevice.Clear(clearColor);
+        GraphicsDevice.Clear(clearColor, ClearFlags.Color | ClearFlags.Depth | ClearFlags.Stencil);
     }
 
     internal unsafe CubicGraphics(GameWindow window, GameSettings settings)

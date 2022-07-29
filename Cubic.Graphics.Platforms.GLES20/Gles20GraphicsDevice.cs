@@ -81,16 +81,32 @@ public sealed class Gles20GraphicsDevice : GraphicsDevice
         throw new NotImplementedException();
     }
 
-    public override void Clear(Color color)
+    public override void Clear(Color color, ClearFlags flags)
     {
+        uint mask = 0;
+        if (flags.HasFlag(ClearFlags.Color))
+            mask |= (uint) ClearBufferMask.ColorBufferBit;
+        if (flags.HasFlag(ClearFlags.Depth))
+            mask |= (uint) ClearBufferMask.DepthBufferBit;
+        if (flags.HasFlag(ClearFlags.Stencil))
+            mask |= (uint) ClearBufferMask.StencilBufferBit;
+
         Gl.ClearColor(color);
-        Gl.Clear((uint) ClearBufferMask.ColorBufferBit | (uint) ClearBufferMask.DepthBufferBit);
+        Gl.Clear(mask);
     }
 
-    public override void Clear(Vector4 color)
+    public override void Clear(Vector4 color, ClearFlags flags)
     {
+        uint mask = 0;
+        if (flags.HasFlag(ClearFlags.Color))
+            mask |= (uint) ClearBufferMask.ColorBufferBit;
+        if (flags.HasFlag(ClearFlags.Depth))
+            mask |= (uint) ClearBufferMask.DepthBufferBit;
+        if (flags.HasFlag(ClearFlags.Stencil))
+            mask |= (uint) ClearBufferMask.StencilBufferBit;
+        
         Gl.ClearColor(color.X, color.Y, color.Z, color.W);
-        Gl.Clear((uint) ClearBufferMask.ColorBufferBit | (uint) ClearBufferMask.DepthBufferBit);
+        Gl.Clear(mask);
     }
 
     public override void SetShader(Shader shader)

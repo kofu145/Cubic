@@ -80,13 +80,13 @@ public abstract class GraphicsDevice : IDisposable
     /// Clear the screen with the given color.
     /// </summary>
     /// <param name="color">The color to clear the screen with.</param>
-    public abstract void Clear(Color color);
+    public abstract void Clear(Color color, ClearFlags flags);
 
     /// <summary>
     /// Clear the screen with the given color.
     /// </summary>
     /// <param name="color">The <b>normalized</b> color.</param>
-    public abstract void Clear(Vector4 color);
+    public abstract void Clear(Vector4 color, ClearFlags flags);
 
     /// <summary>
     /// Set the shader that will be used on next draw.

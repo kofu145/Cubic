@@ -76,6 +76,7 @@ public class OpenGl33Shader : Shader
             {
                 AttachmentType.Vertex => ShaderType.VertexShader,
                 AttachmentType.Fragment => ShaderType.FragmentShader,
+                AttachmentType.Geometry => ShaderType.GeometryShader,
                 _ => throw new ArgumentOutOfRangeException(nameof(attachment.Attachment), attachment.Attachment, null)
             };
                 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using Cubic.Entities;
@@ -42,6 +43,7 @@ public class ForwardRenderer : Renderer
 
     internal override void PerformRenderPasses(Camera camera, Scene scene)
     {
+
         foreach (Renderable renderable in _opaques.OrderBy(pair =>
                      Vector3.Distance(pair.Transform.Translation, camera.Transform.Position)))
         {
@@ -68,11 +70,7 @@ public class ForwardRenderer : Renderer
         renderable.Shader.Set("uMaterial.shininess", renderable.Material.Shininess);
         DirectionalLight sun = scene.World.Sun;
         Vector3 sunColor = sun.Color.Normalize().ToVector3();
-        float sunDegX = CubicMath.ToRadians(sun.Direction.X);
-        float sunDegY = CubicMath.ToRadians(-sun.Direction.Y);
-        renderable.Shader.Set("uSun.direction",
-            new Vector3(MathF.Cos(sunDegX) * MathF.Cos(sunDegY), MathF.Cos(sunDegX) * MathF.Sin(sunDegY),
-                MathF.Sin(sunDegX)));
+        renderable.Shader.Set("uSun.direction", sun.Forward);
         renderable.Shader.Set("uSun.ambient", sunColor * sun.AmbientMultiplier);
         renderable.Shader.Set("uSun.diffuse", sunColor * sun.DiffuseMultiplier);
         renderable.Shader.Set("uSun.specular", sunColor * sun.SpecularMultiplier);
@@ -91,7 +89,7 @@ public class ForwardRenderer : Renderer
         Metrics.DrawCallsInternal++;
     }
 
-    private struct Renderable
+    internal struct Renderable
     {
         public readonly Buffer VertexBuffer;
         public readonly Buffer IndexBuffer;
