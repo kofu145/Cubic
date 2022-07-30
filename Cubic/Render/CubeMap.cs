@@ -11,7 +11,7 @@ public class CubeMap : Texture
     public CubeMap(Bitmap top, Bitmap bottom, Bitmap front, Bitmap back, Bitmap right, Bitmap left, bool autoDispose = true) : base(autoDispose)
     {
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
-        InternalTexture = device.CreateTexture((uint) top.Size.Width, (uint) top.Size.Height, PixelFormat.RGB,
+        InternalTexture = device.CreateTexture((uint) top.Size.Width, (uint) top.Size.Height, PixelFormat.RGB8,
             usage: TextureUsage.Cubemap, wrap: TextureWrap.Clamp);
         InternalTexture.Update(0, 0, (uint) top.Size.Width, (uint) top.Size.Height, top.Data, CubemapPosition.PositiveY);
         InternalTexture.Update(0, 0, (uint) bottom.Size.Width, (uint) bottom.Size.Height, bottom.Data, CubemapPosition.NegativeY);

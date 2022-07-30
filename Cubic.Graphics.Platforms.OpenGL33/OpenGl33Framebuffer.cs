@@ -21,7 +21,7 @@ public class OpenGl33Framebuffer : Framebuffer
                 Gl.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
                 switch (tex.Format)
                 {
-                    case PixelFormat.DepthStencil:
+                    case PixelFormat.Depth24Stencil8:
                         Gl.FramebufferTexture2D(FramebufferTarget.Framebuffer,
                             FramebufferAttachment.DepthStencilAttachment, TextureTarget.Texture2D, tex.Handle, 0);
                         break;

@@ -31,14 +31,14 @@ public class RenderTarget : Texture
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
 
         Framebuffer = device.CreateFramebuffer();
-        InternalTexture = device.CreateTexture((uint) size.Width, (uint) size.Height, Graphics.PixelFormat.RGBA,
+        InternalTexture = device.CreateTexture((uint) size.Width, (uint) size.Height, Graphics.PixelFormat.RGBA8,
             usage: TextureUsage.Framebuffer, mipmap: false);
         Framebuffer.AttachTexture(InternalTexture);
 
         if (flags == RenderTargetFlags.DepthStencil)
         {
             _depthTexture = device.CreateTexture((uint) size.Width, (uint) size.Height,
-                Graphics.PixelFormat.DepthStencil, TextureSample.Linear, false, TextureUsage.Framebuffer);
+                Graphics.PixelFormat.Depth24Stencil8, TextureSample.Linear, false, TextureUsage.Framebuffer);
             Framebuffer.AttachTexture(_depthTexture);
         }
 

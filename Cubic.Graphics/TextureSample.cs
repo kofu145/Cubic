@@ -1,5 +1,8 @@
 namespace Cubic.Graphics;
 
+/// <summary>
+/// Represents a sample type for textures.
+/// </summary>
 public enum TextureSample
 {
     /// <summary>

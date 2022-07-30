@@ -40,7 +40,7 @@ public class Gles20Texture : Texture
     public override TextureUsage Usage
     {
         get => TextureUsage;
-        set => TextureUsage = value;
+        protected set => TextureUsage = value;
     }
 
     public override TextureWrap Wrap
@@ -94,10 +94,10 @@ public class Gles20Texture : Texture
         Gl.BindTexture(_target, Handle);
         _format = format switch
         {
-            PixelFormat.RGB => Silk.NET.OpenGLES.PixelFormat.Rgb,
-            PixelFormat.RGBA => Silk.NET.OpenGLES.PixelFormat.Rgba,
-            PixelFormat.BRGA => Silk.NET.OpenGLES.PixelFormat.Bgra,
-            PixelFormat.DepthStencil => Silk.NET.OpenGLES.PixelFormat.DepthStencil,
+            PixelFormat.RGB8 => Silk.NET.OpenGLES.PixelFormat.Rgb,
+            PixelFormat.RGBA8 => Silk.NET.OpenGLES.PixelFormat.Rgba,
+            PixelFormat.BRGA8 => Silk.NET.OpenGLES.PixelFormat.Bgra,
+            PixelFormat.Depth24Stencil8 => Silk.NET.OpenGLES.PixelFormat.DepthStencil,
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
 
@@ -112,7 +112,7 @@ public class Gles20Texture : Texture
             default:
                 InternalFormat iFormat = InternalFormat.Rgba;
                 PixelType pType = PixelType.UnsignedByte;
-                if (format == PixelFormat.DepthStencil)
+                if (format == PixelFormat.Depth24Stencil8)
                 {
                     iFormat = InternalFormat.Depth24Stencil8;
                     pType = (PixelType) GLEnum.UnsignedInt248;

@@ -25,7 +25,7 @@ public class Texture2D : Texture
         ImageResult result = ImageResult.FromMemory(File.ReadAllBytes(path));
             
         InternalTexture = CreateTexture(result.Width, result.Height, result.Data,
-            result.Comp == ColorComponents.RedGreenBlueAlpha ? PixelFormat.RGBA : PixelFormat.RGB);
+            result.Comp == ColorComponents.RedGreenBlueAlpha ? PixelFormat.RGBA8 : PixelFormat.RGB8);
         Size = new Size(result.Width, result.Height);
         Path = path;
     }
@@ -58,7 +58,7 @@ public class Texture2D : Texture
         InternalTexture.Update(x, y, (uint) width, (uint) height, data);
     }
 
-    private static unsafe Cubic.Graphics.Texture CreateTexture(int width, int height, byte[] data, PixelFormat format = PixelFormat.RGBA)
+    private static unsafe Cubic.Graphics.Texture CreateTexture(int width, int height, byte[] data, PixelFormat format = PixelFormat.RGBA8)
     {
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
         Cubic.Graphics.Texture tex = device.CreateTexture((uint) width, (uint) height, format, mipmap: false, anisotropicLevel: 16);

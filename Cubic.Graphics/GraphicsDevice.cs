@@ -4,6 +4,9 @@ using System.Numerics;
 
 namespace Cubic.Graphics;
 
+/// <summary>
+/// Represents a native graphics device that can be issued graphics commands.
+/// </summary>
 public abstract class GraphicsDevice : IDisposable
 {
     /// <summary>
@@ -31,6 +34,9 @@ public abstract class GraphicsDevice : IDisposable
     /// </summary>
     public abstract GraphicsApi CurrentApi { get; }
     
+    /// <summary>
+    /// Will return <see langword="true" /> when this grapics device has been disposed.
+    /// </summary>
     public abstract bool IsDisposed { get; protected set; }
     
     /// <summary>
@@ -80,12 +86,14 @@ public abstract class GraphicsDevice : IDisposable
     /// Clear the screen with the given color.
     /// </summary>
     /// <param name="color">The color to clear the screen with.</param>
+    /// <param name="flags">The flags to clear the screen with.</param>
     public abstract void Clear(Color color, ClearFlags flags);
 
     /// <summary>
     /// Clear the screen with the given color.
     /// </summary>
     /// <param name="color">The <b>normalized</b> color.</param>
+    /// <param name="flags">The flags to clear the screen with.</param>
     public abstract void Clear(Vector4 color, ClearFlags flags);
 
     /// <summary>
@@ -102,9 +110,7 @@ public abstract class GraphicsDevice : IDisposable
     public abstract void SetVertexBuffer(Buffer vertexBuffer);*/
 
     /// <summary>
-    /// Set the vertex buffer that will be used on next draw. Use this overload if you need to manually define the layout
-    /// used in the current vertex shader. You may need to do this if the automatic overload does not correctly determine
-    /// the layout itself.
+    /// Set the vertex buffer that will be used on next draw, with the defined shader layout.
     /// </summary>
     /// <param name="vertexBuffer">The vertex buffer to set.</param>
     /// <param name="stride">The stride the layout should use.</param>
@@ -157,6 +163,9 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="baseVertex">The base vertex to use.</param>
     public abstract void Draw(uint count, int indices, int baseVertex);
 
+    /// <summary>
+    /// Dispose this graphics device.
+    /// </summary>
     public abstract void Dispose();
     
     public delegate void OnViewportResized(Rectangle viewport);

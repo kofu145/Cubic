@@ -1,5 +1,8 @@
 namespace Cubic.Graphics;
 
+/// <summary>
+/// Represents different graphics APIs Cubic supports.
+/// </summary>
 public enum GraphicsApi
 {
     /// <summary>
@@ -13,5 +16,8 @@ public enum GraphicsApi
     /// </summary>
     OpenGL33,
     
+    /// <summary>
+    /// OpenGL ES 2.0
+    /// </summary>
     GLES20
 }

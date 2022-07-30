@@ -55,14 +55,14 @@ public class CubicGraphics : IDisposable
         CurrentRenderTarget = target;
     }
 
-    public void Clear(Vector4 clearColor)
+    public void Clear(Vector4 clearColor, ClearFlags flags = ClearFlags.Color | ClearFlags.Depth | ClearFlags.Stencil)
     {
-        GraphicsDevice.Clear(clearColor, ClearFlags.Color | ClearFlags.Depth | ClearFlags.Stencil);
+        GraphicsDevice.Clear(clearColor, flags);
     }
 
-    public void Clear(Color clearColor)
+    public void Clear(Color clearColor, ClearFlags flags = ClearFlags.Color | ClearFlags.Depth | ClearFlags.Stencil)
     {
-        GraphicsDevice.Clear(clearColor, ClearFlags.Color | ClearFlags.Depth | ClearFlags.Stencil);
+        GraphicsDevice.Clear(clearColor, flags);
     }
 
     internal unsafe CubicGraphics(GameWindow window, GameSettings settings)

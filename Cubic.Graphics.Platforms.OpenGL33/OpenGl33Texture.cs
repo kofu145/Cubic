@@ -31,10 +31,10 @@ public class OpenGl33Texture : Texture
         Gl.BindTexture(_target, Handle);
         _format = format switch
         {
-            PixelFormat.RGB => Silk.NET.OpenGL.PixelFormat.Rgb,
-            PixelFormat.RGBA => Silk.NET.OpenGL.PixelFormat.Rgba,
-            PixelFormat.BRGA => Silk.NET.OpenGL.PixelFormat.Bgra,
-            PixelFormat.DepthStencil => Silk.NET.OpenGL.PixelFormat.DepthStencil,
+            PixelFormat.RGB8 => Silk.NET.OpenGL.PixelFormat.Rgb,
+            PixelFormat.RGBA8 => Silk.NET.OpenGL.PixelFormat.Rgba,
+            PixelFormat.BRGA8 => Silk.NET.OpenGL.PixelFormat.Bgra,
+            PixelFormat.Depth24Stencil8 => Silk.NET.OpenGL.PixelFormat.DepthStencil,
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
 
@@ -49,7 +49,7 @@ public class OpenGl33Texture : Texture
             default:
                 InternalFormat iFormat = InternalFormat.Rgba;
                 PixelType pType = PixelType.UnsignedByte;
-                if (format == PixelFormat.DepthStencil)
+                if (format == PixelFormat.Depth24Stencil8)
                 {
                     iFormat = InternalFormat.Depth24Stencil8;
                     pType = (PixelType) GLEnum.UnsignedInt248;
@@ -62,9 +62,6 @@ public class OpenGl33Texture : Texture
 
         _wrap = wrap;
         _anisotropicLevel = anisotropicLevel;
-
-        if (usage == TextureUsage.Framebuffer)
-            return;
 
         TextureWrapMode mode = wrap switch
         {
@@ -112,7 +109,7 @@ public class OpenGl33Texture : Texture
     public override TextureUsage Usage
     {
         get => TextureUsage;
-        set => TextureUsage = value;
+        protected set => TextureUsage = value;
     }
 
     public override TextureWrap Wrap
