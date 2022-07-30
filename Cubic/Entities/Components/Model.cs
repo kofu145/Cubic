@@ -34,16 +34,18 @@ in vec3 aNormals;
 out vec2 frag_texCoords;
 out vec3 frag_normal;
 out vec3 frag_position;
+out vec4 frag_lightSpace;
 
 uniform mat4 uModel;
-uniform mat4 uView;
-uniform mat4 uProjection;
+uniform mat4 uCamera;
+uniform mat4 uLightSpace;
 
 void main()
 {
     frag_texCoords = aTexCoords;
-    gl_Position = vec4(aPosition, 1.0) * uModel * uView * uProjection;
     frag_position = vec3(vec4(aPosition, 1.0) * uModel);
+    frag_lightSpace = vec4(frag_position, 1.0) * uLightSpace;
+    gl_Position = vec4(frag_position, 1.0) * uCamera;
     frag_normal = aNormals * mat3(transpose(inverse(uModel)));
 }";
 
@@ -67,25 +69,28 @@ struct DirectionalLight
 in vec2 frag_texCoords;
 in vec3 frag_normal;
 in vec3 frag_position;
+in vec4 frag_lightSpace;
 
 out vec4 out_color;
 
 uniform DirectionalLight uSun;
 uniform Material uMaterial;
 uniform vec3 uCameraPos;
+uniform sampler2D uShadowMap;
 
-vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir);
+vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir, float shadow);
+float CalculateShadow(vec4 lightSpace);
 
 void main()
 {
     vec3 norm = normalize(frag_normal);
     vec3 viewDir = normalize(uCameraPos - frag_position);
     
-    vec4 result = CalculateDirectional(uSun, norm, viewDir);
+    vec4 result = CalculateDirectional(uSun, norm, viewDir, CalculateShadow(frag_lightSpace));
     out_color = result * uMaterial.color;
 }
 
-vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
+vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir, float shadow)
 {
     vec3 lightDir = normalize(-light.direction);
     
@@ -99,7 +104,22 @@ vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
     vec3 ambient = light.ambient * vec3(alRes);
     vec3 diffuse = light.diffuse * diff * vec3(alRes);
     vec3 specular = light.specular * spec * vec3(texture(uMaterial.specular, frag_texCoords));
-    return vec4(ambient + diffuse + specular, alRes.a);
+    //return vec4(ambient + diffuse + specular, alRes.a);
+    return vec4(ambient + (1.0 - shadow) * (diffuse + specular), alRes.a);
+}
+
+float CalculateShadow(vec4 lightSpace)
+{   
+    vec3 proj = lightSpace.xyz / lightSpace.w;
+    if (proj.z > 1.0)
+        return 0.0;
+    proj = proj * 0.5 + 0.5;
+    float closestDepth = texture(uShadowMap, proj.xy).r;
+    float currentDepth = proj.z;
+    //float bias = max(0.05 * (1.0 - dot(frag_normal, uSun.direction)), 0.005);
+    float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
 }";
 
     public static readonly ShaderLayout[] Layout;
@@ -152,6 +172,10 @@ vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir)
     protected internal override unsafe void Draw()
     {
         base.Draw();
+        
+        _shader.Set("uMaterial.albedo", 0);
+        _shader.Set("uMaterial.specular", 1);
+        _shader.Set("uShadowMap", 2);
 
         if (Material.Translucent)
         {

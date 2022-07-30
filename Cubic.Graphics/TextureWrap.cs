@@ -13,5 +13,10 @@ public enum TextureWrap
     /// <summary>
     /// This texture will clamp to edge outside of its bounds.
     /// </summary>
-    Clamp
+    ClampToEdge,
+    
+    /// <summary>
+    /// This texture will clamp to the border outside its bounds.
+    /// </summary>
+    ClampToBorder
 }

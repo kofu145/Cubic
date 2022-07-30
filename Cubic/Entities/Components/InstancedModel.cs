@@ -54,6 +54,10 @@ public class InstancedModel : Component
         // THIS IS MERELY TO GET A TEST WORKING
         // todo: This has not been fixed for several months. Please actually be bothered to fix it SOON PLEASE THANKS
 
+        _shader.Set("uMaterial.albedo", 0);
+        _shader.Set("uMaterial.specular", 1);
+        _shader.Set("uShadowMap", 2);
+        
         foreach (ModelGroup modelGroup in _instances)
         {
             foreach (Matrix4x4 mat in modelGroup.ModelMatrices)

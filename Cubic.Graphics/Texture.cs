@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 
 namespace Cubic.Graphics;
 
@@ -34,6 +35,11 @@ public abstract class Texture : IDisposable
     /// value will automatically regenerate the mipmaps.
     /// </summary>
     public abstract uint AnisotropicLevel { get; set; }
+    
+    /// <summary>
+    /// Get or set the border color if clamping to border.
+    /// </summary>
+    public abstract Color BorderColor { get; set; }
     
     /// <summary>
     /// Update this texture with the given data.
