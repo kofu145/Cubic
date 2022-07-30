@@ -6,6 +6,7 @@ using System.Numerics;
 using Cubic.Entities;
 using Cubic.Graphics;
 using Cubic.Render.Lighting;
+using Cubic.Render.PostProcessing;
 using Cubic.Scenes;
 using Cubic.Utilities;
 using Buffer = Cubic.Graphics.Buffer;
@@ -17,10 +18,13 @@ public class ForwardRenderer : Renderer
     private List<Renderable> _opaques;
     private List<Renderable> _translucents;
 
+    public readonly ShadowMap ShadowMap;
+
     public ForwardRenderer()
     {
         _opaques = new List<Renderable>();
         _translucents = new List<Renderable>();
+        ShadowMap = new ShadowMap(new Size(1024, 1024));
     }
 
     public override void RenderOpaque(Buffer vertexBuffer, Buffer indexBuffer, int numIndices, Matrix4x4 transform,
@@ -43,24 +47,30 @@ public class ForwardRenderer : Renderer
 
     internal override void PerformRenderPasses(Camera camera, Scene scene)
     {
-
+        Matrix4x4 lightSpace = ShadowMap.Draw(scene, camera, _opaques);
+        
         foreach (Renderable renderable in _opaques.OrderBy(pair =>
                      Vector3.Distance(pair.Transform.Translation, camera.Transform.Position)))
         {
-            DrawRenderable(renderable, camera, scene);
+            DrawRenderable(renderable, camera, scene, lightSpace);
         }
         
         foreach (Renderable renderable in _translucents.OrderBy(pair =>
                      -Vector3.Distance(pair.Transform.Translation, camera.Transform.Position)))
         {
-            DrawRenderable(renderable, camera, scene);
+            DrawRenderable(renderable, camera, scene, lightSpace);
         }
     }
 
-    private void DrawRenderable(Renderable renderable, Camera camera, Scene scene)
+    public override void Dispose()
     {
-        renderable.Shader.Set("uProjection", camera.ProjectionMatrix);
-        renderable.Shader.Set("uView", camera.ViewMatrix);
+        ShadowMap.Dispose();
+    }
+
+    private void DrawRenderable(Renderable renderable, Camera camera, Scene scene, Matrix4x4 lightSpace)
+    {
+        renderable.Shader.Set("uCamera", camera.ViewMatrix * camera.ProjectionMatrix);
+        //renderable.Shader.Set("uCamera", lightSpace);
         renderable.Shader.Set("uModel", renderable.Transform);
         
         renderable.Shader.Set("uCameraPos", camera.Transform.Position);
@@ -74,12 +84,15 @@ public class ForwardRenderer : Renderer
         renderable.Shader.Set("uSun.ambient", sunColor * sun.AmbientMultiplier);
         renderable.Shader.Set("uSun.diffuse", sunColor * sun.DiffuseMultiplier);
         renderable.Shader.Set("uSun.specular", sunColor * sun.SpecularMultiplier);
+        
+        renderable.Shader.Set("uLightSpace", lightSpace);
 
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
         
         device.SetTexture(0, renderable.Material.Albedo.InternalTexture);
         device.SetTexture(1, renderable.Material.Specular.InternalTexture);
-        
+        device.SetTexture(2, ShadowMap.DepthTexture);
+
         device.SetShader(renderable.Shader.InternalProgram);
         
         device.SetVertexBuffer(renderable.VertexBuffer, renderable.Stride, renderable.Layout);

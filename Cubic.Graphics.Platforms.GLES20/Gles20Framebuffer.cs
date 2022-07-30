@@ -26,6 +26,8 @@ public class Gles20Framebuffer : Framebuffer
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        
+        // TODO: Drawbuffer(?) and readbuffer here.
     }
     
     internal Gles20Framebuffer(uint handle)

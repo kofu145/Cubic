@@ -1,4 +1,6 @@
 using System;
+using System.Drawing;
+using System.Numerics;
 using System.Reflection.Metadata;
 using Silk.NET.OpenGLES;
 using static Cubic.Graphics.Platforms.GLES20.Gles20GraphicsDevice;
@@ -15,6 +17,7 @@ public class Gles20Texture : Texture
     private TextureWrap _wrap;
     private TextureTarget _target;
     private uint _anisotropicLevel;
+    private Color _clampColor;
 
     public override bool IsDisposed { get; protected set; }
 
@@ -52,7 +55,8 @@ public class Gles20Texture : Texture
             TextureWrapMode mode = value switch
             {
                 TextureWrap.Repeat => TextureWrapMode.Repeat,
-                TextureWrap.Clamp => TextureWrapMode.ClampToEdge,
+                TextureWrap.ClampToEdge => TextureWrapMode.ClampToEdge,
+                TextureWrap.ClampToBorder => TextureWrapMode.ClampToBorder,
                 _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
             };
             
@@ -60,6 +64,19 @@ public class Gles20Texture : Texture
             Gl.TexParameter(_target, TextureParameterName.TextureWrapT, (int) mode);
             if (TextureUsage == TextureUsage.Framebuffer)
                 Gl.TexParameter(_target, GLEnum.TextureWrapR, (int) mode);
+        }
+    }
+    
+    public override unsafe Color BorderColor
+    {
+        get => _clampColor;
+        set
+        {
+            _clampColor = value;
+            Vector4 clamp = new Vector4(value.R / 255f, value.G / 255f, value.B / 255f, value.A / 255f);
+            Gl.BindTexture(TextureTarget.Texture2D, Handle);
+            fixed (float* border = new float[] { clamp.X, clamp.Y, clamp.Z, clamp.W })
+                Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, border);
         }
     }
 
@@ -129,7 +146,8 @@ public class Gles20Texture : Texture
         TextureWrapMode mode = wrap switch
         {
             TextureWrap.Repeat => TextureWrapMode.Repeat,
-            TextureWrap.Clamp => TextureWrapMode.ClampToEdge,
+            TextureWrap.ClampToEdge => TextureWrapMode.ClampToEdge,
+            TextureWrap.ClampToBorder => TextureWrapMode.ClampToBorder,
             _ => throw new ArgumentOutOfRangeException(nameof(wrap), wrap, null)
         };
         

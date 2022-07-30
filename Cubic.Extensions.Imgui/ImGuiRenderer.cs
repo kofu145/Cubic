@@ -353,14 +353,14 @@ out_color = frag_color * texture(uTexture, frag_texCoords);
         ImGui.PopFont();
     }
 
-    public IntPtr TextureToImGui(Texture texture)
+    public IntPtr TextureToImGui(Cubic.Graphics.Texture texture)
     {
         switch (CubicGraphics.GraphicsDevice.CurrentApi)
         {
             case GraphicsApi.OpenGL33:
-                return (IntPtr) ((OpenGl33Texture) texture.InternalTexture).Handle;
+                return (IntPtr) ((OpenGl33Texture) texture).Handle;
             case GraphicsApi.GLES20:
-                return (IntPtr) ((Gles20Texture) texture.InternalTexture).Handle;
+                return (IntPtr) ((Gles20Texture) texture).Handle;
             default:
                 throw new ArgumentOutOfRangeException();
         }

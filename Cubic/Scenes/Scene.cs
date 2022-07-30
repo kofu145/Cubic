@@ -100,6 +100,8 @@ public abstract class Scene : IDisposable
         foreach (IDisposable resource in CreatedResources)
             resource.Dispose();
         
+        Renderer.Dispose();
+        
         //World.Skybox?.Dispose();
     }
 

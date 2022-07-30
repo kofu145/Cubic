@@ -10,6 +10,10 @@ public class OpenGl33Framebuffer : Framebuffer
 
     public override bool IsDisposed { get; protected set; }
 
+    private bool _hasColorAttachment;
+    private DrawBufferMode _dbMode;
+    private ReadBufferMode _rdMode;
+
     public override void AttachTexture(Texture texture, int colorAttachment = 0)
     {
         OpenGl33Texture tex = (OpenGl33Texture) texture;
@@ -25,10 +29,15 @@ public class OpenGl33Framebuffer : Framebuffer
                         Gl.FramebufferTexture2D(FramebufferTarget.Framebuffer,
                             FramebufferAttachment.DepthStencilAttachment, TextureTarget.Texture2D, tex.Handle, 0);
                         break;
+                    case PixelFormat.DepthOnly:
+                        Gl.FramebufferTexture2D(FramebufferTarget.Framebuffer,
+                            FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, tex.Handle, 0);
+                        break;
                     default:
                         Gl.FramebufferTexture2D(FramebufferTarget.Framebuffer,
                             (FramebufferAttachment) (int) FramebufferAttachment.ColorAttachment0 + colorAttachment,
                             TextureTarget.Texture2D, tex.Handle, 0);
+                        _hasColorAttachment = true;
                         break;
                 }
                 break;
@@ -36,6 +45,17 @@ public class OpenGl33Framebuffer : Framebuffer
                 throw new ArgumentOutOfRangeException();
         }
 
+        if (_hasColorAttachment)
+        {
+            Gl.DrawBuffer(_dbMode);
+            Gl.ReadBuffer(_rdMode);
+        }
+        else
+        {
+            Gl.DrawBuffer(DrawBufferMode.None);
+            Gl.ReadBuffer(ReadBufferMode.None);
+        }
+        
         GLEnum status = Gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
         if (status != GLEnum.FramebufferComplete)
             throw new Exception($"Framebuffer status: {status}");
@@ -44,6 +64,11 @@ public class OpenGl33Framebuffer : Framebuffer
     internal OpenGl33Framebuffer(uint handle)
     {
         Handle = handle;
+
+        Gl.GetInteger(GetPName.DrawBuffer, out int drawBuffer);
+        Gl.GetInteger(GetPName.ReadBuffer, out int readBuffer);
+        _dbMode = (DrawBufferMode) drawBuffer;
+        _rdMode = (ReadBufferMode) readBuffer;
     }
 
     public override void Dispose()

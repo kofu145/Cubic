@@ -9,6 +9,8 @@ namespace Cubic.Render;
 public class Shader : IDisposable
 {
     public Cubic.Graphics.Shader InternalProgram;
+    
+    public const string Empty = "void main() {}";
 
     public Shader(string vertex, string fragment, ShaderLoadType loadType = ShaderLoadType.String)
     {

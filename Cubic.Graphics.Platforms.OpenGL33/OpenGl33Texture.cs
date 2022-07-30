@@ -1,4 +1,6 @@
 using System;
+using System.Drawing;
+using System.Numerics;
 using Silk.NET.OpenGL;
 using static Cubic.Graphics.Platforms.OpenGL33.OpenGl33GraphicsDevice;
 
@@ -14,6 +16,7 @@ public class OpenGl33Texture : Texture
     private TextureWrap _wrap;
     private TextureTarget _target;
     private uint _anisotropicLevel;
+    private Color _clampColor;
 
     internal unsafe OpenGl33Texture(uint width, uint height, PixelFormat format, TextureSample sample, bool mipmap, TextureUsage usage, TextureWrap wrap, uint anisotropicLevel)
     {
@@ -35,6 +38,7 @@ public class OpenGl33Texture : Texture
             PixelFormat.RGBA8 => Silk.NET.OpenGL.PixelFormat.Rgba,
             PixelFormat.BRGA8 => Silk.NET.OpenGL.PixelFormat.Bgra,
             PixelFormat.Depth24Stencil8 => Silk.NET.OpenGL.PixelFormat.DepthStencil,
+            PixelFormat.DepthOnly => Silk.NET.OpenGL.PixelFormat.DepthComponent,
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
 
@@ -49,10 +53,16 @@ public class OpenGl33Texture : Texture
             default:
                 InternalFormat iFormat = InternalFormat.Rgba;
                 PixelType pType = PixelType.UnsignedByte;
-                if (format == PixelFormat.Depth24Stencil8)
+                switch (format)
                 {
-                    iFormat = InternalFormat.Depth24Stencil8;
-                    pType = (PixelType) GLEnum.UnsignedInt248;
+                    case PixelFormat.Depth24Stencil8:
+                        iFormat = InternalFormat.Depth24Stencil8;
+                        pType = (PixelType) GLEnum.UnsignedInt248;
+                        break;
+                    case PixelFormat.DepthOnly:
+                        iFormat = InternalFormat.DepthComponent;
+                        pType = PixelType.Float;
+                        break;
                 }
                 
                 Gl.TexImage2D(TextureTarget.Texture2D, 0, iFormat, width, height, 0, _format, pType,
@@ -66,7 +76,8 @@ public class OpenGl33Texture : Texture
         TextureWrapMode mode = wrap switch
         {
             TextureWrap.Repeat => TextureWrapMode.Repeat,
-            TextureWrap.Clamp => TextureWrapMode.ClampToEdge,
+            TextureWrap.ClampToEdge => TextureWrapMode.ClampToEdge,
+            TextureWrap.ClampToBorder => TextureWrapMode.ClampToBorder,
             _ => throw new ArgumentOutOfRangeException(nameof(wrap), wrap, null)
         };
         
@@ -121,7 +132,8 @@ public class OpenGl33Texture : Texture
             TextureWrapMode mode = value switch
             {
                 TextureWrap.Repeat => TextureWrapMode.Repeat,
-                TextureWrap.Clamp => TextureWrapMode.ClampToEdge,
+                TextureWrap.ClampToEdge => TextureWrapMode.ClampToEdge,
+                TextureWrap.ClampToBorder => TextureWrapMode.ClampToBorder,
                 _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
             };
             
@@ -144,6 +156,19 @@ public class OpenGl33Texture : Texture
             Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxAnisotropy, value);
             if (_mipmap)
                 Gl.GenerateMipmap(TextureTarget.Texture2D);
+        }
+    }
+
+    public override unsafe Color BorderColor
+    {
+        get => _clampColor;
+        set
+        {
+            _clampColor = value;
+            Vector4 clamp = new Vector4(value.R / 255f, value.G / 255f, value.B / 255f, value.A / 255f);
+            Gl.BindTexture(TextureTarget.Texture2D, Handle);
+            fixed (float* border = new float[] { clamp.X, clamp.Y, clamp.Z, clamp.W })
+                Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, border);
         }
     }
 

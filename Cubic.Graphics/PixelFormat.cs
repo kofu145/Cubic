@@ -23,5 +23,10 @@ public enum PixelFormat
     /// <summary>
     /// Use 24 bits for the depth buffer, and 8 bits for the stencil buffer.
     /// </summary>
-    Depth24Stencil8
+    Depth24Stencil8,
+    
+    /// <summary>
+    /// Depth buffer only.
+    /// </summary>
+    DepthOnly
 }
