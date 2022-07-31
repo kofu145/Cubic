@@ -56,7 +56,7 @@ public class InstancedModel : Component
 
         _shader.Set("uMaterial.albedo", 0);
         _shader.Set("uMaterial.specular", 1);
-        _shader.Set("uShadowMap", 2);
+        //_shader.Set("uShadowMap", 2);
         
         foreach (ModelGroup modelGroup in _instances)
         {

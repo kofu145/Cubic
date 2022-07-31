@@ -72,8 +72,8 @@ out vec4 out_color;
 uniform DirectionalLight uSun;
 uniform Material uMaterial;
 uniform vec3 uCameraPos;
-uniform sampler2D uShadowMap;
-uniform vec4 uLightSpace;
+//uniform sampler2D uShadowMap;
+//uniform vec4 uLightSpace;
 
 vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir, float shadow);
 float CalculateShadow(vec4 lightSpace);
@@ -83,7 +83,7 @@ void main()
     vec3 norm = normalize(frag_normal);
     vec3 viewDir = normalize(uCameraPos - frag_position);
     
-    vec4 result = CalculateDirectional(uSun, norm, viewDir, CalculateShadow(vec4(frag_position, 1.0) * uLightSpace));
+    vec4 result = CalculateDirectional(uSun, norm, viewDir, 0.0 /*CalculateShadow(vec4(frag_position, 1.0) * uLightSpace)*/);
     out_color = result * uMaterial.color;
 }
 
@@ -105,7 +105,7 @@ vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir, flo
     return vec4(ambient + (1.0 - shadow) * (diffuse + specular), alRes.a);
 }
 
-float CalculateShadow(vec4 lightSpace)
+/*float CalculateShadow(vec4 lightSpace)
 {   
     //vec3 proj = lightSpace.xyz / lightSpace.w;
     vec3 proj = vec3(lightSpace);
@@ -118,7 +118,7 @@ float CalculateShadow(vec4 lightSpace)
     float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
 
     return shadow;
-}";
+}*/";
 
     public static readonly ShaderLayout[] Layout;
     public const uint Stride = 32;
@@ -173,7 +173,7 @@ float CalculateShadow(vec4 lightSpace)
         
         _shader.Set("uMaterial.albedo", 0);
         _shader.Set("uMaterial.specular", 1);
-        _shader.Set("uShadowMap", 2);
+        //_shader.Set("uShadowMap", 2);
 
         if (Material.Translucent)
         {
