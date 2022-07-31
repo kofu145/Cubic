@@ -230,15 +230,16 @@ public partial class Sound : IDisposable
     private void GetVorbisData()
     {
         _vorbis.SubmitBuffer();
-
-        if (_vorbis.Decoded < _vorbis.SampleRate / 2)
-        {
-            //StbVorbis.stb_vorbis_seek(_vorbis.StbVorbis, );
-            _vorbis.Restart();
-            _vorbis.SubmitBuffer();
-        }
+        int decoded = _vorbis.Decoded;
 
         short[] data = _vorbis.SongBuffer;
+
+        if (decoded < _vorbis.SampleRate / 2)
+        {
+            Array.Resize(ref data, decoded * 2);
+            _vorbis.Restart();
+        }
+
         _device.UpdateBuffer(_buffers[_currentBuffer], AudioFormat.Stereo16, data, _vorbis.SampleRate);
     }
 
