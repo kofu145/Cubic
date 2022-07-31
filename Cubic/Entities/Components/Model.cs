@@ -34,17 +34,14 @@ in vec3 aNormals;
 out vec2 frag_texCoords;
 out vec3 frag_normal;
 out vec3 frag_position;
-out vec4 frag_lightSpace;
 
 uniform mat4 uModel;
 uniform mat4 uCamera;
-uniform mat4 uLightSpace;
 
 void main()
 {
     frag_texCoords = aTexCoords;
     frag_position = vec3(vec4(aPosition, 1.0) * uModel);
-    frag_lightSpace = vec4(frag_position, 1.0) * uLightSpace;
     gl_Position = vec4(frag_position, 1.0) * uCamera;
     frag_normal = aNormals * mat3(transpose(inverse(uModel)));
 }";
@@ -69,7 +66,6 @@ struct DirectionalLight
 in vec2 frag_texCoords;
 in vec3 frag_normal;
 in vec3 frag_position;
-in vec4 frag_lightSpace;
 
 out vec4 out_color;
 
@@ -77,6 +73,7 @@ uniform DirectionalLight uSun;
 uniform Material uMaterial;
 uniform vec3 uCameraPos;
 uniform sampler2D uShadowMap;
+uniform vec4 uLightSpace;
 
 vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir, float shadow);
 float CalculateShadow(vec4 lightSpace);
@@ -86,7 +83,7 @@ void main()
     vec3 norm = normalize(frag_normal);
     vec3 viewDir = normalize(uCameraPos - frag_position);
     
-    vec4 result = CalculateDirectional(uSun, norm, viewDir, CalculateShadow(frag_lightSpace));
+    vec4 result = CalculateDirectional(uSun, norm, viewDir, CalculateShadow(vec4(frag_position, 1.0) * uLightSpace));
     out_color = result * uMaterial.color;
 }
 
@@ -110,11 +107,12 @@ vec4 CalculateDirectional(DirectionalLight light, vec3 normal, vec3 viewDir, flo
 
 float CalculateShadow(vec4 lightSpace)
 {   
-    vec3 proj = lightSpace.xyz / lightSpace.w;
+    //vec3 proj = lightSpace.xyz / lightSpace.w;
+    vec3 proj = vec3(lightSpace);
     if (proj.z > 1.0)
         return 0.0;
-    proj = proj * 0.5 + 0.5;
-    float closestDepth = texture(uShadowMap, proj.xy).r;
+    vec2 coord = proj.xy * 0.5 + 0.5;
+    float closestDepth = texture(uShadowMap, coord).r;
     float currentDepth = proj.z;
     //float bias = max(0.05 * (1.0 - dot(frag_normal, uSun.direction)), 0.005);
     float shadow = currentDepth > closestDepth ? 1.0 : 0.0;

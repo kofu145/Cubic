@@ -17,6 +17,8 @@ public class ShadowMap : IDisposable
 
     public const string ShadowVertex = @"
 in vec3 aPosition;
+in vec2 aTexCoords;
+in vec3 aNormal;
 
 uniform mat4 uModel;
 uniform mat4 uLightSpace;
@@ -29,6 +31,7 @@ void main()
     public const string ShadowFragment = Shader.Empty;
 
     private Shader _shader;
+    private ShaderLayout[] _layouts;
     
     public ShadowMap(Size size)
     {
@@ -41,12 +44,18 @@ void main()
         _framebuffer.AttachTexture(DepthTexture);
 
         _shader = new Shader(ShadowVertex, ShadowFragment);
+        _layouts = new[]
+        {
+            new ShaderLayout("aPosition", 3, AttribType.Float),
+            new ShaderLayout("aTexCoords", 2, AttribType.Float),
+            new ShaderLayout("aNormal", 3, AttribType.Float)
+        };
     }
 
     internal Matrix4x4 Draw(Scene scene, Camera camera, List<ForwardRenderer.Renderable> renderables)
     {
-        Matrix4x4 projection = Matrix4x4.CreateOrthographicOffCenter(-10, 10, -10, 10, 1.0f, 20f);
-        Matrix4x4 view = Matrix4x4.CreateLookAt(-scene.World.Sun.Forward, Vector3.Zero, -Vector3.UnitY);
+        Matrix4x4 projection = Matrix4x4.CreateOrthographicOffCenter(-10.0f, 10.0f, -10.0f, 10, 1.0f, 200f);
+        Matrix4x4 view = Matrix4x4.CreateLookAt(-scene.World.Sun.Forward, Vector3.Zero, Vector3.UnitY);
         Matrix4x4 space = view * projection;
 
         GraphicsDevice device = CubicGraphics.GraphicsDevice;
@@ -78,7 +87,7 @@ void main()
 
         _shader.Set("uModel", renderable.Transform);
 
-        device.SetVertexBuffer(renderable.VertexBuffer, renderable.Stride, renderable.Layout);
+        device.SetVertexBuffer(renderable.VertexBuffer, 32, _layouts);
         device.SetIndexBuffer(renderable.IndexBuffer);
 
         device.Draw((uint) renderable.NumIndices);
