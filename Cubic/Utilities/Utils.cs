@@ -60,4 +60,27 @@ public static class Utils
         
         return Color.FromArgb(255, (int) r, (int) g, (int) b);
     }
+
+    public static Size CalculateAspectRatio(Size resolution)
+    {
+        // Calculate the width-height ratio.
+        float ratio = resolution.Width / (float) resolution.Height;
+
+        // Count up until the lowest value as the aspect ratio cannot be higher than the lowest value.
+        int lowestValue = resolution.Width < resolution.Height ? resolution.Width : resolution.Height;
+        for (int i = 1; i < lowestValue; i++)
+        {
+            // Multiply both together and calculate a good enough value, a bias of 0.1 seems to work well.
+            float multiplied = ratio * i;
+            if (multiplied - (int) multiplied < 0.1f)
+            {
+                // Return 16:10 instead of 8:5 as people associate better with 16:10 rather than 8:5.
+                if ((int) multiplied == 8 && i == 5)
+                    return new Size(16, 10);
+                return new Size((int) multiplied, i);
+            }
+        }
+
+        return resolution;
+    }
 }

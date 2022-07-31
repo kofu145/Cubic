@@ -38,21 +38,13 @@ public static unsafe class Monitors
             VideoMode* modes = GLFW.GetVideoModes(m, out int count);
             for (int dm = 0; dm < count; dm++)
             {
-                displayModes.Add(new DisplayMode()
-                {
-                    Resolution = new Size(modes[dm].Width, modes[dm].Height),
-                    RefreshRate = modes[dm].RefreshRate
-                });
+                displayModes.Add(new DisplayMode(new Size(modes[dm].Width, modes[dm].Height), modes[dm].RefreshRate));
             }
 
             Monitor monitor = new Monitor()
             {
                 Position = new Point(x, y),
-                CurrentDisplayMode = new DisplayMode()
-                {
-                    Resolution = new Size(mode->Width, mode->Height),
-                    RefreshRate = mode->RefreshRate
-                },
+                CurrentDisplayMode = new DisplayMode(new Size(mode->Width, mode->Height), mode->RefreshRate),
                 AvailableDisplayModes = displayModes.ToArray()
             };
             monitors.Add(monitor);
