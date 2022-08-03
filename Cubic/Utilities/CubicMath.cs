@@ -34,28 +34,12 @@ public static class CubicMath
     }
 
     /// <summary>
-    /// A simple linear interpolation between two control points, affected by the changing parameter t.
-    /// </summary>
-    /// <param name="t">A normalized value representing the change in time (elapsed position) of the bezier curve.</param>
-    /// <remarks>
-    /// Use <see cref="GetNormalizedPointFromInterval"/> to get a normalized value from any point from a defined
-    /// interval, if your changing parameter is not normalized.
-    /// </remarks>
-    /// <param name="p0">A <see cref="Vector2"/> representing the first control point of the curve.</param>
-    /// <param name="p1">A <see cref="Vector2"/> representing the second control point of the curve.</param>
-    /// <returns>A <see cref="Vector2"/> result position along the curve, based on t.</returns>
-    public static Vector2 LinearBezierCurve(float t, Vector2 p0, Vector2 p1)
-    {
-        return p0 + t * (p1 - p0);
-    }
-    
-    /// <summary>
     /// Calculates a position along a quadratic bezier curve that outputs a value based on the given variable for t
     /// along the given control points, taken as <see cref="Vector2"/>.
     /// </summary>
     /// <param name="t">A normalized value representing the change in time (elapsed position) of the bezier curve.</param>
     /// <remarks>
-    /// Use <see cref="GetNormalizedPointFromInterval"/> to get a normalized value from any point from a defined
+    /// Use <see cref="InverseLerp"/> to get a normalized value from any point from a defined
     /// interval, if your changing parameter is not normalized.
     /// </remarks>
     /// <param name="p0">A <see cref="Vector2"/> representing the first control point of the curve.</param>
@@ -75,7 +59,7 @@ public static class CubicMath
     /// <param name="t">A normalized value representing the change in time (elapsed position) of the bezier curve.
     /// </param>
     /// <remarks>
-    /// Use <see cref="GetNormalizedPointFromInterval"/> to get a normalized value from any point from a defined
+    /// Use <see cref="InverseLerp"/> to get a normalized value from any point from a defined
     /// interval, if your changing parameter is not normalized.
     /// </remarks>
     /// <param name="p0">A <see cref="Vector2"/> representing the first control point of the curve.</param>
@@ -94,7 +78,7 @@ public static class CubicMath
     /// </summary>
     /// <param name="t">A normalized value representing the change in time (elapsed position) of the bezier curve.</param>
     /// <remarks>
-    /// Use <see cref="GetNormalizedPointFromInterval"/> to get a normalized value from any point from a defined
+    /// Use <see cref="InverseLerp"/> to get a normalized value from any point from a defined
     /// interval, if your changing parameter is not normalized.
     /// </remarks>
     /// <param name="p0">A <see cref="Vector2"/> representing the first control point of the curve.</param>
@@ -134,24 +118,10 @@ public static class CubicMath
     /// <param name="max">The maximum value of the interval.</param>
     /// <param name="point">The given point within the interval that is to be normalized.</param>
     /// <returns>A normalized point representing the given point in the interval.</returns>
-    public static float GetNormalizedPointFromInterval(float min, float max, float point)
+    public static float InverseLerp(float min, float max, float point)
     {
         return (point - min) / (max - min);
     }
-    /// <summary>
-    /// The opposite of <see cref="GetNormalizedPointFromInterval"/>, which gives the equivalent point within an
-    /// interval based on a given normalized value.
-    /// </summary>
-    /// <example>
-    /// For example, an interval from 200 to 300, given the point .5, would return the non-normal value 250.
-    /// </example>
-    /// <param name="min">The minimum value of the interval.</param>
-    /// <param name="max">The maximum value of the interval.</param>
-    /// <param name="point">A given normalized value, representing the point within the interval.</param>
-    /// <returns>The point within the interval represented by the given normalized value.</returns>
-    public static float GetPointFromNormalizedInterval(float min, float max, float point)
-    {
-        return point * (max - min) + min;
-    }
+    
     
 }
